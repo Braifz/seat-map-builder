@@ -20,6 +20,7 @@ export function Toolbar() {
   const tools: { id: ToolType; label: string; icon: string }[] = [
     { id: "select", label: "Select", icon: "◉" },
     { id: "addRow", label: "Add Row", icon: "▭" },
+    { id: "addMultipleRows", label: "Add Multiple Rows", icon: "▭+" },
     { id: "addArea", label: "Add Area", icon: "▢" },
     { id: "addTable", label: "Add Table", icon: "○" },
     { id: "pan", label: "Pan", icon: "✋" },

@@ -9,6 +9,7 @@ import type {
   SectionId,
   ElementId,
   Seat,
+  Row,
   Section,
 } from "../types";
 
@@ -95,13 +96,84 @@ export const useSeatMapStore = create<SeatMapStore>()(
         });
       },
 
+      removeRows: (rowIds) => {
+        const currentRows = get().rows;
+        const currentSeats = get().seats;
+        const rows = { ...currentRows };
+        const seats = { ...currentSeats };
+        const seatsToRemove: SeatId[] = [];
+
+        rowIds.forEach((rowId) => {
+          const row = currentRows[rowId];
+          if (row) {
+            row.seats.forEach((seatId) => {
+              delete seats[seatId];
+              seatsToRemove.push(seatId);
+            });
+            delete rows[rowId];
+          }
+        });
+
+        set({
+          rows,
+          seats,
+          selectedIds: get().selectedIds.filter(
+            (id) =>
+              !rowIds.includes(id as RowId) &&
+              !seatsToRemove.includes(id as SeatId),
+          ),
+        });
+      },
+
+      addMultipleRows: (rowConfigs, basePosition, spacing = 50) => {
+        const rowIds: RowId[] = [];
+        const newRows: Record<RowId, Row> = {};
+        const newSeats: Record<SeatId, Seat> = {};
+
+        rowConfigs.forEach((config, index) => {
+          const rowId = generateId("row") as RowId;
+          const seatIds: SeatId[] = [];
+          const yPosition = basePosition.y + index * spacing;
+
+          for (let i = 0; i < config.seatCount; i++) {
+            const seatId = generateId("seat") as SeatId;
+            seatIds.push(seatId);
+            newSeats[seatId] = {
+              id: seatId,
+              label: `${i + 1}`,
+              position: { x: basePosition.x + i * 35, y: yPosition },
+              type: "seat",
+              status: "available",
+              rowId,
+              sectionId: config.sectionId,
+            };
+          }
+
+          newRows[rowId] = {
+            id: rowId,
+            label: config.label,
+            position: { x: basePosition.x, y: yPosition },
+            seats: seatIds,
+            sectionId: config.sectionId,
+          };
+
+          rowIds.push(rowId);
+        });
+
+        set((state) => ({
+          rows: { ...state.rows, ...newRows },
+          seats: { ...state.seats, ...newSeats },
+        }));
+
+        return rowIds;
+      },
+
       updateRowLabel: (rowId, label) => {
         set((state) => ({
           rows: { ...state.rows, [rowId]: { ...state.rows[rowId], label } },
         }));
       },
 
-      // Section actions
       addSection: (
         label: string,
         color: string,
@@ -153,6 +225,67 @@ export const useSeatMapStore = create<SeatMapStore>()(
       updateSeatType: (seatId, type) => {
         set((state) => ({
           seats: { ...state.seats, [seatId]: { ...state.seats[seatId], type } },
+        }));
+      },
+
+      removeSeat: (seatId) => {
+        const seat = get().seats[seatId];
+        if (!seat) return;
+
+        const seats = { ...get().seats };
+        delete seats[seatId];
+
+        // Also remove from parent row if applicable
+        if (seat.rowId) {
+          const row = get().rows[seat.rowId];
+          if (row) {
+            const rowId = seat.rowId;
+            const updatedRow = {
+              ...row,
+              seats: row.seats.filter((id) => id !== seatId),
+            };
+            set((state) => ({
+              rows: { ...state.rows, [rowId]: updatedRow },
+              seats,
+              selectedIds: state.selectedIds.filter((id) => id !== seatId),
+            }));
+            return;
+          }
+        }
+
+        set({
+          seats,
+          selectedIds: get().selectedIds.filter((id) => id !== seatId),
+        });
+      },
+
+      removeSeats: (seatIds) => {
+        const currentSeats = get().seats;
+        const seats = { ...currentSeats };
+        const currentRows = { ...get().rows };
+        const updatedRows: Record<RowId, Row> = {};
+
+        seatIds.forEach((seatId) => {
+          const seat = currentSeats[seatId];
+          if (seat) {
+            delete seats[seatId];
+            if (seat.rowId && currentRows[seat.rowId]) {
+              if (!updatedRows[seat.rowId]) {
+                updatedRows[seat.rowId] = { ...currentRows[seat.rowId] };
+              }
+              updatedRows[seat.rowId].seats = updatedRows[
+                seat.rowId
+              ].seats.filter((id) => id !== seatId);
+            }
+          }
+        });
+
+        set((state) => ({
+          rows: { ...state.rows, ...updatedRows },
+          seats,
+          selectedIds: state.selectedIds.filter(
+            (id) => !seatIds.includes(id as SeatId),
+          ),
         }));
       },
 

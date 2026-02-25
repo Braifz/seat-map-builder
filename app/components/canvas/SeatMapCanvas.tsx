@@ -9,6 +9,7 @@ import { Table } from "./Table";
 import { CreateRowModal } from "../modals/CreateRowModal";
 import { CreateTableModal } from "../modals/CreateTableModal";
 import { CreateAreaModal } from "../modals/CreateAreaModal";
+import { CreateMultipleRowsModal } from "../modals/CreateMultipleRowsModal";
 import type {
   Position,
   TableShape,
@@ -28,6 +29,7 @@ export function SeatMapCanvas() {
   const [showRowModal, setShowRowModal] = useState(false);
   const [showTableModal, setShowTableModal] = useState(false);
   const [showAreaModal, setShowAreaModal] = useState(false);
+  const [showMultipleRowsModal, setShowMultipleRowsModal] = useState(false);
 
   const {
     rows,
@@ -46,6 +48,7 @@ export function SeatMapCanvas() {
     addRow,
     addArea,
     addTable,
+    addMultipleRows,
     setActiveTool,
     moveRow,
     moveArea,
@@ -121,6 +124,9 @@ export function SeatMapCanvas() {
       } else if (activeTool === "addRow") {
         setPendingClick(svgPoint);
         setShowRowModal(true);
+      } else if (activeTool === "addMultipleRows") {
+        setPendingClick(svgPoint);
+        setShowMultipleRowsModal(true);
       } else if (activeTool === "addArea") {
         setPendingClick(svgPoint);
         setShowAreaModal(true);
@@ -150,7 +156,17 @@ export function SeatMapCanvas() {
     }
   };
 
-  // Handle area creation from modal
+  // Handle multiple rows creation from modal
+  const handleCreateMultipleRows = (
+    rowConfigs: { label: string; seatCount: number; sectionId?: string }[],
+    spacing: number,
+  ) => {
+    if (pendingClick) {
+      addMultipleRows(rowConfigs, pendingClick, spacing);
+      setPendingClick(null);
+      setActiveTool("select");
+    }
+  };
   const handleCreateArea = (
     label: string,
     width: number,
@@ -365,6 +381,17 @@ export function SeatMapCanvas() {
           setActiveTool("select");
         }}
         onCreate={handleCreateRow}
+        defaultPosition={pendingClick || undefined}
+      />
+
+      <CreateMultipleRowsModal
+        isOpen={showMultipleRowsModal}
+        onClose={() => {
+          setShowMultipleRowsModal(false);
+          setPendingClick(null);
+          setActiveTool("select");
+        }}
+        onCreate={handleCreateMultipleRows}
         defaultPosition={pendingClick || undefined}
       />
 

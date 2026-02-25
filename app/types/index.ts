@@ -65,7 +65,19 @@ export interface Table {
   seats: SeatId[];
 }
 
-export type ToolType = "select" | "addRow" | "addArea" | "addTable" | "pan";
+export type ToolType =
+  | "select"
+  | "addRow"
+  | "addMultipleRows"
+  | "addArea"
+  | "addTable"
+  | "pan";
+
+export interface RowConfig {
+  label: string;
+  seatCount: number;
+  sectionId?: SectionId;
+}
 
 export interface SeatMapState {
   name: string;
@@ -88,7 +100,13 @@ export interface SeatMapActions {
     position?: Position,
     sectionId?: SectionId,
   ) => RowId;
+  addMultipleRows: (
+    rowConfigs: RowConfig[],
+    basePosition: Position,
+    spacing?: number,
+  ) => RowId[];
   removeRow: (rowId: RowId) => void;
+  removeRows: (rowIds: RowId[]) => void;
   updateRowLabel: (rowId: RowId, label: string) => void;
 
   // Section actions
@@ -104,6 +122,8 @@ export interface SeatMapActions {
   // Seat actions
   updateSeatLabel: (seatId: SeatId, label: string) => void;
   updateSeatType: (seatId: SeatId, type: SeatType) => void;
+  removeSeat: (seatId: SeatId) => void;
+  removeSeats: (seatIds: SeatId[]) => void;
 
   // Area actions
   addArea: (
