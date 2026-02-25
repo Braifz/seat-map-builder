@@ -8,6 +8,7 @@ import { Area } from "./Area";
 import { Table } from "./Table";
 import { CreateRowModal } from "../modals/CreateRowModal";
 import { CreateTableModal } from "../modals/CreateTableModal";
+import { CreateAreaModal } from "../modals/CreateAreaModal";
 import type {
   Position,
   TableShape,
@@ -26,12 +27,14 @@ export function SeatMapCanvas() {
   const [pendingClick, setPendingClick] = useState<Position | null>(null);
   const [showRowModal, setShowRowModal] = useState(false);
   const [showTableModal, setShowTableModal] = useState(false);
+  const [showAreaModal, setShowAreaModal] = useState(false);
 
   const {
     rows,
     seats,
     areas,
     tables,
+    sections,
     selectedIds,
     zoom,
     pan,
@@ -119,11 +122,8 @@ export function SeatMapCanvas() {
         setPendingClick(svgPoint);
         setShowRowModal(true);
       } else if (activeTool === "addArea") {
-        addArea(`Area ${Object.keys(areas).length + 1}`, svgPoint, {
-          width: 200,
-          height: 150,
-        });
-        setActiveTool("select");
+        setPendingClick(svgPoint);
+        setShowAreaModal(true);
       } else if (activeTool === "addTable") {
         setPendingClick(svgPoint);
         setShowTableModal(true);
@@ -134,28 +134,35 @@ export function SeatMapCanvas() {
         }
       }
     },
-    [
-      activeTool,
-      pan,
-      screenToSVG,
-      addArea,
-      areas,
-      clearSelection,
-      setActiveTool,
-      selectedIds,
-    ],
+    [activeTool, pan, screenToSVG, clearSelection, selectedIds],
   );
 
   // Handle row creation from modal
-  const handleCreateRow = (label: string, seatCount: number) => {
+  const handleCreateRow = (
+    label: string,
+    seatCount: number,
+    sectionId?: string,
+  ) => {
     if (pendingClick) {
-      addRow(label, seatCount, pendingClick);
+      addRow(label, seatCount, pendingClick, sectionId);
       setPendingClick(null);
       setActiveTool("select");
     }
   };
 
-  // Handle table creation from modal
+  // Handle area creation from modal
+  const handleCreateArea = (
+    label: string,
+    width: number,
+    height: number,
+    color: string,
+  ) => {
+    if (pendingClick) {
+      addArea(label, pendingClick, { width, height }, color);
+      setPendingClick(null);
+      setActiveTool("select");
+    }
+  };
   const handleCreateTable = (
     label: string,
     shape: TableShape,
@@ -278,20 +285,7 @@ export function SeatMapCanvas() {
   );
 
   return (
-    <div className="flex-1 overflow-hidden bg-gray-50 relative">
-      {/* Grid background */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          backgroundImage: `
-            linear-gradient(to right, #e5e7eb 1px, transparent 1px),
-            linear-gradient(to bottom, #e5e7eb 1px, transparent 1px)
-          `,
-          backgroundSize: `${20 * zoom}px ${20 * zoom}px`,
-          backgroundPosition: `${pan.x}px ${pan.y}px`,
-        }}
-      />
-
+    <div className="flex-1 overflow-hidden bg-gray-100 relative">
       <svg
         ref={svgRef}
         className={`w-full h-full ${activeTool === "pan" || isDragging ? "cursor-grabbing" : activeTool !== "select" ? "cursor-crosshair" : "cursor-default"}`}
@@ -324,6 +318,7 @@ export function SeatMapCanvas() {
               onSeatClick={handleSeatClick}
               selectedIds={selectedIds}
               scale={zoom}
+              section={row.sectionId ? sections[row.sectionId] : undefined}
             />
           ))}
 
@@ -371,6 +366,16 @@ export function SeatMapCanvas() {
         }}
         onCreate={handleCreateRow}
         defaultPosition={pendingClick || undefined}
+      />
+
+      <CreateAreaModal
+        isOpen={showAreaModal}
+        onClose={() => {
+          setShowAreaModal(false);
+          setPendingClick(null);
+          setActiveTool("select");
+        }}
+        onCreate={handleCreateArea}
       />
 
       <CreateTableModal

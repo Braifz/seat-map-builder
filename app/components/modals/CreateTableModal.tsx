@@ -29,7 +29,7 @@ export function CreateTableModal({
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg shadow-xl w-96 p-6">
-        <h2 className="text-lg font-semibold mb-4">Create Table</h2>
+        <h2 className="text-lg font-semibold mb-4 text-black">Create Table</h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -40,7 +40,7 @@ export function CreateTableModal({
               type="text"
               value={label}
               onChange={(e) => setLabel(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 text-black focus:ring-blue-500"
               placeholder="e.g., VIP Table 1"
               autoFocus
             />
@@ -57,7 +57,7 @@ export function CreateTableModal({
                 className={`flex-1 py-2 rounded-md border ${
                   shape === "round"
                     ? "bg-blue-50 border-blue-500 text-blue-700"
-                    : "border-gray-300 hover:bg-gray-50"
+                    : "border-gray-300 hover:bg-gray-50 text-gray-500"
                 }`}
               >
                 Round
@@ -65,10 +65,10 @@ export function CreateTableModal({
               <button
                 type="button"
                 onClick={() => setShape("rectangular")}
-                className={`flex-1 py-2 rounded-md border ${
+                className={`flex-1 py-2 rounded-md border  ${
                   shape === "rectangular"
                     ? "bg-blue-50 border-blue-500 text-blue-700"
-                    : "border-gray-300 hover:bg-gray-50"
+                    : "border-gray-300 hover:bg-gray-50 text-gray-500"
                 }`}
               >
                 Rectangular
@@ -88,7 +88,7 @@ export function CreateTableModal({
               }
               min={1}
               max={20}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 text-black focus:ring-blue-500"
             />
             <p className="text-xs text-gray-500 mt-1">
               {shape === "round"
@@ -101,7 +101,7 @@ export function CreateTableModal({
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors"
+              className="flex-1 px-4 py-2 border border-gray-300 rounded-md  hover:bg-gray-50 transition-colors text-black"
             >
               Cancel
             </button>

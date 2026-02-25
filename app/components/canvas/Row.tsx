@@ -1,6 +1,6 @@
 "use client";
 
-import type { Row as RowType, Seat as SeatType } from "../../types";
+import type { Row as RowType, Seat as SeatType, Section } from "../../types";
 import { Seat } from "./Seat";
 
 interface RowProps {
@@ -11,6 +11,7 @@ interface RowProps {
   onSeatClick: (seatId: string, e: React.MouseEvent) => void;
   selectedIds: string[];
   scale?: number;
+  section?: Section;
 }
 
 export function Row({
@@ -21,6 +22,7 @@ export function Row({
   onSeatClick,
   selectedIds,
   scale = 1,
+  section,
 }: RowProps) {
   const firstSeat = seats[0];
   const lastSeat = seats[seats.length - 1];
@@ -80,6 +82,8 @@ export function Row({
             isSelected={selectedIds.includes(seat.id)}
             onClick={(e) => onSeatClick(seat.id, e)}
             scale={scale}
+            section={section}
+            rowLabel={row.label}
           />
         </g>
       ))}

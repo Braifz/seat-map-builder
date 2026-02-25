@@ -1,27 +1,45 @@
 "use client";
 
-import type { Seat as SeatType } from "../../types";
+import { useState } from "react";
+import type { Seat as SeatType, Section } from "../../types";
 
 interface SeatProps {
   seat: SeatType;
   isSelected: boolean;
   onClick: (e: React.MouseEvent) => void;
   scale?: number;
+  section?: Section;
+  rowLabel?: string;
 }
 
 const SEAT_SIZE = 24;
 
-export function Seat({ seat, isSelected, onClick, scale = 1 }: SeatProps) {
+export function Seat({
+  seat,
+  isSelected,
+  onClick,
+  scale = 1,
+  section,
+  rowLabel,
+}: SeatProps) {
+  const [isHovered, setIsHovered] = useState(false);
+
   const getSeatColor = () => {
+    // If seat has a section, use section color
+    if (section) {
+      return { fill: section.color, stroke: section.color };
+    }
+
+    // Otherwise use default type-based colors
     switch (seat.type) {
       case "vip":
-        return "fill-amber-400 stroke-amber-600";
+        return { fill: "#fbbf24", stroke: "#d97706" };
       case "wheelchair":
-        return "fill-blue-400 stroke-blue-600";
+        return { fill: "#60a5fa", stroke: "#2563eb" };
       case "companion":
-        return "fill-green-400 stroke-green-600";
+        return { fill: "#4ade80", stroke: "#16a34a" };
       default:
-        return "fill-gray-100 stroke-gray-400";
+        return { fill: "#f3f4f6", stroke: "#9ca3af" };
     }
   };
 
@@ -36,6 +54,7 @@ export function Seat({ seat, isSelected, onClick, scale = 1 }: SeatProps) {
 
   const size = SEAT_SIZE / scale;
   const halfSize = size / 2;
+  const colors = getSeatColor();
 
   return (
     <g
@@ -43,13 +62,16 @@ export function Seat({ seat, isSelected, onClick, scale = 1 }: SeatProps) {
       className="cursor-pointer"
       onClick={onClick}
       data-element-id={seat.id}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
       {getSeatShape() === "circle" ? (
         <circle
           r={halfSize}
-          className={`${getSeatColor()} ${
-            isSelected ? "stroke-2 stroke-blue-500" : "stroke-1"
-          } transition-all hover:stroke-2`}
+          fill={colors.fill}
+          stroke={isSelected ? "#3b82f6" : colors.stroke}
+          strokeWidth={isSelected ? 2 : 1}
+          className="transition-all hover:stroke-2"
         />
       ) : (
         <rect
@@ -58,9 +80,10 @@ export function Seat({ seat, isSelected, onClick, scale = 1 }: SeatProps) {
           width={size}
           height={size}
           rx={4}
-          className={`${getSeatColor()} ${
-            isSelected ? "stroke-2 stroke-blue-500" : "stroke-1"
-          } transition-all hover:stroke-2`}
+          fill={colors.fill}
+          stroke={isSelected ? "#3b82f6" : colors.stroke}
+          strokeWidth={isSelected ? 2 : 1}
+          className="transition-all hover:stroke-2"
         />
       )}
       <text
@@ -71,6 +94,66 @@ export function Seat({ seat, isSelected, onClick, scale = 1 }: SeatProps) {
       >
         {seat.label}
       </text>
+
+      {/* Hover Tooltip */}
+      {isHovered && (
+        <g transform={`translate(0, -${size + 10})`}>
+          <rect
+            x={-70}
+            y={-60}
+            width={140}
+            height={55}
+            rx={8}
+            fill="#1f2937"
+            stroke="#374151"
+            strokeWidth={1}
+          />
+          {/* Section header */}
+          <text
+            x={0}
+            y={-42}
+            textAnchor="middle"
+            className="fill-gray-400 text-xs uppercase tracking-wider"
+            style={{ fontSize: `${8 / scale}px` }}
+          >
+            {section ? `SECTION ${section.sectionNumber}` : "NO SECTION"}
+          </text>
+          {/* Section name */}
+          <text
+            x={0}
+            y={-25}
+            textAnchor="middle"
+            className="fill-white font-semibold"
+            style={{ fontSize: `${12 / scale}px` }}
+          >
+            {section?.label || "General"}
+          </text>
+          {/* Row | Seat info */}
+          <text
+            x={0}
+            y={-8}
+            textAnchor="middle"
+            className="fill-gray-300"
+            style={{ fontSize: `${10 / scale}px` }}
+          >
+            {rowLabel
+              ? `Row ${rowLabel} | Seat ${seat.label}`
+              : `Seat ${seat.label}`}
+          </text>
+          {/* Price */}
+          {section?.price && (
+            <text
+              x={0}
+              y={8}
+              textAnchor="middle"
+              className="fill-green-400 font-semibold"
+              style={{ fontSize: `${11 / scale}px` }}
+            >
+              €{section.price}
+            </text>
+          )}
+        </g>
+      )}
     </g>
   );
 }

@@ -2,7 +2,8 @@ export type SeatId = string;
 export type RowId = string;
 export type AreaId = string;
 export type TableId = string;
-export type ElementId = SeatId | RowId | AreaId | TableId;
+export type SectionId = string;
+export type ElementId = SeatId | RowId | AreaId | TableId | SectionId;
 
 export type Position = {
   x: number;
@@ -25,6 +26,7 @@ export interface Seat {
   status: ElementStatus;
   rowId?: RowId;
   tableId?: TableId;
+  sectionId?: SectionId;
 }
 
 export interface Row {
@@ -33,6 +35,7 @@ export interface Row {
   position: Position;
   seats: SeatId[];
   curve?: number;
+  sectionId?: SectionId;
 }
 
 export interface Area {
@@ -41,6 +44,14 @@ export interface Area {
   position: Position;
   size: Size;
   color?: string;
+}
+
+export interface Section {
+  id: SectionId;
+  label: string;
+  color: string;
+  sectionNumber: number;
+  price?: number;
 }
 
 export type TableShape = "round" | "rectangular";
@@ -62,6 +73,7 @@ export interface SeatMapState {
   seats: Record<SeatId, Seat>;
   areas: Record<AreaId, Area>;
   tables: Record<TableId, Table>;
+  sections: Record<SectionId, Section>;
   selectedIds: ElementId[];
   zoom: number;
   pan: Position;
@@ -70,9 +82,24 @@ export interface SeatMapState {
 
 export interface SeatMapActions {
   // Row actions
-  addRow: (label: string, seatCount: number, position?: Position) => RowId;
+  addRow: (
+    label: string,
+    seatCount: number,
+    position?: Position,
+    sectionId?: SectionId,
+  ) => RowId;
   removeRow: (rowId: RowId) => void;
   updateRowLabel: (rowId: RowId, label: string) => void;
+
+  // Section actions
+  addSection: (
+    label: string,
+    color: string,
+    sectionNumber: number,
+    price?: number,
+  ) => SectionId;
+  removeSection: (sectionId: SectionId) => void;
+  updateSection: (sectionId: SectionId, updates: Partial<Section>) => void;
 
   // Seat actions
   updateSeatLabel: (seatId: SeatId, label: string) => void;

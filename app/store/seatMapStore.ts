@@ -6,8 +6,10 @@ import type {
   RowId,
   AreaId,
   TableId,
+  SectionId,
   ElementId,
   Seat,
+  Section,
 } from "../types";
 
 const generateId = (prefix: string): string =>
@@ -24,6 +26,7 @@ const initialState = {
   seats: {},
   areas: {},
   tables: {},
+  sections: {},
   selectedIds: [],
   zoom: DEFAULT_ZOOM,
   pan: { x: 0, y: 0 },
@@ -36,7 +39,12 @@ export const useSeatMapStore = create<SeatMapStore>()(
       ...initialState,
 
       // Row actions
-      addRow: (label, seatCount, position = { x: 100, y: 100 }) => {
+      addRow: (
+        label,
+        seatCount,
+        position = { x: 100, y: 100 },
+        sectionId?: SectionId,
+      ) => {
         const rowId = generateId("row") as RowId;
         const seatIds: SeatId[] = [];
         const seats: Record<SeatId, Seat> = {};
@@ -51,13 +59,14 @@ export const useSeatMapStore = create<SeatMapStore>()(
             type: "seat",
             status: "available",
             rowId,
+            sectionId,
           };
         }
 
         set((state) => ({
           rows: {
             ...state.rows,
-            [rowId]: { id: rowId, label, position, seats: seatIds },
+            [rowId]: { id: rowId, label, position, seats: seatIds, sectionId },
           },
           seats: { ...state.seats, ...seats },
         }));
@@ -89,6 +98,45 @@ export const useSeatMapStore = create<SeatMapStore>()(
       updateRowLabel: (rowId, label) => {
         set((state) => ({
           rows: { ...state.rows, [rowId]: { ...state.rows[rowId], label } },
+        }));
+      },
+
+      // Section actions
+      addSection: (
+        label: string,
+        color: string,
+        sectionNumber: number,
+        price?: number,
+      ) => {
+        const sectionId = generateId("section") as SectionId;
+        const section: Section = {
+          id: sectionId,
+          label,
+          color,
+          sectionNumber,
+          price,
+        };
+        set((state) => ({
+          sections: { ...state.sections, [sectionId]: section },
+        }));
+        return sectionId;
+      },
+
+      removeSection: (sectionId: SectionId) => {
+        const sections = { ...get().sections };
+        delete sections[sectionId];
+        set({
+          sections,
+          selectedIds: get().selectedIds.filter((id) => id !== sectionId),
+        });
+      },
+
+      updateSection: (sectionId: SectionId, updates: Partial<Section>) => {
+        set((state) => ({
+          sections: {
+            ...state.sections,
+            [sectionId]: { ...state.sections[sectionId], ...updates },
+          },
         }));
       },
 
@@ -475,6 +523,7 @@ export const useSeatMapStore = create<SeatMapStore>()(
           seats: state.seats,
           areas: state.areas,
           tables: state.tables,
+          sections: state.sections,
         };
         return JSON.stringify(exportData, null, 2);
       },
@@ -488,6 +537,7 @@ export const useSeatMapStore = create<SeatMapStore>()(
             seats: data.seats || {},
             areas: data.areas || {},
             tables: data.tables || {},
+            sections: data.sections || {},
             selectedIds: [],
           });
         } catch (error) {
@@ -515,6 +565,7 @@ export const useSeatMapStore = create<SeatMapStore>()(
         seats: state.seats,
         areas: state.areas,
         tables: state.tables,
+        sections: state.sections,
       }),
     },
   ),
