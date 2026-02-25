@@ -1,36 +1,149 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SeatMapBuilder
 
-## Getting Started
+Editor visual interactivo para diseñar mapas de asientos. Inspirado en Seats.io, permite crear y editar filas, asientos, áreas y mesas.
 
-First, run the development server:
+## Setup
 
 ```bash
+# Instalar dependencias
+npm install
+
+# Iniciar servidor de desarrollo
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+La aplicación estará disponible en `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Decisiones Técnicas
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Stack
+- **Next.js 16.1.6** - Framework React con App Router
+- **React 19** - Biblioteca UI con latest features
+- **TypeScript** - Tipado estático para robustez
+- **Tailwind CSS 4** - Estilos utilitarios
+- **Zustand** - Gestión de estado global con persistencia
 
-## Learn More
+### Arquitectura
 
-To learn more about Next.js, take a look at the following resources:
+#### Canvas SVG
+Se eligió SVG sobre Canvas HTML porque:
+- Eventos por elemento nativos (click, hover)
+- CSS styling directo
+- Escalabilidad vectorial
+- Mejor para interacción directa con elementos individuales
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+#### Gestión de Estado (Zustand)
+- Store centralizado con todas las entidades (rows, seats, areas, tables)
+- Persistencia automática en localStorage
+- Acciones inmutables con spread operator
+- Selector automático de estado
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+#### Coordinate System
+- Coordenadas virtuales "mundiales"
+- Transformación SVG para zoom/pan
+- Conversión screen-to-SVG para interacciones precisas
 
-## Deploy on Vercel
+### Estructura de Datos
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```typescript
+interface Seat {
+  id: string;
+  label: string;
+  position: { x, y };
+  type: 'seat' | 'wheelchair' | 'companion' | 'vip';
+  status: 'available' | 'occupied' | 'blocked';
+  rowId?: string;
+  tableId?: string;
+}
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+interface Row {
+  id: string;
+  label: string;
+  position: { x, y };
+  seats: string[];
+}
+
+interface Area {
+  id: string;
+  label: string;
+  position: { x, y };
+  size: { width, height };
+  color?: string;
+}
+
+interface Table {
+  id: string;
+  label: string;
+  position: { x, y };
+  shape: 'round' | 'rectangular';
+  size: { width, height };
+  seats: string[];
+}
+```
+
+## Features Implementadas
+
+### MVP Completado
+- ✅ Visualización de filas, asientos, áreas y mesas
+- ✅ Crear filas con cantidad configurable de asientos
+- ✅ Selección individual y múltiple (Shift+click)
+- ✅ Etiquetado de todos los elementos
+- ✅ Bulk labeling con patrones ({n}, {N}, prefijos)
+- ✅ Zoom y pan del canvas
+- ✅ Import/Export JSON completo
+- ✅ "Nuevo mapa" con confirmación
+- ✅ Persistencia en localStorage
+
+### Controles
+| Acción | Método |
+|--------|--------|
+| Seleccionar | Click |
+| Multi-selección | Shift + Click |
+| Pan | Alt + Drag o tool Pan |
+| Zoom | Mouse wheel o botones +/- |
+| Crear fila | Tool "Add Row" + click |
+| Crear área | Tool "Add Area" + click |
+| Crear mesa | Tool "Add Table" + click |
+| Eliminar | Botón Delete o confirmación |
+
+## Supuestos Asumidos
+
+1. Estado en memoria (localStorage) sin backend requerido
+2. Un solo mapa activo por sesión
+3. Navegador moderno (ES2020+)
+4. Resolución mínima 1280x720
+5. Mapa 2D (no 3D)
+6. Asientos posicionados automáticamente en filas/mesas
+
+## Estructura del Proyecto
+
+```
+app/
+├── components/
+│   ├── canvas/
+│   │   ├── SeatMapCanvas.tsx
+│   │   ├── Seat.tsx
+│   │   ├── Row.tsx
+│   │   ├── Area.tsx
+│   │   └── Table.tsx
+│   ├── toolbar/
+│   │   └── Toolbar.tsx
+│   └── inspector/
+│       └── InspectorPanel.tsx
+├── store/
+│   └── seatMapStore.ts
+├── types/
+│   └── index.ts
+└── page.tsx
+```
+
+## Posibles Mejoras Futuras
+
+- Undo/Redo con histórico de acciones
+- Drag de elementos para reposicionar
+- Rotación de filas y mesas
+- Curvatura de filas
+- Colores personalizables por área
+- Preview de impresión
+- Colaboración en tiempo real
+
