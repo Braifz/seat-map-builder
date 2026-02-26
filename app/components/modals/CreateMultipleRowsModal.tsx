@@ -135,7 +135,9 @@ export function CreateMultipleRowsModal({
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg shadow-xl w-[600px] p-6 max-h-[90vh] overflow-y-auto">
-        <h2 className="text-lg font-semibold mb-4">Create Multiple Rows</h2>
+        <h2 className="text-lg font-semibold mb-4 text-black">
+          Create Multiple Rows
+        </h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Label Prefix */}
@@ -148,7 +150,7 @@ export function CreateMultipleRowsModal({
                 type="text"
                 value={labelPrefix}
                 onChange={(e) => handleLabelPrefixChange(e.target.value)}
-                className="w-24 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-24 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
                 placeholder="A"
               />
               <p className="text-sm text-gray-500 flex items-center">
@@ -170,7 +172,7 @@ export function CreateMultipleRowsModal({
               }
               min={20}
               max={200}
-              className="w-32 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-32 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
             />
           </div>
 
@@ -215,7 +217,7 @@ export function CreateMultipleRowsModal({
                     type="text"
                     value={newSectionName}
                     onChange={(e) => setNewSectionName(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
                     placeholder="e.g., Bronze, Silver, Gold"
                   />
                 </div>
@@ -235,7 +237,7 @@ export function CreateMultipleRowsModal({
                         type="text"
                         value={newSectionColor}
                         onChange={(e) => setNewSectionColor(e.target.value)}
-                        className="flex-1 px-2 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="flex-1 px-2 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
                         placeholder="#f97316"
                       />
                     </div>
@@ -250,7 +252,7 @@ export function CreateMultipleRowsModal({
                       onChange={(e) => setNewSectionPrice(e.target.value)}
                       min={0}
                       step={0.01}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
                       placeholder="25.00"
                     />
                   </div>
@@ -266,7 +268,7 @@ export function CreateMultipleRowsModal({
                   onChange={(e) =>
                     setSelectedSectionId(e.target.value as SectionId)
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
                 >
                   <option value="">-- Select a section --</option>
                   {existingSections.map((section) => (
@@ -320,7 +322,7 @@ export function CreateMultipleRowsModal({
                           onChange={(e) =>
                             updateRow(row.id, { label: e.target.value })
                           }
-                          className="w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
                         />
                       </td>
                       <td className="px-3 py-2">
@@ -337,7 +339,7 @@ export function CreateMultipleRowsModal({
                           }
                           min={1}
                           max={100}
-                          className="w-20 px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-20 px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
                         />
                       </td>
                       <td className="px-3 py-2 text-center">

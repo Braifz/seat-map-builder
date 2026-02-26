@@ -60,8 +60,15 @@ export function CreateStructureModal({
     setColor(defaultColors[newType]);
 
     // Auto-update label based on type
-    const typeLabel = structureTypes.find((t) => t.type === newType)?.label || "Structure";
-    if (label === "Stage" || label === "Bar" || label === "Entrance" || label === "Exit" || label === "Custom") {
+    const typeLabel =
+      structureTypes.find((t) => t.type === newType)?.label || "Structure";
+    if (
+      label === "Stage" ||
+      label === "Bar" ||
+      label === "Entrance" ||
+      label === "Exit" ||
+      label === "Custom"
+    ) {
       setLabel(typeLabel);
     }
   };
@@ -85,7 +92,7 @@ export function CreateStructureModal({
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-gray-900">Add Structure</h2>
+          <h2 className="text-lg font-semibold text-black">Add Structure</h2>
           <button
             onClick={handleClose}
             className="text-gray-400 hover:text-gray-600 transition-colors"
@@ -128,7 +135,7 @@ export function CreateStructureModal({
               type="text"
               value={label}
               onChange={(e) => setLabel(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
               placeholder="e.g., Main Stage"
             />
           </div>
@@ -142,10 +149,12 @@ export function CreateStructureModal({
               <input
                 type="number"
                 value={width}
-                onChange={(e) => setWidth(Math.max(40, parseInt(e.target.value) || 40))}
+                onChange={(e) =>
+                  setWidth(Math.max(40, parseInt(e.target.value) || 40))
+                }
                 min={40}
                 max={500}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
               />
             </div>
             <div>
@@ -155,10 +164,12 @@ export function CreateStructureModal({
               <input
                 type="number"
                 value={height}
-                onChange={(e) => setHeight(Math.max(40, parseInt(e.target.value) || 40))}
+                onChange={(e) =>
+                  setHeight(Math.max(40, parseInt(e.target.value) || 40))
+                }
                 min={40}
                 max={500}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
               />
             </div>
           </div>
@@ -179,7 +190,7 @@ export function CreateStructureModal({
                 type="text"
                 value={color}
                 onChange={(e) => setColor(e.target.value)}
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black text-sm"
               />
             </div>
           </div>

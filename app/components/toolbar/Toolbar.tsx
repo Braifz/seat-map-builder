@@ -1,7 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import { useSeatMapStore } from "../../store/seatMapStore";
 import type { ToolType } from "../../types";
+import { EditSelectionModal } from "../modals/EditSelectionModal";
 
 export function Toolbar() {
   const {
@@ -15,7 +17,15 @@ export function Toolbar() {
     resetMap,
     selectedIds,
     deleteSelected,
+    rows,
+    seats,
+    areas,
+    tables,
+    structures,
+    sections,
   } = useSeatMapStore();
+
+  const [showEditModal, setShowEditModal] = useState(false);
 
   const tools: { id: ToolType; label: string; icon: string }[] = [
     { id: "select", label: "Select", icon: "◉" },
@@ -69,6 +79,36 @@ export function Toolbar() {
       )
     ) {
       resetMap();
+    }
+  };
+
+  const canEdit = () => {
+    if (selectedIds.length === 0) return false;
+    if (selectedIds.length === 1) return true;
+
+    // Check if all selected items belong to the same section
+    const sectionIds = new Set<string | undefined>();
+
+    for (const id of selectedIds) {
+      let sectionId: string | undefined;
+
+      if (id.startsWith("row_")) {
+        sectionId = rows[id]?.sectionId;
+      } else if (id.startsWith("seat_")) {
+        sectionId = seats[id]?.sectionId;
+      }
+      // Areas, tables, structures don't have sections
+
+      sectionIds.add(sectionId);
+    }
+
+    // Can edit if all belong to same section (including undefined)
+    return sectionIds.size === 1;
+  };
+
+  const handleEdit = () => {
+    if (canEdit()) {
+      setShowEditModal(true);
     }
   };
 
@@ -156,6 +196,16 @@ export function Toolbar() {
 
       <div className="flex-1" />
 
+      {/* Edit button (only shown when items can be edited) */}
+      {canEdit() && (
+        <button
+          onClick={handleEdit}
+          className="px-3 py-2 rounded-md text-sm font-medium text-blue-600 hover:bg-blue-50 transition-colors"
+        >
+          Edit ({selectedIds.length})
+        </button>
+      )}
+
       {/* Delete button (only shown when items selected) */}
       {selectedIds.length > 0 && (
         <button
@@ -165,6 +215,19 @@ export function Toolbar() {
           Delete ({selectedIds.length})
         </button>
       )}
+
+      {/* Edit Modal */}
+      <EditSelectionModal
+        isOpen={showEditModal}
+        onClose={() => setShowEditModal(false)}
+        selectedIds={selectedIds}
+        rows={rows}
+        seats={seats}
+        areas={areas}
+        tables={tables}
+        structures={structures}
+        sections={sections}
+      />
     </div>
   );
 }

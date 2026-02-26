@@ -78,7 +78,7 @@ export function InspectorPanel() {
           type="text"
           value={name}
           onChange={(e) => setMapName(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
         />
       </div>
 
@@ -136,7 +136,7 @@ export function InspectorPanel() {
               value={getLabel()}
               onChange={handleLabelChange}
               disabled={isMultiSelection}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 text-black"
               placeholder={
                 isMultiSelection ? "Use bulk labeling below" : "Label"
               }
@@ -157,7 +157,7 @@ export function InspectorPanel() {
                   onChange={(e) =>
                     handleSeatTypeChange(e.target.value as SeatType)
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
                 >
                   <option value="seat">Standard Seat</option>
                   <option value="vip">VIP Seat</option>

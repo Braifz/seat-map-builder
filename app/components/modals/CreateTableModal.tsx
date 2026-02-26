@@ -40,7 +40,7 @@ export function CreateTableModal({
               type="text"
               value={label}
               onChange={(e) => setLabel(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 text-black focus:ring-blue-500"
+              className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black text-sm"
               placeholder="e.g., VIP Table 1"
               autoFocus
             />
@@ -88,7 +88,7 @@ export function CreateTableModal({
               }
               min={1}
               max={20}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 text-black focus:ring-blue-500"
+              className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black text-sm"
             />
             <p className="text-xs text-gray-500 mt-1">
               {shape === "round"

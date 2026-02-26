@@ -90,7 +90,7 @@ export function CreateRowModal({
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg shadow-xl w-[420px] p-6 max-h-[90vh] overflow-y-auto">
-        <h2 className="text-lg font-semibold mb-4">Create Row</h2>
+        <h2 className="text-lg font-semibold mb-4 text-black">Create Row</h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -101,7 +101,7 @@ export function CreateRowModal({
               type="text"
               value={label}
               onChange={(e) => updateField("label", e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
               placeholder="e.g., Platea A"
               autoFocus
             />
@@ -122,7 +122,7 @@ export function CreateRowModal({
               }
               min={1}
               max={100}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
             />
             <p className="text-xs text-gray-500 mt-1">Max 100 seats per row</p>
           </div>
@@ -188,7 +188,7 @@ export function CreateRowModal({
                     onChange={(e) =>
                       updateField("newSectionName", e.target.value)
                     }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
                     placeholder="e.g., Bronze, Silver, Gold"
                   />
                 </div>
@@ -231,7 +231,7 @@ export function CreateRowModal({
                       }
                       min={0}
                       step={0.01}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
                       placeholder="25.00"
                     />
                   </div>
@@ -250,7 +250,7 @@ export function CreateRowModal({
                       e.target.value as SectionId,
                     )
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
                 >
                   <option value="">-- Select a section --</option>
                   {existingSections.map((section) => (
