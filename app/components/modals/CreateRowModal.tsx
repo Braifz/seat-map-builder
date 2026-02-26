@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { useSeatMapStore } from "../../store/seatMapStore";
+import { useThemeColors } from "../../hooks/useThemeColors";
 import type { SectionId } from "../../types";
 
 interface CreateRowModalProps {
@@ -29,6 +30,7 @@ export function CreateRowModal({
   defaultPosition,
 }: CreateRowModalProps) {
   const { sections, addSection } = useSeatMapStore();
+  const { colors } = useThemeColors();
 
   const [formState, setFormState] = useState(DEFAULT_FORM_STATE);
 
@@ -89,26 +91,34 @@ export function CreateRowModal({
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-xl w-[420px] p-6 max-h-[90vh] overflow-y-auto">
-        <h2 className="text-lg font-semibold mb-4 text-black">Create Row</h2>
+      <div
+        className={`${colors.bgPrimary} rounded-lg shadow-xl w-[420px] p-6 max-h-[90vh] overflow-y-auto border ${colors.border}`}
+      >
+        <h2 className={`text-lg font-semibold mb-4 ${colors.textPrimary}`}>
+          Create Row
+        </h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              className={`block text-sm font-medium ${colors.textSecondary} mb-1`}
+            >
               Row Label
             </label>
             <input
               type="text"
               value={label}
               onChange={(e) => updateField("label", e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+              className={`w-full px-3 py-2 border ${colors.border} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${colors.textPrimary} ${colors.bgPrimary}`}
               placeholder="e.g., Platea A"
               autoFocus
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              className={`block text-sm font-medium ${colors.textSecondary} mb-1`}
+            >
               Number of Seats
             </label>
             <input
@@ -122,9 +132,11 @@ export function CreateRowModal({
               }
               min={1}
               max={100}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+              className={`w-full px-3 py-2 border ${colors.border} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${colors.textPrimary} ${colors.bgPrimary}`}
             />
-            <p className="text-xs text-gray-500 mt-1">Max 100 seats per row</p>
+            <p className={`text-xs ${colors.textMuted} mt-1`}>
+              Max 100 seats per row
+            </p>
           </div>
 
           <div className="flex items-center gap-2">
@@ -135,9 +147,12 @@ export function CreateRowModal({
               onChange={(e) =>
                 updateField("useDefaultPosition", e.target.checked)
               }
-              className="rounded border-gray-300"
+              className={`rounded ${colors.border}`}
             />
-            <label htmlFor="usePosition" className="text-sm text-gray-700">
+            <label
+              htmlFor="usePosition"
+              className={`text-sm ${colors.textSecondary}`}
+            >
               {defaultPosition
                 ? `Place at clicked position (${Math.round(defaultPosition.x)}, ${Math.round(defaultPosition.y)})`
                 : "Place at default position"}
@@ -145,8 +160,10 @@ export function CreateRowModal({
           </div>
 
           {/* Section Selection */}
-          <div className="border-t pt-4 mt-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+          <div className={`border-t ${colors.border} pt-4 mt-4`}>
+            <label
+              className={`block text-sm font-medium ${colors.textSecondary} mb-2`}
+            >
               Section
             </label>
 
@@ -154,10 +171,10 @@ export function CreateRowModal({
               <button
                 type="button"
                 onClick={() => updateField("sectionMode", "new")}
-                className={`flex-1 px-3 py-2 text-sm rounded-md transition-colors ${
+                className={`flex-1 px-3 py-2 text-sm rounded-md transition-colors border ${
                   sectionMode === "new"
-                    ? "bg-blue-100 text-blue-700 border border-blue-300"
-                    : "bg-gray-100 text-gray-700 border border-gray-300 hover:bg-gray-200"
+                    ? `${colors.selectedBg} ${colors.selectedText} ${colors.selectedBorder}`
+                    : `${colors.bgSecondary} ${colors.textPrimary} ${colors.border} ${colors.bgHover}`
                 }`}
               >
                 New Section
@@ -166,10 +183,10 @@ export function CreateRowModal({
                 type="button"
                 onClick={() => updateField("sectionMode", "existing")}
                 disabled={existingSections.length === 0}
-                className={`flex-1 px-3 py-2 text-sm rounded-md transition-colors ${
+                className={`flex-1 px-3 py-2 text-sm rounded-md transition-colors border ${
                   sectionMode === "existing"
-                    ? "bg-blue-100 text-blue-700 border border-blue-300"
-                    : "bg-gray-100 text-gray-700 border border-gray-300 hover:bg-gray-200"
+                    ? `${colors.selectedBg} ${colors.selectedText} ${colors.selectedBorder}`
+                    : `${colors.bgSecondary} ${colors.textPrimary} ${colors.border} ${colors.bgHover}`
                 } ${existingSections.length === 0 ? "opacity-50 cursor-not-allowed" : ""}`}
               >
                 Existing Section
@@ -177,9 +194,11 @@ export function CreateRowModal({
             </div>
 
             {sectionMode === "new" ? (
-              <div className="space-y-3 bg-gray-50 p-3 rounded-md">
+              <div className={`space-y-3 ${colors.bgSecondary} p-3 rounded-md`}>
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-1">
+                  <label
+                    className={`block text-sm font-medium ${colors.textSecondary} mb-1`}
+                  >
                     Section Name
                   </label>
                   <input
@@ -188,58 +207,62 @@ export function CreateRowModal({
                     onChange={(e) =>
                       updateField("newSectionName", e.target.value)
                     }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                    className={`w-full px-3 py-2 border ${colors.border} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${colors.textPrimary} ${colors.bgPrimary}`}
                     placeholder="e.g., Bronze, Silver, Gold"
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-600 mb-1">
-                      Color
-                    </label>
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="color"
-                        value={newSectionColor}
-                        onChange={(e) =>
-                          updateField("newSectionColor", e.target.value)
-                        }
-                        className="w-10 h-9 rounded cursor-pointer border border-gray-300"
-                      />
-                      <input
-                        type="text"
-                        value={newSectionColor}
-                        onChange={(e) =>
-                          updateField("newSectionColor", e.target.value)
-                        }
-                        className="flex-1 px-2 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="#f97316"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-600 mb-1">
-                      Price (€)
-                    </label>
+                <div>
+                  <label
+                    className={`block text-sm font-medium ${colors.textSecondary} mb-1`}
+                  >
+                    Color
+                  </label>
+                  <div className="flex items-center gap-2">
                     <input
-                      type="number"
-                      value={newSectionPrice}
+                      type="color"
+                      value={newSectionColor}
                       onChange={(e) =>
-                        updateField("newSectionPrice", e.target.value)
+                        updateField("newSectionColor", e.target.value)
                       }
-                      min={0}
-                      step={0.01}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-                      placeholder="25.00"
+                      className={`w-10 h-9 rounded cursor-pointer border ${colors.border}`}
+                    />
+                    <input
+                      type="text"
+                      value={newSectionColor}
+                      onChange={(e) =>
+                        updateField("newSectionColor", e.target.value)
+                      }
+                      className={`flex-1 px-2 py-2 text-sm border ${colors.border} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${colors.textPrimary} ${colors.bgPrimary}`}
+                      placeholder="#f97316"
                     />
                   </div>
                 </div>
+
+                <div>
+                  <label
+                    className={`block text-sm font-medium ${colors.textSecondary} mb-1`}
+                  >
+                    Price (€)
+                  </label>
+                  <input
+                    type="number"
+                    value={newSectionPrice}
+                    onChange={(e) =>
+                      updateField("newSectionPrice", e.target.value)
+                    }
+                    min={0}
+                    step={0.01}
+                    className={`w-full px-3 py-2 border ${colors.border} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${colors.textPrimary} ${colors.bgPrimary}`}
+                    placeholder="25.00"
+                  />
+                </div>
               </div>
             ) : (
-              <div className="bg-gray-50 p-3 rounded-md">
-                <label className="block text-sm font-medium text-gray-600 mb-1">
+              <div className={`${colors.bgSecondary} p-3 rounded-md`}>
+                <label
+                  className={`block text-sm font-medium ${colors.textSecondary} mb-1`}
+                >
                   Select Section
                 </label>
                 <select
@@ -250,7 +273,7 @@ export function CreateRowModal({
                       e.target.value as SectionId,
                     )
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                  className={`w-full px-3 py-2 border ${colors.border} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${colors.textPrimary} ${colors.bgPrimary}`}
                 >
                   <option value="">-- Select a section --</option>
                   {existingSections.map((section) => (
@@ -268,7 +291,7 @@ export function CreateRowModal({
             <button
               type="button"
               onClick={handleClose}
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors"
+              className={`flex-1 px-4 py-2 border ${colors.border} rounded-md ${colors.textPrimary} ${colors.bgHover} transition-colors`}
             >
               Cancel
             </button>

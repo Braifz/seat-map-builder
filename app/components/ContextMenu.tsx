@@ -1,6 +1,7 @@
 "use client";
 
 import type { ElementId } from "../types";
+import { useThemeColors } from "../hooks/useThemeColors";
 
 interface ContextMenuProps {
   x: number;
@@ -11,6 +12,8 @@ interface ContextMenuProps {
   onSendToBack: () => void;
   onRotate: (degrees: number) => void;
   onDelete: () => void;
+  onEdit?: () => void;
+  canEdit?: boolean;
 }
 
 interface MenuItem {
@@ -30,8 +33,23 @@ export function ContextMenu({
   onSendToBack,
   onRotate,
   onDelete,
+  onEdit,
+  canEdit,
 }: ContextMenuProps) {
+  const { colors } = useThemeColors();
+
   const menuItems: MenuItem[] = [
+    ...(canEdit && onEdit
+      ? [
+          {
+            type: "action" as const,
+            label: "✏️ Edit",
+            shortcut: "Enter",
+            onClick: onEdit,
+          },
+          { type: "separator" as const },
+        ]
+      : []),
     {
       type: "action",
       label: "🔼 Bring to Front",
@@ -85,11 +103,13 @@ export function ContextMenu({
 
       {/* Context Menu */}
       <div
-        className="fixed z-50 bg-white rounded-lg shadow-xl border border-gray-200 py-1 min-w-[180px]"
+        className={`fixed z-50 ${colors.bgPrimary} rounded-lg shadow-xl border ${colors.border} py-1 min-w-[180px]`}
         style={{ left: adjustedX, top: adjustedY }}
       >
         {selectedIds.length > 0 && (
-          <div className="px-3 py-2 text-xs text-gray-500 border-b border-gray-100 mb-1">
+          <div
+            className={`px-3 py-2 text-xs ${colors.textMuted} border-b ${colors.border} mb-1`}
+          >
             {selectedIds.length} item{selectedIds.length > 1 ? "s" : ""}{" "}
             selected
           </div>
@@ -98,7 +118,7 @@ export function ContextMenu({
         {menuItems.map((item, index) => {
           if (item.type === "separator") {
             return (
-              <div key={index} className="my-1 border-t border-gray-100" />
+              <div key={index} className={`my-1 border-t ${colors.border}`} />
             );
           }
 
@@ -111,13 +131,15 @@ export function ContextMenu({
                 }
                 onClose();
               }}
-              className={`w-full px-3 py-2 text-left text-sm flex items-center justify-between hover:bg-gray-50 transition-colors ${
-                item.danger ? "text-red-600 hover:bg-red-50" : "text-gray-700"
+              className={`w-full px-3 py-2 text-left text-sm flex items-center justify-between ${colors.bgHover} transition-colors ${
+                item.danger
+                  ? `${colors.dangerText} ${colors.dangerHover}`
+                  : colors.textPrimary
               }`}
             >
               <span>{item.label}</span>
               {item.shortcut && (
-                <span className="text-xs text-gray-400 ml-4">
+                <span className={`text-xs ${colors.textMuted} ml-4`}>
                   {item.shortcut}
                 </span>
               )}

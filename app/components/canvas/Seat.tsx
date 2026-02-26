@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { Seat as SeatType, Section } from "../../types";
+import { useThemeColors } from "../../hooks/useThemeColors";
 
 interface SeatProps {
   seat: SeatType;
@@ -18,11 +19,11 @@ export function Seat({
   seat,
   isSelected,
   onClick,
-  scale: _scale = 1,
   section,
   rowLabel,
 }: SeatProps) {
   const [isHovered, setIsHovered] = useState(false);
+  const { isDark } = useThemeColors();
 
   const getSeatColor = () => {
     // If seat has a section, use section color
@@ -54,7 +55,7 @@ export function Seat({
 
   const size = SEAT_SIZE;
   const halfSize = size / 2;
-  const colors = getSeatColor();
+  const seatColors = getSeatColor();
 
   return (
     <g
@@ -68,8 +69,8 @@ export function Seat({
       {getSeatShape() === "circle" ? (
         <circle
           r={halfSize}
-          fill={colors.fill}
-          stroke={isSelected ? "#3b82f6" : colors.stroke}
+          fill={seatColors.fill}
+          stroke={isSelected ? "#3b82f6" : seatColors.stroke}
           strokeWidth={isSelected ? 2 : 1}
           className="transition-all hover:stroke-2"
         />
@@ -80,8 +81,8 @@ export function Seat({
           width={size}
           height={size}
           rx={4}
-          fill={colors.fill}
-          stroke={isSelected ? "#3b82f6" : colors.stroke}
+          fill={seatColors.fill}
+          stroke={isSelected ? "#3b82f6" : seatColors.stroke}
           strokeWidth={isSelected ? 2 : 1}
           className="transition-all hover:stroke-2"
         />
@@ -98,15 +99,15 @@ export function Seat({
       {/* Hover Tooltip - Minimalist Style */}
       {isHovered && (
         <g transform={`translate(0, -${size + 12})`}>
-          {/* White card background with subtle shadow */}
+          {/* Card background with subtle shadow */}
           <rect
             x={-60}
             y={-55}
             width={120}
             height={50}
             rx={8}
-            fill="white"
-            stroke="#e5e7eb"
+            fill={isDark ? "#1e1e1e" : "white"}
+            stroke={isDark ? "#2d2d2d" : "#e5e7eb"}
             strokeWidth={1}
             filter="drop-shadow(0 2px 4px rgba(0,0,0,0.1))"
           />
@@ -115,7 +116,7 @@ export function Seat({
             x={0}
             y={-38}
             textAnchor="middle"
-            className="fill-gray-500"
+            fill={isDark ? "#a0a0a0" : "#6b7280"}
             style={{ fontSize: `9px` }}
           >
             {rowLabel
@@ -127,7 +128,8 @@ export function Seat({
             x={0}
             y={-22}
             textAnchor="middle"
-            className="fill-gray-900 font-bold"
+            fill={isDark ? "#e3e3e3" : "#111827"}
+            fontWeight="bold"
             style={{ fontSize: `13px` }}
           >
             €{section?.price || "—"}

@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { useSeatMapStore } from "../../store/seatMapStore";
+import { useThemeColors } from "../../hooks/useThemeColors";
 import type {
   Row,
   Seat,
@@ -45,6 +46,7 @@ export function EditSelectionModal({
     updateSelectedLabels,
     addSection,
   } = useSeatMapStore();
+  const { colors } = useThemeColors();
 
   // Compute element info first
   const elementInfo = useMemo(() => {
@@ -134,8 +136,10 @@ export function EditSelectionModal({
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
-        <h2 className="text-xl font-semibold text-black mb-4">
+      <div
+        className={`${colors.bgPrimary} rounded-lg shadow-xl w-full max-w-md p-6 border ${colors.border}`}
+      >
+        <h2 className={`text-xl font-semibold mb-4 ${colors.textPrimary}`}>
           Edit{" "}
           {selectedIds.length === 1
             ? elementType
@@ -146,26 +150,30 @@ export function EditSelectionModal({
           {selectedIds.length === 1 ? (
             <>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label
+                  className={`block text-sm font-medium ${colors.textSecondary} mb-1`}
+                >
                   Label
                 </label>
                 <input
                   type="text"
                   value={label}
                   onChange={(e) => setLabel(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                  className={`w-full px-3 py-2 border ${colors.border} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${colors.textPrimary} ${colors.bgPrimary}`}
                 />
               </div>
 
               {elementType === "seat" && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label
+                    className={`block text-sm font-medium ${colors.textSecondary} mb-1`}
+                  >
                     Seat Type
                   </label>
                   <select
                     value={seatType}
                     onChange={(e) => setSeatType(e.target.value as SeatType)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                    className={`w-full px-3 py-2 border ${colors.border} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${colors.textPrimary} ${colors.bgPrimary}`}
                   >
                     <option value="seat">Standard Seat</option>
                     <option value="vip">VIP</option>
@@ -177,7 +185,9 @@ export function EditSelectionModal({
             </>
           ) : (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                className={`block text-sm font-medium ${colors.textSecondary} mb-1`}
+              >
                 Label Pattern (use {"{n}"} or {"{N}"} for numbering)
               </label>
               <input
@@ -185,9 +195,9 @@ export function EditSelectionModal({
                 value={pattern}
                 onChange={(e) => setPattern(e.target.value)}
                 placeholder="e.g., A-{'{n}'}, Row {'{N}'}"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                className={`w-full px-3 py-2 border ${colors.border} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${colors.textPrimary} ${colors.bgPrimary}`}
               />
-              <p className="text-xs text-gray-500 mt-1">
+              <p className={`text-xs ${colors.textMuted} mt-1`}>
                 {"{n}"} = 1, 2, 3... | {"{N}"} = 01, 02, 03...
               </p>
             </div>
@@ -198,13 +208,15 @@ export function EditSelectionModal({
             elementType === "seat" ||
             elementType === "multiple") && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                className={`block text-sm font-medium ${colors.textSecondary} mb-1`}
+              >
                 Section
               </label>
               <select
                 value={sectionId}
                 onChange={(e) => setSectionId(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                className={`w-full px-3 py-2 border ${colors.border} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${colors.textPrimary} ${colors.bgPrimary}`}
               >
                 <option value="">No Section</option>
                 {Object.values(sections).map((section) => (
@@ -216,34 +228,66 @@ export function EditSelectionModal({
               </select>
 
               {sectionId === "new" && (
-                <div className="mt-3 space-y-3 p-3 bg-gray-50 rounded-md">
+                <div
+                  className={`mt-3 space-y-3 p-3 ${colors.bgSecondary} rounded-md`}
+                >
                   <input
                     type="text"
                     value={newSectionName}
                     onChange={(e) => setNewSectionName(e.target.value)}
                     placeholder="Section Name"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                    className={`w-full px-3 py-2 border ${colors.border} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${colors.textPrimary} ${colors.bgPrimary}`}
                   />
-                  <div className="flex gap-2">
-                    <input
-                      type="color"
-                      value={newSectionColor}
-                      onChange={(e) => setNewSectionColor(e.target.value)}
-                      className="w-12 h-10 rounded cursor-pointer"
-                    />
-                    <input
-                      type="number"
-                      value={newSectionNumber}
-                      onChange={(e) => setNewSectionNumber(e.target.value)}
-                      placeholder="Section #"
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label
+                        className={`block text-sm font-medium ${colors.textSecondary} mb-1`}
+                      >
+                        Color
+                      </label>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="color"
+                          value={newSectionColor}
+                          onChange={(e) => setNewSectionColor(e.target.value)}
+                          className={`w-10 h-9 rounded cursor-pointer border ${colors.border}`}
+                        />
+                        <input
+                          type="text"
+                          value={newSectionColor}
+                          onChange={(e) => setNewSectionColor(e.target.value)}
+                          className={`flex-1 px-2 py-2 text-sm border ${colors.border} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${colors.textPrimary} ${colors.bgPrimary}`}
+                          placeholder="#3b82f6"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label
+                        className={`block text-sm font-medium ${colors.textSecondary} mb-1`}
+                      >
+                        Section #
+                      </label>
+                      <input
+                        type="number"
+                        value={newSectionNumber}
+                        onChange={(e) => setNewSectionNumber(e.target.value)}
+                        placeholder="1"
+                        className={`w-full px-3 py-2 border ${colors.border} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${colors.textPrimary} ${colors.bgPrimary}`}
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label
+                      className={`block text-sm font-medium ${colors.textSecondary} mb-1`}
+                    >
+                      Price ($)
+                    </label>
                     <input
                       type="number"
                       value={newSectionPrice}
                       onChange={(e) => setNewSectionPrice(e.target.value)}
-                      placeholder="Price $"
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="25.00"
+                      className={`w-full px-3 py-2 border ${colors.border} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${colors.textPrimary} ${colors.bgPrimary}`}
                     />
                   </div>
                 </div>
@@ -255,7 +299,7 @@ export function EditSelectionModal({
         <div className="flex gap-3 mt-6">
           <button
             onClick={onClose}
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors"
+            className={`flex-1 px-4 py-2 border ${colors.border} rounded-md ${colors.textPrimary} ${colors.bgHover} transition-colors`}
           >
             Cancel
           </button>

@@ -1,0 +1,91 @@
+"use client";
+
+import { FilePlus, Download, Upload } from "lucide-react";
+import { useSeatMapStore } from "../../store/seatMapStore";
+import { Tooltip } from "./Tooltip";
+import { useThemeColors } from "../../hooks/useThemeColors";
+
+export function FileActions() {
+  const { exportMap, importMap, resetMap } = useSeatMapStore();
+  const { colors } = useThemeColors();
+
+  const handleExport = () => {
+    const data = exportMap();
+    const blob = new Blob([data], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `seatmap_${Date.now()}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleImport = () => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".json";
+    input.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const content = event.target?.result as string;
+          if (content) {
+            try {
+              importMap(content);
+            } catch {
+              alert("Invalid file format");
+            }
+          }
+        };
+        reader.readAsText(file);
+      }
+    };
+    input.click();
+  };
+
+  const handleNewMap = () => {
+    if (
+      confirm(
+        "Are you sure you want to create a new map? All unsaved changes will be lost.",
+      )
+    ) {
+      resetMap();
+    }
+  };
+
+  return (
+    <div className="fixed top-4 right-4 z-50">
+      <div
+        className={`flex items-center gap-1 ${colors.bgPrimary} rounded-2xl px-2 py-2 shadow-lg border ${colors.border}`}
+      >
+        <Tooltip content="New Map" position="bottom">
+          <button
+            onClick={handleNewMap}
+            className={`p-2.5 rounded-xl ${colors.textSecondary} ${colors.bgHover} ${colors.textPrimary} transition-all duration-150`}
+          >
+            <FilePlus size={20} />
+          </button>
+        </Tooltip>
+
+        <Tooltip content="Export" position="bottom">
+          <button
+            onClick={handleExport}
+            className={`p-2.5 rounded-xl ${colors.textSecondary} ${colors.bgHover} ${colors.textPrimary} transition-all duration-150`}
+          >
+            <Download size={20} />
+          </button>
+        </Tooltip>
+
+        <Tooltip content="Import" position="bottom">
+          <button
+            onClick={handleImport}
+            className={`p-2.5 rounded-xl ${colors.textSecondary} ${colors.bgHover} ${colors.textPrimary} transition-all duration-150`}
+          >
+            <Upload size={20} />
+          </button>
+        </Tooltip>
+      </div>
+    </div>
+  );
+}

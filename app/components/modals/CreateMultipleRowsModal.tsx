@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { useSeatMapStore } from "../../store/seatMapStore";
+import { useThemeColors } from "../../hooks/useThemeColors";
 import type { SectionId, RowConfig } from "../../types";
 
 interface CreateMultipleRowsModalProps {
@@ -33,6 +34,7 @@ export function CreateMultipleRowsModal({
   defaultPosition,
 }: CreateMultipleRowsModalProps) {
   const { sections, addSection } = useSeatMapStore();
+  const { colors } = useThemeColors();
   const [rows, setRows] = useState<RowDefinition[]>([
     { id: "1", label: "A", seatCount: 6 },
   ]);
@@ -134,15 +136,19 @@ export function CreateMultipleRowsModal({
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-xl w-[600px] p-6 max-h-[90vh] overflow-y-auto">
-        <h2 className="text-lg font-semibold mb-4 text-black">
+      <div
+        className={`${colors.bgPrimary} rounded-lg shadow-xl w-[600px] p-6 max-h-[90vh] overflow-y-auto border ${colors.border}`}
+      >
+        <h2 className={`text-lg font-semibold mb-4 ${colors.textPrimary}`}>
           Create Multiple Rows
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Label Prefix */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              className={`block text-sm font-medium ${colors.textSecondary} mb-1`}
+            >
               Row Label Prefix
             </label>
             <div className="flex gap-2">
@@ -150,10 +156,10 @@ export function CreateMultipleRowsModal({
                 type="text"
                 value={labelPrefix}
                 onChange={(e) => handleLabelPrefixChange(e.target.value)}
-                className="w-24 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                className={`w-24 px-3 py-2 border ${colors.border} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${colors.textPrimary} ${colors.bgPrimary}`}
                 placeholder="A"
               />
-              <p className="text-sm text-gray-500 flex items-center">
+              <p className={`text-sm ${colors.textMuted} flex items-center`}>
                 Use single letter (A, B, C...) or prefix (Row 1, Row 2...)
               </p>
             </div>
@@ -161,7 +167,9 @@ export function CreateMultipleRowsModal({
 
           {/* Spacing */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              className={`block text-sm font-medium ${colors.textSecondary} mb-1`}
+            >
               Spacing Between Rows (px)
             </label>
             <input
@@ -172,23 +180,25 @@ export function CreateMultipleRowsModal({
               }
               min={20}
               max={200}
-              className="w-32 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+              className={`w-32 px-3 py-2 border ${colors.border} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${colors.textPrimary} ${colors.bgPrimary}`}
             />
           </div>
 
           {/* Section Selection */}
-          <div className="border-t pt-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+          <div className={`border-t ${colors.border} pt-4`}>
+            <label
+              className={`block text-sm font-medium ${colors.textSecondary} mb-2`}
+            >
               Section (optional)
             </label>
             <div className="flex gap-2 mb-3">
               <button
                 type="button"
                 onClick={() => setSectionMode("new")}
-                className={`flex-1 px-3 py-2 text-sm rounded-md transition-colors ${
+                className={`flex-1 px-3 py-2 text-sm rounded-md transition-colors border ${
                   sectionMode === "new"
-                    ? "bg-blue-100 text-blue-700 border border-blue-300"
-                    : "bg-gray-100 text-gray-700 border border-gray-300 hover:bg-gray-200"
+                    ? `${colors.selectedBg} ${colors.selectedText} ${colors.selectedBorder}`
+                    : `${colors.bgSecondary} ${colors.textPrimary} ${colors.border} ${colors.bgHover}`
                 }`}
               >
                 New Section
@@ -197,10 +207,10 @@ export function CreateMultipleRowsModal({
                 type="button"
                 onClick={() => setSectionMode("existing")}
                 disabled={existingSections.length === 0}
-                className={`flex-1 px-3 py-2 text-sm rounded-md transition-colors ${
+                className={`flex-1 px-3 py-2 text-sm rounded-md transition-colors border ${
                   sectionMode === "existing"
-                    ? "bg-blue-100 text-blue-700 border border-blue-300"
-                    : "bg-gray-100 text-gray-700 border border-gray-300 hover:bg-gray-200"
+                    ? `${colors.selectedBg} ${colors.selectedText} ${colors.selectedBorder}`
+                    : `${colors.bgSecondary} ${colors.textPrimary} ${colors.border} ${colors.bgHover}`
                 } ${existingSections.length === 0 ? "opacity-50 cursor-not-allowed" : ""}`}
               >
                 Existing Section
@@ -208,22 +218,26 @@ export function CreateMultipleRowsModal({
             </div>
 
             {sectionMode === "new" ? (
-              <div className="space-y-3 bg-gray-50 p-3 rounded-md">
+              <div className={`space-y-3 ${colors.bgSecondary} p-3 rounded-md`}>
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-1">
+                  <label
+                    className={`block text-sm font-medium ${colors.textSecondary} mb-1`}
+                  >
                     Section Name
                   </label>
                   <input
                     type="text"
                     value={newSectionName}
                     onChange={(e) => setNewSectionName(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                    className={`w-full px-3 py-2 border ${colors.border} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${colors.textPrimary} ${colors.bgPrimary}`}
                     placeholder="e.g., Bronze, Silver, Gold"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-sm font-medium text-gray-600 mb-1">
+                    <label
+                      className={`block text-sm font-medium ${colors.textSecondary} mb-1`}
+                    >
                       Color
                     </label>
                     <div className="flex items-center gap-2">
@@ -231,19 +245,21 @@ export function CreateMultipleRowsModal({
                         type="color"
                         value={newSectionColor}
                         onChange={(e) => setNewSectionColor(e.target.value)}
-                        className="w-10 h-9 rounded cursor-pointer border border-gray-300"
+                        className={`w-10 h-9 rounded cursor-pointer border ${colors.border}`}
                       />
                       <input
                         type="text"
                         value={newSectionColor}
                         onChange={(e) => setNewSectionColor(e.target.value)}
-                        className="flex-1 px-2 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                        className={`flex-1 px-2 py-2 text-sm border ${colors.border} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${colors.textPrimary} ${colors.bgPrimary}`}
                         placeholder="#f97316"
                       />
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-600 mb-1">
+                    <label
+                      className={`block text-sm font-medium ${colors.textSecondary} mb-1`}
+                    >
                       Price (€)
                     </label>
                     <input
@@ -252,15 +268,17 @@ export function CreateMultipleRowsModal({
                       onChange={(e) => setNewSectionPrice(e.target.value)}
                       min={0}
                       step={0.01}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                      className={`w-full px-3 py-2 border ${colors.border} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${colors.textPrimary} ${colors.bgPrimary}`}
                       placeholder="25.00"
                     />
                   </div>
                 </div>
               </div>
             ) : (
-              <div className="bg-gray-50 p-3 rounded-md">
-                <label className="block text-sm font-medium text-gray-600 mb-1">
+              <div className={`${colors.bgSecondary} p-3 rounded-md`}>
+                <label
+                  className={`block text-sm font-medium ${colors.textSecondary} mb-1`}
+                >
                   Select Section
                 </label>
                 <select
@@ -268,7 +286,7 @@ export function CreateMultipleRowsModal({
                   onChange={(e) =>
                     setSelectedSectionId(e.target.value as SectionId)
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                  className={`w-full px-3 py-2 border ${colors.border} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${colors.textPrimary} ${colors.bgPrimary}`}
                 >
                   <option value="">-- Select a section --</option>
                   {existingSections.map((section) => (
@@ -283,36 +301,46 @@ export function CreateMultipleRowsModal({
           </div>
 
           {/* Rows Table */}
-          <div className="border-t pt-4">
+          <div className={`border-t ${colors.border} pt-4`}>
             <div className="flex justify-between items-center mb-3">
-              <label className="block text-sm font-medium text-gray-700">
+              <label
+                className={`block text-sm font-medium ${colors.textSecondary}`}
+              >
                 Rows ({rows.length}) - Total Seats: {totalSeats}
               </label>
               <button
                 type="button"
                 onClick={addRow}
-                className="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 transition-colors"
+                className={`px-3 py-1 text-sm ${colors.selectedBg} ${colors.selectedText} rounded-md ${colors.bgHover} transition-colors`}
               >
                 + Add Row
               </button>
             </div>
 
-            <div className="border rounded-md overflow-hidden">
+            <div
+              className={`border ${colors.border} rounded-md overflow-hidden`}
+            >
               <table className="w-full text-sm">
-                <thead className="bg-gray-50">
+                <thead className={colors.bgSecondary}>
                   <tr>
-                    <th className="px-3 py-2 text-left font-medium text-gray-700">
+                    <th
+                      className={`px-3 py-2 text-left font-medium ${colors.textSecondary}`}
+                    >
                       Row Label
                     </th>
-                    <th className="px-3 py-2 text-left font-medium text-gray-700">
+                    <th
+                      className={`px-3 py-2 text-left font-medium ${colors.textSecondary}`}
+                    >
                       Seats
                     </th>
-                    <th className="px-3 py-2 text-center font-medium text-gray-700 w-16">
+                    <th
+                      className={`px-3 py-2 text-center font-medium ${colors.textSecondary} w-16`}
+                    >
                       Action
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-200">
+                <tbody className={`divide-y ${colors.border}`}>
                   {rows.map((row) => (
                     <tr key={row.id}>
                       <td className="px-3 py-2">
@@ -322,7 +350,7 @@ export function CreateMultipleRowsModal({
                           onChange={(e) =>
                             updateRow(row.id, { label: e.target.value })
                           }
-                          className="w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                          className={`w-full px-2 py-1 border ${colors.border} rounded focus:outline-none focus:ring-2 focus:ring-blue-500 ${colors.textPrimary} ${colors.bgPrimary}`}
                         />
                       </td>
                       <td className="px-3 py-2">
@@ -339,7 +367,7 @@ export function CreateMultipleRowsModal({
                           }
                           min={1}
                           max={100}
-                          className="w-20 px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                          className={`w-20 px-2 py-1 border ${colors.border} rounded focus:outline-none focus:ring-2 focus:ring-blue-500 ${colors.textPrimary} ${colors.bgPrimary}`}
                         />
                       </td>
                       <td className="px-3 py-2 text-center">
@@ -366,7 +394,7 @@ export function CreateMultipleRowsModal({
 
           {/* Position Info */}
           {defaultPosition && (
-            <div className="text-sm text-gray-500">
+            <div className={`text-sm ${colors.textMuted}`}>
               Will be placed at: ({Math.round(defaultPosition.x)},{" "}
               {Math.round(defaultPosition.y)})
             </div>
@@ -376,7 +404,7 @@ export function CreateMultipleRowsModal({
             <button
               type="button"
               onClick={handleClose}
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors"
+              className={`flex-1 px-4 py-2 border ${colors.border} rounded-md ${colors.textPrimary} ${colors.bgHover} transition-colors`}
             >
               Cancel
             </button>

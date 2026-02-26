@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useThemeColors } from "../../hooks/useThemeColors";
 
 interface CreateLineModalProps {
   isOpen: boolean;
@@ -24,6 +25,7 @@ export function CreateLineModal({
   const [strokeWidth, setStrokeWidth] = useState(2);
   const [lineType, setLineType] = useState<"straight" | "freehand">("straight");
   const [opacity, setOpacity] = useState(1);
+  const { colors } = useThemeColors();
 
   if (!isOpen) return null;
 
@@ -41,19 +43,25 @@ export function CreateLineModal({
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-xl w-96 p-6">
-        <h2 className="text-lg font-semibold mb-4 text-black">Create Line</h2>
+      <div
+        className={`${colors.bgPrimary} rounded-lg shadow-xl w-96 p-6 border ${colors.border}`}
+      >
+        <h2 className={`text-lg font-semibold mb-4 ${colors.textPrimary}`}>
+          Create Line
+        </h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              className={`block text-sm font-medium ${colors.textSecondary} mb-1`}
+            >
               Line Label
             </label>
             <input
               type="text"
               value={label}
               onChange={(e) => setLabel(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+              className={`w-full px-3 py-2 border ${colors.border} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${colors.textPrimary} ${colors.bgPrimary}`}
               placeholder="e.g., Boundary Line"
               autoFocus
             />
@@ -61,7 +69,9 @@ export function CreateLineModal({
 
           {/* Line Type Selector */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              className={`block text-sm font-medium ${colors.textSecondary} mb-2`}
+            >
               Line Type
             </label>
             <div className="grid grid-cols-2 gap-2">
@@ -75,12 +85,14 @@ export function CreateLineModal({
                   onClick={() => setLineType(option.value)}
                   className={`flex flex-col items-center gap-1 p-2 rounded-md border transition-all ${
                     lineType === option.value
-                      ? "border-blue-500 bg-blue-50 text-blue-600"
-                      : "border-gray-300 hover:bg-gray-50"
+                      ? `${colors.selectedBorder} ${colors.selectedBg} ${colors.selectedText}`
+                      : `${colors.border} ${colors.bgHover}`
                   }`}
                 >
                   <span className="text-lg">{option.icon}</span>
-                  <span className="text-xs">{option.label}</span>
+                  <span className={`text-xs ${colors.textSecondary}`}>
+                    {option.label}
+                  </span>
                 </button>
               ))}
             </div>
@@ -88,7 +100,9 @@ export function CreateLineModal({
 
           {/* Stroke Width */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              className={`block text-sm font-medium ${colors.textSecondary} mb-2`}
+            >
               Stroke Width: {strokeWidth}px
             </label>
             <input
@@ -100,14 +114,18 @@ export function CreateLineModal({
               onChange={(e) => setStrokeWidth(parseInt(e.target.value))}
               className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
             />
-            <div className="flex justify-between text-xs text-gray-500 mt-1">
+            <div
+              className={`flex justify-between text-xs ${colors.textMuted} mt-1`}
+            >
               <span>Thin</span>
               <span>Thick</span>
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              className={`block text-sm font-medium ${colors.textSecondary} mb-1`}
+            >
               Line Color
             </label>
             <div className="flex items-center gap-3">
@@ -115,13 +133,13 @@ export function CreateLineModal({
                 type="color"
                 value={color}
                 onChange={(e) => setColor(e.target.value)}
-                className="w-12 h-10 rounded cursor-pointer border border-gray-300"
+                className={`w-12 h-10 rounded cursor-pointer border ${colors.border}`}
               />
               <input
                 type="text"
                 value={color}
                 onChange={(e) => setColor(e.target.value)}
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                className={`flex-1 px-3 py-2 border ${colors.border} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${colors.textPrimary} ${colors.bgPrimary}`}
                 placeholder="#6b7280"
               />
             </div>
@@ -129,7 +147,9 @@ export function CreateLineModal({
 
           {/* Opacity Slider */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              className={`block text-sm font-medium ${colors.textSecondary} mb-2`}
+            >
               Opacity: {Math.round(opacity * 100)}%
             </label>
             <input
@@ -141,7 +161,9 @@ export function CreateLineModal({
               onChange={(e) => setOpacity(parseFloat(e.target.value))}
               className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
             />
-            <div className="flex justify-between text-xs text-gray-500 mt-1">
+            <div
+              className={`flex justify-between text-xs ${colors.textMuted} mt-1`}
+            >
               <span>Transparent</span>
               <span>Opaque</span>
             </div>
@@ -151,7 +173,7 @@ export function CreateLineModal({
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors"
+              className={`flex-1 px-4 py-2 border ${colors.border} rounded-md ${colors.textPrimary} ${colors.bgHover} transition-colors`}
             >
               Cancel
             </button>

@@ -2,6 +2,7 @@
 
 import { useRef, useState, useCallback, useEffect } from "react";
 import { useSeatMapStore } from "../../store/seatMapStore";
+import { useThemeColors } from "../../hooks/useThemeColors";
 import { Seat } from "./Seat";
 import { Row } from "./Row";
 import { Area } from "./Area";
@@ -14,6 +15,7 @@ import { CreateMultipleRowsModal } from "../modals/CreateMultipleRowsModal";
 import { CreateStructureModal } from "../modals/CreateStructureModal";
 import { CreateLineModal } from "../modals/CreateLineModal";
 import { ContextMenu } from "../ContextMenu";
+import { EditSelectionModal } from "../modals/EditSelectionModal";
 import { ResizeHandles } from "./ResizeHandles";
 import { RotateHandle } from "./RotateHandle";
 import type {
@@ -31,6 +33,7 @@ import type {
 
 export function SeatMapCanvas() {
   const svgRef = useRef<SVGSVGElement>(null);
+  const { colors } = useThemeColors();
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState<Position>({ x: 0, y: 0 });
   const [lastPan, setLastPan] = useState<Position>({ x: 0, y: 0 });
@@ -42,6 +45,7 @@ export function SeatMapCanvas() {
   const [showMultipleRowsModal, setShowMultipleRowsModal] = useState(false);
   const [showStructureModal, setShowStructureModal] = useState(false);
   const [showLineModal, setShowLineModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [contextMenu, setContextMenu] = useState<{
     x: number;
     y: number;
@@ -347,6 +351,28 @@ export function SeatMapCanvas() {
     setContextMenu({ x: e.clientX, y: e.clientY });
   }, []);
 
+  const canEdit = () => {
+    if (selectedIds.length === 0) return false;
+    if (selectedIds.length === 1) return true;
+    const sectionIds = new Set<string | undefined>();
+    for (const id of selectedIds) {
+      let sectionId: string | undefined;
+      if (id.startsWith("row_")) {
+        sectionId = rows[id]?.sectionId;
+      } else if (id.startsWith("seat_")) {
+        sectionId = seats[id]?.sectionId;
+      }
+      sectionIds.add(sectionId);
+    }
+    return sectionIds.size === 1;
+  };
+
+  const handleEdit = () => {
+    if (canEdit()) {
+      setShowEditModal(true);
+    }
+  };
+
   // Handle mouse move (for panning, element dragging, and box selection)
   const handleMouseMove = useCallback(
     (e: React.MouseEvent) => {
@@ -552,7 +578,7 @@ export function SeatMapCanvas() {
   );
 
   return (
-    <div className="flex-1 overflow-hidden bg-gray-100 relative">
+    <div className={`absolute inset-0 ${colors.bgCanvas} w-full h-full`}>
       <svg
         ref={svgRef}
         className={`w-full h-full ${activeTool === "pan" || isDragging ? "cursor-grabbing" : activeTool !== "select" ? "cursor-crosshair" : "cursor-default"}`}
@@ -653,11 +679,6 @@ export function SeatMapCanvas() {
           )}
         </g>
       </svg>
-
-      {/* Zoom info */}
-      <div className="absolute bottom-4 right-4 bg-white rounded-lg shadow-md px-3 py-2 text-sm text-gray-600">
-        {Math.round(zoom * 100)}%
-      </div>
 
       {/* Modals */}
       <CreateRowModal
@@ -764,8 +785,22 @@ export function SeatMapCanvas() {
             });
             clearSelection();
           }}
+          onEdit={handleEdit}
+          canEdit={canEdit()}
         />
       )}
+      {/* Edit Selection Modal */}
+      <EditSelectionModal
+        isOpen={showEditModal}
+        onClose={() => setShowEditModal(false)}
+        selectedIds={selectedIds}
+        rows={rows}
+        seats={seats}
+        areas={areas}
+        tables={tables}
+        structures={structures}
+        sections={sections}
+      />
     </div>
   );
 }

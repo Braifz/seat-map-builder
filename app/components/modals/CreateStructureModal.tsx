@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useThemeColors } from "../../hooks/useThemeColors";
 import type { StructureType, Position } from "../../types";
 
 interface CreateStructureModalProps {
@@ -50,6 +51,7 @@ export function CreateStructureModal({
   const [width, setWidth] = useState(200);
   const [height, setHeight] = useState(80);
   const [color, setColor] = useState("#dc2626");
+  const { colors } = useThemeColors();
 
   if (!isOpen) return null;
 
@@ -90,12 +92,18 @@ export function CreateStructureModal({
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-black">Add Structure</h2>
+      <div
+        className={`${colors.bgPrimary} rounded-lg shadow-xl max-w-md w-full mx-4 p-6 border ${colors.border}`}
+      >
+        <div
+          className={`flex items-center justify-between mb-4 ${colors.textPrimary}`}
+        >
+          <h2 className={`text-lg font-semibold ${colors.textPrimary}`}>
+            Add Structure
+          </h2>
           <button
             onClick={handleClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
+            className={`${colors.textSecondary} hover:${colors.textPrimary} transition-colors`}
           >
             ×
           </button>
@@ -104,7 +112,9 @@ export function CreateStructureModal({
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Structure Type Selection */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              className={`block text-sm font-medium ${colors.textSecondary} mb-2`}
+            >
               Structure Type
             </label>
             <div className="grid grid-cols-3 gap-2">
@@ -115,8 +125,8 @@ export function CreateStructureModal({
                   onClick={() => handleTypeChange(t.type)}
                   className={`px-3 py-2 text-sm rounded-md border transition-colors ${
                     type === t.type
-                      ? "bg-blue-50 border-blue-500 text-blue-700"
-                      : "bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
+                      ? `${colors.selectedBg} ${colors.selectedBorder} ${colors.selectedText}`
+                      : `${colors.bgPrimary} ${colors.border} ${colors.textPrimary} ${colors.bgHover}`
                   }`}
                 >
                   <span className="mr-1">{t.icon}</span>
@@ -128,14 +138,16 @@ export function CreateStructureModal({
 
           {/* Label */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              className={`block text-sm font-medium ${colors.textSecondary} mb-1`}
+            >
               Label
             </label>
             <input
               type="text"
               value={label}
               onChange={(e) => setLabel(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+              className={`w-full px-3 py-2 border ${colors.border} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${colors.textPrimary} ${colors.bgPrimary}`}
               placeholder="e.g., Main Stage"
             />
           </div>
@@ -143,7 +155,9 @@ export function CreateStructureModal({
           {/* Size */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                className={`block text-sm font-medium ${colors.textSecondary} mb-1`}
+              >
                 Width (px)
               </label>
               <input
@@ -154,11 +168,13 @@ export function CreateStructureModal({
                 }
                 min={40}
                 max={500}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                className={`w-full px-3 py-2 border ${colors.border} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${colors.textPrimary} ${colors.bgPrimary}`}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                className={`block text-sm font-medium ${colors.textSecondary} mb-1`}
+              >
                 Height (px)
               </label>
               <input
@@ -169,14 +185,16 @@ export function CreateStructureModal({
                 }
                 min={40}
                 max={500}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                className={`w-full px-3 py-2 border ${colors.border} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${colors.textPrimary} ${colors.bgPrimary}`}
               />
             </div>
           </div>
 
           {/* Color */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              className={`block text-sm font-medium ${colors.textSecondary} mb-1`}
+            >
               Color
             </label>
             <div className="flex items-center gap-2">
@@ -184,20 +202,20 @@ export function CreateStructureModal({
                 type="color"
                 value={color}
                 onChange={(e) => setColor(e.target.value)}
-                className="w-10 h-10 rounded cursor-pointer border border-gray-300"
+                className={`w-10 h-10 rounded cursor-pointer border ${colors.border}`}
               />
               <input
                 type="text"
                 value={color}
                 onChange={(e) => setColor(e.target.value)}
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black text-sm"
+                className={`flex-1 px-3 py-2 border ${colors.border} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${colors.textPrimary} ${colors.bgPrimary} text-sm`}
               />
             </div>
           </div>
 
           {/* Position Info */}
           {defaultPosition && (
-            <div className="text-sm text-gray-500">
+            <div className={`text-sm ${colors.textMuted}`}>
               Will be placed at: ({Math.round(defaultPosition.x)},{" "}
               {Math.round(defaultPosition.y)})
             </div>
@@ -207,7 +225,7 @@ export function CreateStructureModal({
             <button
               type="button"
               onClick={handleClose}
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors"
+              className={`flex-1 px-4 py-2 border ${colors.border} rounded-md ${colors.textPrimary} ${colors.bgHover} transition-colors`}
             >
               Cancel
             </button>

@@ -1,15 +1,29 @@
-import { Toolbar } from "./components/toolbar/Toolbar";
+"use client";
+
 import { SeatMapCanvas } from "./components/canvas/SeatMapCanvas";
-import { InspectorPanel } from "./components/inspector/InspectorPanel";
+import { FloatingToolbar } from "./components/ui/FloatingToolbar";
+import { ZoomControls } from "./components/ui/ZoomControls";
+import { FileActions } from "./components/ui/FileActions";
+import { HelpButton } from "./components/ui/HelpButton";
+import { ThemeToggle } from "./components/ui/ThemeToggle";
+import { useThemeColors } from "./hooks/useThemeColors";
 
 export default function Home() {
+  const { colors } = useThemeColors();
+
   return (
-    <main className="h-screen flex flex-col overflow-hidden">
-      <Toolbar />
-      <div className="flex-1 flex overflow-hidden">
-        <SeatMapCanvas />
-        <InspectorPanel />
-      </div>
+    <main
+      className={`h-screen w-screen overflow-hidden ${colors.bgPage} relative`}
+    >
+      {/* Canvas - Full screen */}
+      <SeatMapCanvas />
+
+      {/* Floating UI Controls */}
+      <FloatingToolbar />
+      <ZoomControls />
+      <FileActions />
+      <HelpButton />
+      <ThemeToggle />
     </main>
   );
 }
