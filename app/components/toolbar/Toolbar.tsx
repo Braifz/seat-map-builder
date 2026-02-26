@@ -17,6 +17,8 @@ export function Toolbar() {
     resetMap,
     selectedIds,
     deleteSelected,
+    bringToFront,
+    sendToBack,
     rows,
     seats,
     areas,
@@ -32,6 +34,7 @@ export function Toolbar() {
     { id: "addRow", label: "Add Row", icon: "▭" },
     { id: "addMultipleRows", label: "Add Multiple Rows", icon: "▭+" },
     { id: "addArea", label: "Add Area", icon: "▢" },
+    { id: "addLine", label: "Add Line", icon: "➖" },
     { id: "addTable", label: "Add Table", icon: "○" },
     { id: "addStructure", label: "Add Structure", icon: "🏛️" },
     { id: "pan", label: "Pan", icon: "✋" },
@@ -194,7 +197,28 @@ export function Toolbar() {
         </button>
       </div>
 
-      <div className="flex-1" />
+      {/* Layer controls (only shown when items selected) */}
+      {selectedIds.length > 0 && (
+        <>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => bringToFront(selectedIds)}
+              className="p-2 rounded-md text-gray-600 hover:bg-gray-100 transition-colors"
+              title="Bring to Front (Ctrl+Shift+])"
+            >
+              🔼
+            </button>
+            <button
+              onClick={() => sendToBack(selectedIds)}
+              className="p-2 rounded-md text-gray-600 hover:bg-gray-100 transition-colors"
+              title="Send to Back (Ctrl+Shift+[)"
+            >
+              🔽
+            </button>
+          </div>
+          <div className="w-px h-8 bg-gray-300 mx-2" />
+        </>
+      )}
 
       {/* Edit button (only shown when items can be edited) */}
       {canEdit() && (

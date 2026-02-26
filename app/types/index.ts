@@ -25,6 +25,14 @@ export type Size = {
 export type SeatType = "seat" | "wheelchair" | "companion" | "vip";
 export type ElementStatus = "available" | "occupied" | "blocked";
 
+export type AreaShape = "rectangle" | "circle" | "oval" | "square" | "line";
+
+export interface LineConfig {
+  points: Position[];
+  strokeWidth: number;
+  lineType: "straight" | "freehand";
+}
+
 export interface Seat {
   id: SeatId;
   label: string;
@@ -43,6 +51,7 @@ export interface Row {
   seats: SeatId[];
   curve?: number;
   sectionId?: SectionId;
+  zIndex?: number;
 }
 
 export interface Area {
@@ -51,6 +60,11 @@ export interface Area {
   position: Position;
   size: Size;
   color?: string;
+  shape?: AreaShape;
+  opacity?: number;
+  rotation?: number;
+  zIndex?: number;
+  lineConfig?: LineConfig;
 }
 
 export interface Section {
@@ -72,6 +86,8 @@ export interface Table {
   shape: TableShape;
   size: Size;
   seats: SeatId[];
+  rotation?: number;
+  zIndex?: number;
 }
 
 export interface Structure {
@@ -81,6 +97,8 @@ export interface Structure {
   position: Position;
   size: Size;
   color?: string;
+  rotation?: number;
+  zIndex?: number;
 }
 
 export type ToolType =
@@ -88,6 +106,7 @@ export type ToolType =
   | "addRow"
   | "addMultipleRows"
   | "addArea"
+  | "addLine"
   | "addTable"
   | "addStructure"
   | "pan";
@@ -151,6 +170,9 @@ export interface SeatMapActions {
     position: Position,
     size: Size,
     color?: string,
+    shape?: AreaShape,
+    opacity?: number,
+    lineConfig?: LineConfig,
   ) => AreaId;
   removeArea: (areaId: AreaId) => void;
   updateAreaLabel: (areaId: AreaId, label: string) => void;
@@ -177,6 +199,25 @@ export interface SeatMapActions {
   removeStructure: (structureId: StructureId) => void;
   updateStructureLabel: (structureId: StructureId, label: string) => void;
   moveStructure: (structureId: StructureId, delta: Position) => void;
+
+  // Resize actions
+  resizeArea: (areaId: AreaId, newSize: Size) => void;
+  resizeTable: (tableId: TableId, newSize: Size) => void;
+  resizeStructure: (structureId: StructureId, newSize: Size) => void;
+
+  // Rotate actions
+  rotateArea: (areaId: AreaId, degrees: number) => void;
+  rotateTable: (tableId: TableId, degrees: number) => void;
+  rotateStructure: (structureId: StructureId, degrees: number) => void;
+
+  // Opacity action (for areas)
+  setAreaOpacity: (areaId: AreaId, opacity: number) => void;
+
+  // Layer actions (zIndex)
+  bringToFront: (elementIds: ElementId[]) => void;
+  sendToBack: (elementIds: ElementId[]) => void;
+  bringForward: (elementIds: ElementId[]) => void;
+  sendBackward: (elementIds: ElementId[]) => void;
 
   // Move actions
   moveRow: (rowId: RowId, delta: Position) => void;

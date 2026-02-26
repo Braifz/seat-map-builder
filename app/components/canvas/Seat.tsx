@@ -18,7 +18,7 @@ export function Seat({
   seat,
   isSelected,
   onClick,
-  scale = 1,
+  scale: _scale = 1,
   section,
   rowLabel,
 }: SeatProps) {
@@ -52,7 +52,7 @@ export function Seat({
     }
   };
 
-  const size = SEAT_SIZE / scale;
+  const size = SEAT_SIZE;
   const halfSize = size / 2;
   const colors = getSeatColor();
 
@@ -90,7 +90,7 @@ export function Seat({
         y={size / 4}
         textAnchor="middle"
         className="text-xs fill-gray-700 pointer-events-none select-none"
-        style={{ fontSize: `${10 / scale}px` }}
+        style={{ fontSize: `10px` }}
       >
         {seat.label}
       </text>
@@ -116,7 +116,7 @@ export function Seat({
             y={-38}
             textAnchor="middle"
             className="fill-gray-500"
-            style={{ fontSize: `${9 / scale}px` }}
+            style={{ fontSize: `9px` }}
           >
             {rowLabel
               ? `Row ${rowLabel} • Seat ${seat.label}`
@@ -128,7 +128,7 @@ export function Seat({
             y={-22}
             textAnchor="middle"
             className="fill-gray-900 font-bold"
-            style={{ fontSize: `${13 / scale}px` }}
+            style={{ fontSize: `13px` }}
           >
             €{section?.price || "—"}
           </text>

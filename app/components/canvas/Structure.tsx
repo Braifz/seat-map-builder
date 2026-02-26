@@ -16,8 +16,24 @@ const StructureIcon = ({ type }: { type: StructureType["type"] }) => {
       // Stage - rectangle with podium/stand
       return (
         <svg viewBox="0 0 24 24" fill="none" className="w-8 h-8">
-          <rect x="2" y="8" width="20" height="12" rx="1" fill="currentColor" opacity="0.9" />
-          <rect x="6" y="4" width="12" height="6" rx="0.5" fill="currentColor" opacity="0.7" />
+          <rect
+            x="2"
+            y="8"
+            width="20"
+            height="12"
+            rx="1"
+            fill="currentColor"
+            opacity="0.9"
+          />
+          <rect
+            x="6"
+            y="4"
+            width="12"
+            height="6"
+            rx="0.5"
+            fill="currentColor"
+            opacity="0.7"
+          />
         </svg>
       );
     case "bar":
@@ -37,7 +53,15 @@ const StructureIcon = ({ type }: { type: StructureType["type"] }) => {
       // Entrance - arrow pointing in
       return (
         <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6">
-          <rect x="4" y="4" width="16" height="16" rx="1" stroke="currentColor" strokeWidth="2" />
+          <rect
+            x="4"
+            y="4"
+            width="16"
+            height="16"
+            rx="1"
+            stroke="currentColor"
+            strokeWidth="2"
+          />
           <path
             d="M16 12H8M8 12L11 9M8 12L11 15"
             stroke="currentColor"
@@ -51,7 +75,15 @@ const StructureIcon = ({ type }: { type: StructureType["type"] }) => {
       // Exit - arrow pointing out
       return (
         <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6">
-          <rect x="4" y="4" width="16" height="16" rx="1" stroke="currentColor" strokeWidth="2" />
+          <rect
+            x="4"
+            y="4"
+            width="16"
+            height="16"
+            rx="1"
+            stroke="currentColor"
+            strokeWidth="2"
+          />
           <path
             d="M8 12H16M16 12L13 9M16 12L13 15"
             stroke="currentColor"
@@ -65,7 +97,15 @@ const StructureIcon = ({ type }: { type: StructureType["type"] }) => {
       // Custom - square with corners
       return (
         <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6">
-          <rect x="4" y="4" width="16" height="16" rx="1" stroke="currentColor" strokeWidth="2" />
+          <rect
+            x="4"
+            y="4"
+            width="16"
+            height="16"
+            rx="1"
+            stroke="currentColor"
+            strokeWidth="2"
+          />
         </svg>
       );
   }
@@ -75,19 +115,26 @@ export function Structure({
   structure,
   isSelected,
   onClick,
-  scale = 1,
+  scale: _scale = 1,
 }: StructureProps) {
   const centerX = structure.position.x + structure.size.width / 2;
   const centerY = structure.position.y + structure.size.height / 2;
+  const rotation = structure.rotation || 0;
 
   // Text color based on background brightness
   const textColor = "#ffffff";
+
+  // Calculate transform for rotation
+  const transform = rotation
+    ? `rotate(${rotation}, ${centerX}, ${centerY})`
+    : undefined;
 
   return (
     <g
       className="cursor-pointer"
       onClick={onClick}
       data-element-id={structure.id}
+      transform={transform}
     >
       {/* Selection highlight */}
       {isSelected && (
@@ -99,8 +146,8 @@ export function Structure({
           rx={6}
           fill="none"
           className="stroke-blue-500"
-          strokeWidth={2 / scale}
-          strokeDasharray={`${4 / scale} ${4 / scale}`}
+          strokeWidth={2}
+          strokeDasharray={`4 4`}
         />
       )}
 
@@ -113,17 +160,12 @@ export function Structure({
         rx={4}
         fill={structure.color || "#6b7280"}
         className="stroke-gray-700"
-        strokeWidth={1 / scale}
+        strokeWidth={1}
         opacity={0.9}
       />
 
       {/* Icon in center */}
-      <foreignObject
-        x={centerX - 16}
-        y={centerY - 20}
-        width={32}
-        height={32}
-      >
+      <foreignObject x={centerX - 16} y={centerY - 20} width={32} height={32}>
         <div
           className="flex items-center justify-center w-full h-full"
           style={{ color: textColor }}
@@ -135,10 +177,10 @@ export function Structure({
       {/* Label below */}
       <text
         x={centerX}
-        y={structure.position.y + structure.size.height + 15 / scale}
+        y={structure.position.y + structure.size.height + 15}
         textAnchor="middle"
         className="font-medium select-none fill-gray-700 text-xs"
-        style={{ fontSize: `${12 / scale}px` }}
+        style={{ fontSize: `12px` }}
       >
         {structure.label}
       </text>

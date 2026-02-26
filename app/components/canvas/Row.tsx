@@ -39,7 +39,7 @@ export function Row({
           x2={lastSeat.position.x}
           y2={lastSeat.position.y}
           className="stroke-gray-300"
-          strokeWidth={2 / scale}
+          strokeWidth={2}
         />
       )}
 
@@ -53,8 +53,8 @@ export function Row({
           rx={4}
           fill="none"
           className="stroke-blue-500"
-          strokeWidth={2 / scale}
-          strokeDasharray={`${4 / scale} ${4 / scale}`}
+          strokeWidth={2}
+          strokeDasharray={`4 4`}
         />
       )}
 

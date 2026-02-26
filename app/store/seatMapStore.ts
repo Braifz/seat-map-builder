@@ -13,6 +13,8 @@ import type {
   Row,
   Section,
   Structure,
+  AreaShape,
+  LineConfig,
 } from "../types";
 
 const generateId = (prefix: string): string =>
@@ -293,13 +295,32 @@ export const useSeatMapStore = create<SeatMapStore>()(
       },
 
       // Area actions
-      addArea: (label, position, size, color = "#e5e7eb") => {
+      addArea: (
+        label,
+        position,
+        size,
+        color = "#e5e7eb",
+        shape: AreaShape = "rectangle",
+        opacity = 0.8,
+        lineConfig?: LineConfig,
+      ) => {
         const areaId = generateId("area") as AreaId;
 
         set((state) => ({
           areas: {
             ...state.areas,
-            [areaId]: { id: areaId, label, position, size, color },
+            [areaId]: {
+              id: areaId,
+              label,
+              position,
+              size,
+              color,
+              shape,
+              opacity,
+              rotation: 0,
+              zIndex: 0,
+              lineConfig,
+            },
           },
         }));
 
@@ -566,6 +587,220 @@ export const useSeatMapStore = create<SeatMapStore>()(
             },
           },
         }));
+      },
+
+      // Resize actions
+      resizeArea: (areaId, newSize) => {
+        set((state) => ({
+          areas: {
+            ...state.areas,
+            [areaId]: { ...state.areas[areaId], size: newSize },
+          },
+        }));
+      },
+
+      resizeTable: (tableId, newSize) => {
+        set((state) => ({
+          tables: {
+            ...state.tables,
+            [tableId]: { ...state.tables[tableId], size: newSize },
+          },
+        }));
+      },
+
+      resizeStructure: (structureId, newSize) => {
+        set((state) => ({
+          structures: {
+            ...state.structures,
+            [structureId]: { ...state.structures[structureId], size: newSize },
+          },
+        }));
+      },
+
+      // Rotate actions
+      rotateArea: (areaId, degrees) => {
+        set((state) => ({
+          areas: {
+            ...state.areas,
+            [areaId]: {
+              ...state.areas[areaId],
+              rotation: (state.areas[areaId].rotation || 0) + degrees,
+            },
+          },
+        }));
+      },
+
+      rotateTable: (tableId, degrees) => {
+        set((state) => ({
+          tables: {
+            ...state.tables,
+            [tableId]: {
+              ...state.tables[tableId],
+              rotation: (state.tables[tableId].rotation || 0) + degrees,
+            },
+          },
+        }));
+      },
+
+      rotateStructure: (structureId, degrees) => {
+        set((state) => ({
+          structures: {
+            ...state.structures,
+            [structureId]: {
+              ...state.structures[structureId],
+              rotation: (state.structures[structureId].rotation || 0) + degrees,
+            },
+          },
+        }));
+      },
+
+      // Opacity action (for areas)
+      setAreaOpacity: (areaId, opacity) => {
+        set((state) => ({
+          areas: {
+            ...state.areas,
+            [areaId]: { ...state.areas[areaId], opacity },
+          },
+        }));
+      },
+
+      // Layer actions (zIndex)
+      bringToFront: (elementIds) => {
+        const state = get();
+        const maxZ = Math.max(
+          0,
+          ...Object.values(state.areas).map((a) => a.zIndex || 0),
+          ...Object.values(state.tables).map((t) => t.zIndex || 0),
+          ...Object.values(state.structures).map((s) => s.zIndex || 0),
+          ...Object.values(state.rows).map((r) => r.zIndex || 0),
+        );
+        set((state) => {
+          const updates: Partial<typeof state> = {};
+          elementIds.forEach((id) => {
+            if (id.startsWith("area_") && state.areas[id]) {
+              if (!updates.areas) updates.areas = { ...state.areas };
+              updates.areas[id] = { ...state.areas[id], zIndex: maxZ + 1 };
+            } else if (id.startsWith("table_") && state.tables[id]) {
+              if (!updates.tables) updates.tables = { ...state.tables };
+              updates.tables[id] = { ...state.tables[id], zIndex: maxZ + 1 };
+            } else if (id.startsWith("structure_") && state.structures[id]) {
+              if (!updates.structures)
+                updates.structures = { ...state.structures };
+              updates.structures[id] = {
+                ...state.structures[id],
+                zIndex: maxZ + 1,
+              };
+            } else if (id.startsWith("row_") && state.rows[id]) {
+              if (!updates.rows) updates.rows = { ...state.rows };
+              updates.rows[id] = { ...state.rows[id], zIndex: maxZ + 1 };
+            }
+          });
+          return updates;
+        });
+      },
+
+      sendToBack: (elementIds) => {
+        const state = get();
+        const minZ = Math.min(
+          0,
+          ...Object.values(state.areas).map((a) => a.zIndex || 0),
+          ...Object.values(state.tables).map((t) => t.zIndex || 0),
+          ...Object.values(state.structures).map((s) => s.zIndex || 0),
+          ...Object.values(state.rows).map((r) => r.zIndex || 0),
+        );
+        set((state) => {
+          const updates: Partial<typeof state> = {};
+          elementIds.forEach((id) => {
+            if (id.startsWith("area_") && state.areas[id]) {
+              if (!updates.areas) updates.areas = { ...state.areas };
+              updates.areas[id] = { ...state.areas[id], zIndex: minZ - 1 };
+            } else if (id.startsWith("table_") && state.tables[id]) {
+              if (!updates.tables) updates.tables = { ...state.tables };
+              updates.tables[id] = { ...state.tables[id], zIndex: minZ - 1 };
+            } else if (id.startsWith("structure_") && state.structures[id]) {
+              if (!updates.structures)
+                updates.structures = { ...state.structures };
+              updates.structures[id] = {
+                ...state.structures[id],
+                zIndex: minZ - 1,
+              };
+            } else if (id.startsWith("row_") && state.rows[id]) {
+              if (!updates.rows) updates.rows = { ...state.rows };
+              updates.rows[id] = { ...state.rows[id], zIndex: minZ - 1 };
+            }
+          });
+          return updates;
+        });
+      },
+
+      bringForward: (elementIds) => {
+        set((state) => {
+          const updates: Partial<typeof state> = {};
+          elementIds.forEach((id) => {
+            if (id.startsWith("area_") && state.areas[id]) {
+              if (!updates.areas) updates.areas = { ...state.areas };
+              updates.areas[id] = {
+                ...state.areas[id],
+                zIndex: (state.areas[id].zIndex || 0) + 1,
+              };
+            } else if (id.startsWith("table_") && state.tables[id]) {
+              if (!updates.tables) updates.tables = { ...state.tables };
+              updates.tables[id] = {
+                ...state.tables[id],
+                zIndex: (state.tables[id].zIndex || 0) + 1,
+              };
+            } else if (id.startsWith("structure_") && state.structures[id]) {
+              if (!updates.structures)
+                updates.structures = { ...state.structures };
+              updates.structures[id] = {
+                ...state.structures[id],
+                zIndex: (state.structures[id].zIndex || 0) + 1,
+              };
+            } else if (id.startsWith("row_") && state.rows[id]) {
+              if (!updates.rows) updates.rows = { ...state.rows };
+              updates.rows[id] = {
+                ...state.rows[id],
+                zIndex: (state.rows[id].zIndex || 0) + 1,
+              };
+            }
+          });
+          return updates;
+        });
+      },
+
+      sendBackward: (elementIds) => {
+        set((state) => {
+          const updates: Partial<typeof state> = {};
+          elementIds.forEach((id) => {
+            if (id.startsWith("area_") && state.areas[id]) {
+              if (!updates.areas) updates.areas = { ...state.areas };
+              updates.areas[id] = {
+                ...state.areas[id],
+                zIndex: (state.areas[id].zIndex || 0) - 1,
+              };
+            } else if (id.startsWith("table_") && state.tables[id]) {
+              if (!updates.tables) updates.tables = { ...state.tables };
+              updates.tables[id] = {
+                ...state.tables[id],
+                zIndex: (state.tables[id].zIndex || 0) - 1,
+              };
+            } else if (id.startsWith("structure_") && state.structures[id]) {
+              if (!updates.structures)
+                updates.structures = { ...state.structures };
+              updates.structures[id] = {
+                ...state.structures[id],
+                zIndex: (state.structures[id].zIndex || 0) - 1,
+              };
+            } else if (id.startsWith("row_") && state.rows[id]) {
+              if (!updates.rows) updates.rows = { ...state.rows };
+              updates.rows[id] = {
+                ...state.rows[id],
+                zIndex: (state.rows[id].zIndex || 0) - 1,
+              };
+            }
+          });
+          return updates;
+        });
       },
 
       // Move actions

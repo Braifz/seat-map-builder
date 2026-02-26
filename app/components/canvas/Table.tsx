@@ -20,13 +20,24 @@ export function Table({
   onClick,
   onSeatClick,
   selectedIds,
-  scale = 1,
+  scale: _scale = 1,
 }: TableProps) {
   const centerX = table.position.x + table.size.width / 2;
   const centerY = table.position.y + table.size.height / 2;
+  const rotation = table.rotation || 0;
+
+  // Calculate transform for rotation
+  const transform = rotation
+    ? `rotate(${rotation}, ${centerX}, ${centerY})`
+    : undefined;
 
   return (
-    <g className="cursor-pointer" onClick={onClick} data-element-id={table.id}>
+    <g
+      className="cursor-pointer"
+      onClick={onClick}
+      data-element-id={table.id}
+      transform={transform}
+    >
       {/* Selection highlight */}
       {isSelected && (
         <rect
@@ -37,8 +48,8 @@ export function Table({
           rx={table.shape === "round" ? table.size.width / 2 + 10 : 12}
           fill="none"
           className="stroke-blue-500"
-          strokeWidth={2 / scale}
-          strokeDasharray={`${4 / scale} ${4 / scale}`}
+          strokeWidth={2}
+          strokeDasharray={`4 4`}
         />
       )}
 
@@ -49,7 +60,7 @@ export function Table({
           cy={centerY}
           r={Math.max(table.size.width, table.size.height) / 2}
           className="fill-amber-50 stroke-amber-300"
-          strokeWidth={2 / scale}
+          strokeWidth={2}
         />
       ) : (
         <rect
@@ -59,7 +70,7 @@ export function Table({
           height={table.size.height}
           rx={8}
           className="fill-amber-50 stroke-amber-300"
-          strokeWidth={2 / scale}
+          strokeWidth={2}
         />
       )}
 
@@ -72,7 +83,7 @@ export function Table({
         className={`font-semibold select-none ${
           isSelected ? "fill-blue-700" : "fill-amber-800"
         }`}
-        style={{ fontSize: `${12 / scale}px` }}
+        style={{ fontSize: `12px` }}
       >
         {table.label}
       </text>
@@ -84,7 +95,7 @@ export function Table({
             seat={seat}
             isSelected={selectedIds.includes(seat.id)}
             onClick={(e) => onSeatClick(seat.id, e)}
-            scale={scale}
+            scale={_scale}
           />
         </g>
       ))}

@@ -2,86 +2,79 @@
 
 import { useState } from "react";
 
-import type { AreaShape } from "../../types";
-
-interface CreateAreaModalProps {
+interface CreateLineModalProps {
   isOpen: boolean;
   onClose: () => void;
   onCreate: (
     label: string,
-    width: number,
-    height: number,
     color: string,
-    shape: AreaShape,
+    strokeWidth: number,
+    lineType: "straight" | "freehand",
     opacity: number,
   ) => void;
 }
 
-export function CreateAreaModal({
+export function CreateLineModal({
   isOpen,
   onClose,
   onCreate,
-}: CreateAreaModalProps) {
-  const [label, setLabel] = useState("Area 1");
-  const [width, setWidth] = useState(200);
-  const [height, setHeight] = useState(150);
-  const [color, setColor] = useState("#e5e7eb");
-  const [shape, setShape] = useState<AreaShape>("rectangle");
-  const [opacity, setOpacity] = useState(0.8);
+}: CreateLineModalProps) {
+  const [label, setLabel] = useState("Line 1");
+  const [color, setColor] = useState("#6b7280");
+  const [strokeWidth, setStrokeWidth] = useState(2);
+  const [lineType, setLineType] = useState<"straight" | "freehand">("straight");
+  const [opacity, setOpacity] = useState(1);
 
   if (!isOpen) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onCreate(label, width, height, color, shape, opacity);
+    onCreate(label, color, strokeWidth, lineType, opacity);
     // Reset form
-    setLabel("Area 1");
-    setWidth(200);
-    setHeight(150);
-    setColor("#e5e7eb");
-    setShape("rectangle");
-    setOpacity(0.8);
+    setLabel("Line 1");
+    setColor("#6b7280");
+    setStrokeWidth(2);
+    setLineType("straight");
+    setOpacity(1);
     onClose();
   };
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg shadow-xl w-96 p-6">
-        <h2 className="text-lg font-semibold mb-4 text-black">Create Area</h2>
+        <h2 className="text-lg font-semibold mb-4 text-black">Create Line</h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Area Label
+              Line Label
             </label>
             <input
               type="text"
               value={label}
               onChange={(e) => setLabel(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-              placeholder="e.g., Stage Area"
+              placeholder="e.g., Boundary Line"
               autoFocus
             />
           </div>
 
-          {/* Shape Selector */}
+          {/* Line Type Selector */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Shape
+              Line Type
             </label>
-            <div className="grid grid-cols-4 gap-2">
+            <div className="grid grid-cols-2 gap-2">
               {[
-                { value: "rectangle" as const, label: "Rectangle", icon: "▭" },
-                { value: "square" as const, label: "Square", icon: "□" },
-                { value: "circle" as const, label: "Circle", icon: "○" },
-                { value: "oval" as const, label: "Oval", icon: "⬭" },
+                { value: "straight" as const, label: "Straight", icon: "➖" },
+                { value: "freehand" as const, label: "Freehand", icon: "〰️" },
               ].map((option) => (
                 <button
                   key={option.value}
                   type="button"
-                  onClick={() => setShape(option.value)}
+                  onClick={() => setLineType(option.value)}
                   className={`flex flex-col items-center gap-1 p-2 rounded-md border transition-all ${
-                    shape === option.value
+                    lineType === option.value
                       ? "border-blue-500 bg-blue-50 text-blue-600"
                       : "border-gray-300 hover:bg-gray-50"
                   }`}
@@ -93,43 +86,29 @@ export function CreateAreaModal({
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Width (px)
-              </label>
-              <input
-                type="number"
-                value={width}
-                onChange={(e) =>
-                  setWidth(Math.max(50, parseInt(e.target.value) || 50))
-                }
-                min={50}
-                max={2000}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Height (px)
-              </label>
-              <input
-                type="number"
-                value={height}
-                onChange={(e) =>
-                  setHeight(Math.max(50, parseInt(e.target.value) || 50))
-                }
-                min={50}
-                max={2000}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-              />
+          {/* Stroke Width */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Stroke Width: {strokeWidth}px
+            </label>
+            <input
+              type="range"
+              min={1}
+              max={20}
+              step={1}
+              value={strokeWidth}
+              onChange={(e) => setStrokeWidth(parseInt(e.target.value))}
+              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+            />
+            <div className="flex justify-between text-xs text-gray-500 mt-1">
+              <span>Thin</span>
+              <span>Thick</span>
             </div>
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Background Color
+              Line Color
             </label>
             <div className="flex items-center gap-3">
               <input
@@ -143,7 +122,7 @@ export function CreateAreaModal({
                 value={color}
                 onChange={(e) => setColor(e.target.value)}
                 className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-                placeholder="#e5e7eb"
+                placeholder="#6b7280"
               />
             </div>
           </div>

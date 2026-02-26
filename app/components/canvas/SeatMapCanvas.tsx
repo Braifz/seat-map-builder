@@ -12,6 +12,10 @@ import { CreateTableModal } from "../modals/CreateTableModal";
 import { CreateAreaModal } from "../modals/CreateAreaModal";
 import { CreateMultipleRowsModal } from "../modals/CreateMultipleRowsModal";
 import { CreateStructureModal } from "../modals/CreateStructureModal";
+import { CreateLineModal } from "../modals/CreateLineModal";
+import { ContextMenu } from "../ContextMenu";
+import { ResizeHandles } from "./ResizeHandles";
+import { RotateHandle } from "./RotateHandle";
 import type {
   Position,
   TableShape,
@@ -21,6 +25,8 @@ import type {
   SeatId,
   StructureId,
   ToolType,
+  AreaShape,
+  LineConfig,
 } from "../../types";
 
 export function SeatMapCanvas() {
@@ -35,6 +41,11 @@ export function SeatMapCanvas() {
   const [showAreaModal, setShowAreaModal] = useState(false);
   const [showMultipleRowsModal, setShowMultipleRowsModal] = useState(false);
   const [showStructureModal, setShowStructureModal] = useState(false);
+  const [showLineModal, setShowLineModal] = useState(false);
+  const [contextMenu, setContextMenu] = useState<{
+    x: number;
+    y: number;
+  } | null>(null);
   const [previousTool, setPreviousTool] = useState<ToolType | null>(null);
   const [isSpacePressed, setIsSpacePressed] = useState(false);
 
@@ -69,6 +80,11 @@ export function SeatMapCanvas() {
     moveTable,
     moveStructure,
     moveSeat,
+    bringToFront,
+    sendToBack,
+    rotateArea,
+    rotateTable,
+    rotateStructure,
   } = useSeatMapStore();
 
   // Drag state for moving elements
@@ -78,7 +94,7 @@ export function SeatMapCanvas() {
     y: 0,
   });
 
-  // Handle keyboard events for shift key and spacebar
+  // Handle keyboard events for shift key, spacebar, rotation and layer shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Shift") setIsShiftPressed(true);
@@ -87,6 +103,36 @@ export function SeatMapCanvas() {
         setIsSpacePressed(true);
         setPreviousTool(activeTool);
         setActiveTool("pan");
+      }
+      // Rotation shortcuts
+      if (e.key === "r" || e.key === "R") {
+        if (selectedIds.length > 0) {
+          const degrees = e.shiftKey ? -90 : 90;
+          selectedIds.forEach((id) => {
+            if (id.startsWith("area_")) rotateArea(id as AreaId, degrees);
+            else if (id.startsWith("table_"))
+              rotateTable(id as TableId, degrees);
+            else if (id.startsWith("structure_"))
+              rotateStructure(id as StructureId, degrees);
+          });
+        }
+      }
+      // Layer shortcuts - only bring to front / send to back
+      if (
+        (e.key === "]" || e.key === "}") &&
+        (e.ctrlKey || e.metaKey) &&
+        e.shiftKey
+      ) {
+        e.preventDefault();
+        bringToFront(selectedIds);
+      }
+      if (
+        (e.key === "[" || e.key === "{") &&
+        (e.ctrlKey || e.metaKey) &&
+        e.shiftKey
+      ) {
+        e.preventDefault();
+        sendToBack(selectedIds);
       }
     };
     const handleKeyUp = (e: KeyboardEvent) => {
@@ -107,7 +153,18 @@ export function SeatMapCanvas() {
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
     };
-  }, [activeTool, isSpacePressed, previousTool, setActiveTool]);
+  }, [
+    activeTool,
+    isSpacePressed,
+    previousTool,
+    setActiveTool,
+    selectedIds,
+    rotateArea,
+    rotateTable,
+    rotateStructure,
+    bringToFront,
+    sendToBack,
+  ]);
 
   // Convert screen coordinates to SVG coordinates
   const screenToSVG = useCallback(
@@ -174,6 +231,9 @@ export function SeatMapCanvas() {
       } else if (activeTool === "addStructure") {
         setPendingClick(svgPoint);
         setShowStructureModal(true);
+      } else if (activeTool === "addLine") {
+        setPendingClick(svgPoint);
+        setShowLineModal(true);
       } else {
         // Select tool - clear selection if clicking on empty space
         if (e.target === svgRef.current) {
@@ -213,9 +273,11 @@ export function SeatMapCanvas() {
     width: number,
     height: number,
     color: string,
+    shape: AreaShape,
+    opacity: number,
   ) => {
     if (pendingClick) {
-      addArea(label, pendingClick, { width, height }, color);
+      addArea(label, pendingClick, { width, height }, color, shape, opacity);
       setPendingClick(null);
       setActiveTool("select");
     }
@@ -248,6 +310,42 @@ export function SeatMapCanvas() {
       setActiveTool("select");
     }
   };
+
+  const handleCreateLine = (
+    label: string,
+    color: string,
+    strokeWidth: number,
+    lineType: "straight" | "freehand",
+    opacity: number,
+  ) => {
+    if (pendingClick) {
+      const lineConfig: LineConfig = {
+        points: [
+          pendingClick,
+          { x: pendingClick.x + 100, y: pendingClick.y + 100 },
+        ],
+        strokeWidth,
+        lineType,
+      };
+      addArea(
+        label,
+        pendingClick,
+        { width: 100, height: 100 },
+        color,
+        "line",
+        opacity,
+        lineConfig,
+      );
+      setPendingClick(null);
+      setActiveTool("select");
+    }
+  };
+
+  // Handle context menu
+  const handleContextMenu = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    setContextMenu({ x: e.clientX, y: e.clientY });
+  }, []);
 
   // Handle mouse move (for panning, element dragging, and box selection)
   const handleMouseMove = useCallback(
@@ -463,58 +561,69 @@ export function SeatMapCanvas() {
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
         onWheel={handleWheel}
+        onContextMenu={handleContextMenu}
       >
         <g transform={`translate(${pan.x}, ${pan.y}) scale(${zoom})`}>
-          {/* Render areas first (background layer) */}
-          {Object.values(areas).map((area) => (
-            <Area
-              key={area.id}
-              area={area}
-              isSelected={selectedIds.includes(area.id)}
-              onClick={(e) => handleAreaClick(area.id, e)}
-              scale={zoom}
-            />
-          ))}
+          {/* Render areas sorted by zIndex */}
+          {[...Object.values(areas)]
+            .sort((a, b) => (a.zIndex || 0) - (b.zIndex || 0))
+            .map((area) => (
+              <Area
+                key={area.id}
+                area={area}
+                isSelected={selectedIds.includes(area.id)}
+                onClick={(e) => handleAreaClick(area.id, e)}
+                scale={zoom}
+              />
+            ))}
 
-          {/* Render structures (between areas and rows) */}
-          {Object.values(structures).map((structure) => (
-            <Structure
-              key={structure.id}
-              structure={structure}
-              isSelected={selectedIds.includes(structure.id)}
-              onClick={(e) => handleStructureClick(structure.id, e)}
-              scale={zoom}
-            />
-          ))}
+          {/* Render structures sorted by zIndex */}
+          {[...Object.values(structures)]
+            .sort((a, b) => (a.zIndex || 0) - (b.zIndex || 0))
+            .map((structure) => (
+              <Structure
+                key={structure.id}
+                structure={structure}
+                isSelected={selectedIds.includes(structure.id)}
+                onClick={(e) => handleStructureClick(structure.id, e)}
+                scale={zoom}
+              />
+            ))}
 
-          {/* Render rows */}
-          {Object.values(rows).map((row) => (
-            <Row
-              key={row.id}
-              row={row}
-              seats={row.seats.map((seatId) => seats[seatId]).filter(Boolean)}
-              isSelected={selectedIds.includes(row.id)}
-              onClick={(e) => handleRowClick(row.id, e)}
-              onSeatClick={handleSeatClick}
-              selectedIds={selectedIds}
-              scale={zoom}
-              section={row.sectionId ? sections[row.sectionId] : undefined}
-            />
-          ))}
+          {/* Render rows sorted by zIndex */}
+          {[...Object.values(rows)]
+            .sort((a, b) => (a.zIndex || 0) - (b.zIndex || 0))
+            .map((row) => (
+              <Row
+                key={row.id}
+                row={row}
+                seats={row.seats.map((seatId) => seats[seatId]).filter(Boolean)}
+                isSelected={selectedIds.includes(row.id)}
+                onClick={(e) => handleRowClick(row.id, e)}
+                onSeatClick={handleSeatClick}
+                selectedIds={selectedIds}
+                scale={zoom}
+                section={row.sectionId ? sections[row.sectionId] : undefined}
+              />
+            ))}
 
-          {/* Render tables */}
-          {Object.values(tables).map((table) => (
-            <Table
-              key={table.id}
-              table={table}
-              seats={table.seats.map((seatId) => seats[seatId]).filter(Boolean)}
-              isSelected={selectedIds.includes(table.id)}
-              onClick={(e) => handleTableClick(table.id, e)}
-              onSeatClick={handleSeatClick}
-              selectedIds={selectedIds}
-              scale={zoom}
-            />
-          ))}
+          {/* Render tables sorted by zIndex */}
+          {[...Object.values(tables)]
+            .sort((a, b) => (a.zIndex || 0) - (b.zIndex || 0))
+            .map((table) => (
+              <Table
+                key={table.id}
+                table={table}
+                seats={table.seats
+                  .map((seatId) => seats[seatId])
+                  .filter(Boolean)}
+                isSelected={selectedIds.includes(table.id)}
+                onClick={(e) => handleTableClick(table.id, e)}
+                onSeatClick={handleSeatClick}
+                selectedIds={selectedIds}
+                scale={zoom}
+              />
+            ))}
 
           {/* Render individual seats (not in rows or tables) */}
           {Object.values(seats)
@@ -602,6 +711,61 @@ export function SeatMapCanvas() {
         }}
         onCreate={handleCreateStructure}
       />
+
+      <CreateLineModal
+        isOpen={showLineModal}
+        onClose={() => {
+          setShowLineModal(false);
+          setPendingClick(null);
+          setActiveTool("select");
+        }}
+        onCreate={handleCreateLine}
+      />
+
+      {/* Context Menu */}
+      {contextMenu && (
+        <ContextMenu
+          x={contextMenu.x}
+          y={contextMenu.y}
+          selectedIds={selectedIds}
+          onClose={() => setContextMenu(null)}
+          onBringToFront={() => bringToFront(selectedIds)}
+          onSendToBack={() => sendToBack(selectedIds)}
+          onRotate={(degrees) => {
+            selectedIds.forEach((id) => {
+              if (id.startsWith("area_")) rotateArea(id as AreaId, degrees);
+              else if (id.startsWith("table_"))
+                rotateTable(id as TableId, degrees);
+              else if (id.startsWith("structure_"))
+                rotateStructure(id as StructureId, degrees);
+            });
+          }}
+          onDelete={() => {
+            selectedIds.forEach((id) => {
+              if (id.startsWith("row_")) {
+                const row = rows[id as RowId];
+                if (row) {
+                  row.seats.forEach((seatId) => delete seats[seatId]);
+                  delete rows[id as RowId];
+                }
+              } else if (id.startsWith("area_")) {
+                delete areas[id as AreaId];
+              } else if (id.startsWith("table_")) {
+                const table = tables[id as TableId];
+                if (table) {
+                  table.seats.forEach((seatId) => delete seats[seatId]);
+                  delete tables[id as TableId];
+                }
+              } else if (id.startsWith("structure_")) {
+                delete structures[id as StructureId];
+              } else if (id.startsWith("seat_")) {
+                delete seats[id as SeatId];
+              }
+            });
+            clearSelection();
+          }}
+        />
+      )}
     </div>
   );
 }
