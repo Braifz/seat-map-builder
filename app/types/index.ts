@@ -3,7 +3,14 @@ export type RowId = string;
 export type AreaId = string;
 export type TableId = string;
 export type SectionId = string;
-export type ElementId = SeatId | RowId | AreaId | TableId | SectionId;
+export type StructureId = string;
+export type ElementId =
+  | SeatId
+  | RowId
+  | AreaId
+  | TableId
+  | SectionId
+  | StructureId;
 
 export type Position = {
   x: number;
@@ -56,6 +63,8 @@ export interface Section {
 
 export type TableShape = "round" | "rectangular";
 
+export type StructureType = "stage" | "bar" | "entrance" | "exit" | "custom";
+
 export interface Table {
   id: TableId;
   label: string;
@@ -65,12 +74,22 @@ export interface Table {
   seats: SeatId[];
 }
 
+export interface Structure {
+  id: StructureId;
+  label: string;
+  type: StructureType;
+  position: Position;
+  size: Size;
+  color?: string;
+}
+
 export type ToolType =
   | "select"
   | "addRow"
   | "addMultipleRows"
   | "addArea"
   | "addTable"
+  | "addStructure"
   | "pan";
 
 export interface RowConfig {
@@ -85,6 +104,7 @@ export interface SeatMapState {
   seats: Record<SeatId, Seat>;
   areas: Record<AreaId, Area>;
   tables: Record<TableId, Table>;
+  structures: Record<StructureId, Structure>;
   sections: Record<SectionId, Section>;
   selectedIds: ElementId[];
   zoom: number;
@@ -145,6 +165,18 @@ export interface SeatMapActions {
   ) => TableId;
   removeTable: (tableId: TableId) => void;
   updateTableLabel: (tableId: TableId, label: string) => void;
+
+  // Structure actions
+  addStructure: (
+    label: string,
+    type: StructureType,
+    position: Position,
+    size?: Size,
+    color?: string,
+  ) => StructureId;
+  removeStructure: (structureId: StructureId) => void;
+  updateStructureLabel: (structureId: StructureId, label: string) => void;
+  moveStructure: (structureId: StructureId, delta: Position) => void;
 
   // Move actions
   moveRow: (rowId: RowId, delta: Position) => void;

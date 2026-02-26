@@ -23,6 +23,7 @@ export function Toolbar() {
     { id: "addMultipleRows", label: "Add Multiple Rows", icon: "▭+" },
     { id: "addArea", label: "Add Area", icon: "▢" },
     { id: "addTable", label: "Add Table", icon: "○" },
+    { id: "addStructure", label: "Add Structure", icon: "🏛️" },
     { id: "pan", label: "Pan", icon: "✋" },
   ];
 

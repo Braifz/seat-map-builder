@@ -29,24 +29,8 @@ export function Row({
 
   if (!firstSeat || !lastSeat) return null;
 
-  const labelX = firstSeat.position.x - 40;
-  const labelY = firstSeat.position.y + 5;
-
   return (
     <g className="cursor-pointer" onClick={onClick} data-element-id={row.id}>
-      {/* Row label */}
-      <text
-        x={labelX}
-        y={labelY}
-        textAnchor="end"
-        className={`text-sm font-medium select-none ${
-          isSelected ? "fill-blue-600" : "fill-gray-600"
-        }`}
-        style={{ fontSize: `${12 / scale}px` }}
-      >
-        {row.label}
-      </text>
-
       {/* Connection line between seats */}
       {seats.length > 1 && (
         <line

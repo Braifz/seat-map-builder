@@ -7,10 +7,12 @@ import type {
   AreaId,
   TableId,
   SectionId,
+  StructureId,
   ElementId,
   Seat,
   Row,
   Section,
+  Structure,
 } from "../types";
 
 const generateId = (prefix: string): string =>
@@ -27,6 +29,7 @@ const initialState = {
   seats: {},
   areas: {},
   tables: {},
+  structures: {},
   sections: {},
   selectedIds: [],
   zoom: DEFAULT_ZOOM,
@@ -351,23 +354,103 @@ export const useSeatMapStore = create<SeatMapStore>()(
             };
           }
         } else {
-          const cols = Math.ceil(Math.sqrt(seatCount));
-          for (let i = 0; i < seatCount; i++) {
-            const row = Math.floor(i / cols);
-            const col = i % cols;
+          // Rectangular table - place seats around the perimeter
+          const { width, height } = size;
+          const offset = 30; // Distance from table edge to seat center
+
+          // Calculate available space on each edge (minus corners)
+          const topEdge = width;
+          const bottomEdge = width;
+          const leftEdge = height;
+          const rightEdge = height;
+          const totalPerimeter = topEdge + bottomEdge + leftEdge + rightEdge;
+
+          // Distribute seats proportionally
+          const topCount = Math.max(
+            1,
+            Math.round((topEdge / totalPerimeter) * seatCount),
+          );
+          const bottomCount = Math.max(
+            1,
+            Math.round((bottomEdge / totalPerimeter) * seatCount),
+          );
+          const sideCount = Math.max(
+            1,
+            Math.floor(
+              (((leftEdge + rightEdge) / totalPerimeter) * seatCount) / 2,
+            ),
+          );
+          const leftCount = sideCount;
+          const rightCount = seatCount - topCount - bottomCount - leftCount;
+
+          let seatIndex = 0;
+
+          // Top edge seats (left to right)
+          for (let i = 0; i < topCount && seatIndex < seatCount; i++) {
+            const x = position.x + (width / (topCount + 1)) * (i + 1);
+            const y = position.y - offset;
             const seatId = generateId("seat") as SeatId;
             seatIds.push(seatId);
             seats[seatId] = {
               id: seatId,
-              label: `${i + 1}`,
-              position: {
-                x: position.x + 10 + col * 35,
-                y: position.y + 10 + row * 35,
-              },
+              label: `${seatIndex + 1}`,
+              position: { x, y },
               type: "seat",
               status: "available",
               tableId,
             };
+            seatIndex++;
+          }
+
+          // Right edge seats (top to bottom)
+          for (let i = 0; i < rightCount && seatIndex < seatCount; i++) {
+            const x = position.x + width + offset;
+            const y = position.y + (height / (rightCount + 1)) * (i + 1);
+            const seatId = generateId("seat") as SeatId;
+            seatIds.push(seatId);
+            seats[seatId] = {
+              id: seatId,
+              label: `${seatIndex + 1}`,
+              position: { x, y },
+              type: "seat",
+              status: "available",
+              tableId,
+            };
+            seatIndex++;
+          }
+
+          // Bottom edge seats (left to right)
+          for (let i = 0; i < bottomCount && seatIndex < seatCount; i++) {
+            const x = position.x + (width / (bottomCount + 1)) * (i + 1);
+            const y = position.y + height + offset;
+            const seatId = generateId("seat") as SeatId;
+            seatIds.push(seatId);
+            seats[seatId] = {
+              id: seatId,
+              label: `${seatIndex + 1}`,
+              position: { x, y },
+              type: "seat",
+              status: "available",
+              tableId,
+            };
+            seatIndex++;
+          }
+
+          // Left edge seats (top to bottom)
+          for (let i = 0; i < leftCount && seatIndex < seatCount; i++) {
+            const x = position.x - offset;
+            const y = position.y + (height / (leftCount + 1)) * (i + 1);
+            const seatId = generateId("seat") as SeatId;
+            seatIds.push(seatId);
+            seats[seatId] = {
+              id: seatId,
+              label: `${seatIndex + 1}`,
+              position: { x, y },
+              type: "seat",
+              status: "available",
+              tableId,
+            };
+            seatIndex++;
           }
         }
 
@@ -415,6 +498,72 @@ export const useSeatMapStore = create<SeatMapStore>()(
           tables: {
             ...state.tables,
             [tableId]: { ...state.tables[tableId], label },
+          },
+        }));
+      },
+
+      // Structure actions
+      addStructure: (label, type, position, size, color) => {
+        const structureId = generateId("structure") as StructureId;
+        const defaultSizes = {
+          stage: { width: 200, height: 80 },
+          bar: { width: 120, height: 60 },
+          entrance: { width: 80, height: 60 },
+          exit: { width: 80, height: 60 },
+          custom: { width: 100, height: 60 },
+        };
+        const defaultColors = {
+          stage: "#dc2626",
+          bar: "#facc15",
+          entrance: "#16a34a",
+          exit: "#f97316",
+          custom: "#6b7280",
+        };
+
+        const structure: Structure = {
+          id: structureId,
+          label,
+          type,
+          position,
+          size: size || defaultSizes[type],
+          color: color || defaultColors[type],
+        };
+
+        set((state) => ({
+          structures: { ...state.structures, [structureId]: structure },
+        }));
+        return structureId;
+      },
+
+      removeStructure: (structureId) => {
+        const structures = { ...get().structures };
+        delete structures[structureId];
+        set({
+          structures,
+          selectedIds: get().selectedIds.filter((id) => id !== structureId),
+        });
+      },
+
+      updateStructureLabel: (structureId, label) => {
+        set((state) => ({
+          structures: {
+            ...state.structures,
+            [structureId]: { ...state.structures[structureId], label },
+          },
+        }));
+      },
+
+      moveStructure: (structureId, delta) => {
+        set((state) => ({
+          structures: {
+            ...state.structures,
+            [structureId]: {
+              ...state.structures[structureId],
+              position: {
+                x: state.structures[structureId].position.x + delta.x,
+                y: state.structures[structureId].position.y + delta.y,
+              },
+            },
           },
         }));
       },
@@ -547,6 +696,7 @@ export const useSeatMapStore = create<SeatMapStore>()(
           ...Object.keys(state.rows),
           ...Object.keys(state.areas),
           ...Object.keys(state.tables),
+          ...Object.keys(state.structures),
           ...Object.keys(state.seats),
         ];
         set({ selectedIds: allIds });
@@ -563,6 +713,8 @@ export const useSeatMapStore = create<SeatMapStore>()(
             get().removeArea(id as AreaId);
           } else if (id.startsWith("table_")) {
             get().removeTable(id as TableId);
+          } else if (id.startsWith("structure_")) {
+            get().removeStructure(id as StructureId);
           }
         });
 
@@ -588,7 +740,7 @@ export const useSeatMapStore = create<SeatMapStore>()(
       },
 
       updateSelectedLabels: (pattern) => {
-        const { selectedIds, seats, rows, areas, tables } = get();
+        const { selectedIds, seats, rows, areas, tables, structures } = get();
         let counter = 1;
 
         selectedIds.forEach((id) => {
@@ -615,6 +767,12 @@ export const useSeatMapStore = create<SeatMapStore>()(
               .replace(/\{n\}/g, String(counter))
               .replace(/\{N\}/g, String(counter).padStart(2, "0"));
             get().updateTableLabel(id as TableId, label);
+            counter++;
+          } else if (id.startsWith("structure_") && structures[id]) {
+            const label = pattern
+              .replace(/\{n\}/g, String(counter))
+              .replace(/\{N\}/g, String(counter).padStart(2, "0"));
+            get().updateStructureLabel(id as StructureId, label);
             counter++;
           }
         });
@@ -656,6 +814,7 @@ export const useSeatMapStore = create<SeatMapStore>()(
           seats: state.seats,
           areas: state.areas,
           tables: state.tables,
+          structures: state.structures,
           sections: state.sections,
         };
         return JSON.stringify(exportData, null, 2);
@@ -670,6 +829,7 @@ export const useSeatMapStore = create<SeatMapStore>()(
             seats: data.seats || {},
             areas: data.areas || {},
             tables: data.tables || {},
+            structures: data.structures || {},
             sections: data.sections || {},
             selectedIds: [],
           });
@@ -698,6 +858,7 @@ export const useSeatMapStore = create<SeatMapStore>()(
         seats: state.seats,
         areas: state.areas,
         tables: state.tables,
+        structures: state.structures,
         sections: state.sections,
       }),
     },
