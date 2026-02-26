@@ -179,6 +179,34 @@ export const useSeatMapStore = create<SeatMapStore>()(
         }));
       },
 
+      updateRowSection: (rowId, sectionId) => {
+        const row = get().rows[rowId];
+        if (!row) return;
+
+        set((state) => {
+          const updatedSeats = { ...state.seats };
+          row.seats.forEach((seatId) => {
+            if (updatedSeats[seatId]) {
+              updatedSeats[seatId] = {
+                ...updatedSeats[seatId],
+                sectionId,
+              };
+            }
+          });
+
+          return {
+            rows: {
+              ...state.rows,
+              [rowId]: {
+                ...state.rows[rowId],
+                sectionId,
+              },
+            },
+            seats: updatedSeats,
+          };
+        });
+      },
+
       addSection: (
         label: string,
         color: string,
@@ -230,6 +258,15 @@ export const useSeatMapStore = create<SeatMapStore>()(
       updateSeatType: (seatId, type) => {
         set((state) => ({
           seats: { ...state.seats, [seatId]: { ...state.seats[seatId], type } },
+        }));
+      },
+
+      updateSeatSection: (seatId, sectionId) => {
+        set((state) => ({
+          seats: {
+            ...state.seats,
+            [seatId]: { ...state.seats[seatId], sectionId },
+          },
         }));
       },
 
@@ -342,6 +379,15 @@ export const useSeatMapStore = create<SeatMapStore>()(
           areas: {
             ...state.areas,
             [areaId]: { ...state.areas[areaId], label },
+          },
+        }));
+      },
+
+      updateArea: (areaId, updates) => {
+        set((state) => ({
+          areas: {
+            ...state.areas,
+            [areaId]: { ...state.areas[areaId], ...updates },
           },
         }));
       },
@@ -523,6 +569,15 @@ export const useSeatMapStore = create<SeatMapStore>()(
         }));
       },
 
+      updateTable: (tableId, updates) => {
+        set((state) => ({
+          tables: {
+            ...state.tables,
+            [tableId]: { ...state.tables[tableId], ...updates },
+          },
+        }));
+      },
+
       // Structure actions
       addStructure: (label, type, position, size, color) => {
         const structureId = generateId("structure") as StructureId;
@@ -570,6 +625,15 @@ export const useSeatMapStore = create<SeatMapStore>()(
           structures: {
             ...state.structures,
             [structureId]: { ...state.structures[structureId], label },
+          },
+        }));
+      },
+
+      updateStructure: (structureId, updates) => {
+        set((state) => ({
+          structures: {
+            ...state.structures,
+            [structureId]: { ...state.structures[structureId], ...updates },
           },
         }));
       },

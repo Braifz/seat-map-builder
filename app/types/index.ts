@@ -147,6 +147,7 @@ export interface SeatMapActions {
   removeRow: (rowId: RowId) => void;
   removeRows: (rowIds: RowId[]) => void;
   updateRowLabel: (rowId: RowId, label: string) => void;
+  updateRowSection: (rowId: RowId, sectionId?: SectionId) => void;
 
   // Section actions
   addSection: (
@@ -161,6 +162,7 @@ export interface SeatMapActions {
   // Seat actions
   updateSeatLabel: (seatId: SeatId, label: string) => void;
   updateSeatType: (seatId: SeatId, type: SeatType) => void;
+  updateSeatSection: (seatId: SeatId, sectionId?: SectionId) => void;
   removeSeat: (seatId: SeatId) => void;
   removeSeats: (seatIds: SeatId[]) => void;
 
@@ -176,6 +178,7 @@ export interface SeatMapActions {
   ) => AreaId;
   removeArea: (areaId: AreaId) => void;
   updateAreaLabel: (areaId: AreaId, label: string) => void;
+  updateArea: (areaId: AreaId, updates: Partial<Area>) => void;
 
   // Table actions
   addTable: (
@@ -187,6 +190,7 @@ export interface SeatMapActions {
   ) => TableId;
   removeTable: (tableId: TableId) => void;
   updateTableLabel: (tableId: TableId, label: string) => void;
+  updateTable: (tableId: TableId, updates: Partial<Table>) => void;
 
   // Structure actions
   addStructure: (
@@ -198,6 +202,10 @@ export interface SeatMapActions {
   ) => StructureId;
   removeStructure: (structureId: StructureId) => void;
   updateStructureLabel: (structureId: StructureId, label: string) => void;
+  updateStructure: (
+    structureId: StructureId,
+    updates: Partial<Structure>,
+  ) => void;
   moveStructure: (structureId: StructureId, delta: Position) => void;
 
   // Resize actions

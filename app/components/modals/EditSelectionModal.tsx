@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSeatMapStore } from "../../store/seatMapStore";
 import { useThemeColors } from "../../hooks/useThemeColors";
 import type {
@@ -11,6 +11,9 @@ import type {
   Structure,
   Section,
   SeatType,
+  AreaShape,
+  TableShape,
+  StructureType,
 } from "../../types";
 
 interface EditSelectionModalProps {
@@ -38,17 +41,22 @@ export function EditSelectionModal({
 }: EditSelectionModalProps) {
   const {
     updateRowLabel,
+    updateRowSection,
     updateSeatLabel,
     updateSeatType,
+    updateSeatSection,
     updateAreaLabel,
+    updateArea,
     updateTableLabel,
+    updateTable,
     updateStructureLabel,
+    updateStructure,
     updateSelectedLabels,
     addSection,
   } = useSeatMapStore();
   const { colors } = useThemeColors();
 
-  // Compute element info first
+  // Compute element info
   const elementInfo = useMemo(() => {
     if (selectedIds.length === 1) {
       const id = selectedIds[0];
@@ -58,6 +66,16 @@ export function EditSelectionModal({
           label: rows[id].label,
           seatType: "seat" as SeatType,
           sectionId: rows[id].sectionId,
+          width: 0,
+          height: 0,
+          areaShape: "rectangle" as AreaShape,
+          areaColor: "#e5e7eb",
+          areaOpacity: 0.8,
+          tableShape: "round" as TableShape,
+          structureType: "custom" as StructureType,
+          structureColor: "#6b7280",
+          lineType: "straight" as "straight" | "freehand",
+          lineStrokeWidth: 2,
         };
       } else if (id.startsWith("seat_") && seats[id]) {
         return {
@@ -65,70 +83,229 @@ export function EditSelectionModal({
           label: seats[id].label,
           seatType: seats[id].type,
           sectionId: seats[id].sectionId,
+          width: 0,
+          height: 0,
+          areaShape: "rectangle" as AreaShape,
+          areaColor: "#e5e7eb",
+          areaOpacity: 0.8,
+          tableShape: "round" as TableShape,
+          structureType: "custom" as StructureType,
+          structureColor: "#6b7280",
+          lineType: "straight" as "straight" | "freehand",
+          lineStrokeWidth: 2,
         };
       } else if (id.startsWith("area_") && areas[id]) {
+        const area = areas[id];
         return {
           type: "area",
-          label: areas[id].label,
+          label: area.label,
           seatType: "seat" as SeatType,
+          sectionId: "",
+          width: area.size.width,
+          height: area.size.height,
+          areaShape: area.shape || "rectangle",
+          areaColor: area.color || "#e5e7eb",
+          areaOpacity: area.opacity ?? 0.8,
+          tableShape: "round" as TableShape,
+          structureType: "custom" as StructureType,
+          structureColor: "#6b7280",
+          lineType: area.lineConfig?.lineType || "straight",
+          lineStrokeWidth: area.lineConfig?.strokeWidth || 2,
         };
       } else if (id.startsWith("table_") && tables[id]) {
+        const table = tables[id];
         return {
           type: "table",
-          label: tables[id].label,
+          label: table.label,
           seatType: "seat" as SeatType,
+          sectionId: "",
+          width: table.size.width,
+          height: table.size.height,
+          areaShape: "rectangle" as AreaShape,
+          areaColor: "#e5e7eb",
+          areaOpacity: 0.8,
+          tableShape: table.shape,
+          structureType: "custom" as StructureType,
+          structureColor: "#6b7280",
+          lineType: "straight" as "straight" | "freehand",
+          lineStrokeWidth: 2,
         };
       } else if (id.startsWith("structure_") && structures[id]) {
+        const structure = structures[id];
         return {
           type: "structure",
-          label: structures[id].label,
+          label: structure.label,
           seatType: "seat" as SeatType,
+          sectionId: "",
+          width: structure.size.width,
+          height: structure.size.height,
+          areaShape: "rectangle" as AreaShape,
+          areaColor: "#e5e7eb",
+          areaOpacity: 0.8,
+          tableShape: "round" as TableShape,
+          structureType: structure.type,
+          structureColor: structure.color || "#6b7280",
+          lineType: "straight" as "straight" | "freehand",
+          lineStrokeWidth: 2,
         };
       }
     }
-    return { type: "multiple", label: "", seatType: "seat" as SeatType };
+    return {
+      type: "multiple",
+      label: "",
+      seatType: "seat" as SeatType,
+      sectionId: "",
+      width: 0,
+      height: 0,
+      areaShape: "rectangle" as AreaShape,
+      areaColor: "#e5e7eb",
+      areaOpacity: 0.8,
+      tableShape: "round" as TableShape,
+      structureType: "custom" as StructureType,
+      structureColor: "#6b7280",
+      lineType: "straight" as "straight" | "freehand",
+      lineStrokeWidth: 2,
+    };
   }, [selectedIds, rows, seats, areas, tables, structures]);
 
-  const [label, setLabel] = useState(elementInfo.label);
+  const [label, setLabel] = useState("");
   const [pattern, setPattern] = useState("{n}");
-  const [seatType, setSeatType] = useState<SeatType>(elementInfo.seatType);
+  const [seatType, setSeatType] = useState<SeatType>("seat");
   const [sectionId, setSectionId] = useState<string>("");
+  const [width, setWidth] = useState(100);
+  const [height, setHeight] = useState(80);
+  const [areaShape, setAreaShape] = useState<AreaShape>("rectangle");
+  const [areaColor, setAreaColor] = useState("#e5e7eb");
+  const [areaOpacity, setAreaOpacity] = useState(0.8);
+  const [tableShape, setTableShape] = useState<TableShape>("round");
+  const [structureType, setStructureType] = useState<StructureType>("custom");
+  const [structureColor, setStructureColor] = useState("#6b7280");
+  const [lineType, setLineType] = useState<"straight" | "freehand">("straight");
+  const [lineStrokeWidth, setLineStrokeWidth] = useState(2);
   const [newSectionName, setNewSectionName] = useState("");
   const [newSectionColor, setNewSectionColor] = useState("#3b82f6");
   const [newSectionNumber, setNewSectionNumber] = useState("");
   const [newSectionPrice, setNewSectionPrice] = useState("");
 
   const elementType = elementInfo.type;
+  const hasSectionAssignableSelection = useMemo(
+    () =>
+      selectedIds.some((id) => id.startsWith("row_") || id.startsWith("seat_")),
+    [selectedIds],
+  );
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    setLabel(elementInfo.label);
+    setSeatType(elementInfo.seatType);
+    setSectionId(elementInfo.sectionId || "");
+    setWidth(elementInfo.width);
+    setHeight(elementInfo.height);
+    setAreaShape(elementInfo.areaShape);
+    setAreaColor(elementInfo.areaColor);
+    setAreaOpacity(elementInfo.areaOpacity);
+    setTableShape(elementInfo.tableShape);
+    setStructureType(elementInfo.structureType);
+    setStructureColor(elementInfo.structureColor);
+    setLineType(elementInfo.lineType);
+    setLineStrokeWidth(elementInfo.lineStrokeWidth);
+    setPattern("{n}");
+  }, [isOpen, elementInfo]);
 
   if (!isOpen) return null;
+
+  const applySectionToSelection = (targetSectionId?: string) => {
+    selectedIds.forEach((id) => {
+      if (id.startsWith("row_")) {
+        updateRowSection(id, targetSectionId);
+      } else if (id.startsWith("seat_")) {
+        updateSeatSection(id, targetSectionId);
+      }
+    });
+  };
 
   const handleSave = () => {
     if (selectedIds.length === 1) {
       const id = selectedIds[0];
       if (elementType === "row") {
         updateRowLabel(id, label);
+        if (sectionId !== "new") {
+          updateRowSection(id, sectionId || undefined);
+        }
       } else if (elementType === "seat") {
         updateSeatLabel(id, label);
         updateSeatType(id, seatType);
+        if (sectionId !== "new") {
+          updateSeatSection(id, sectionId || undefined);
+        }
       } else if (elementType === "area") {
         updateAreaLabel(id, label);
+        updateArea(id, {
+          label,
+          color: areaColor,
+          shape: areaShape,
+          opacity: areaOpacity,
+          size: {
+            width: Math.max(10, width),
+            height: Math.max(10, height),
+          },
+          lineConfig:
+            areaShape === "line"
+              ? {
+                  points: areas[id]?.lineConfig?.points || [
+                    areas[id].position,
+                    {
+                      x: areas[id].position.x + Math.max(10, width),
+                      y: areas[id].position.y + Math.max(10, height),
+                    },
+                  ],
+                  lineType,
+                  strokeWidth: Math.max(1, lineStrokeWidth),
+                }
+              : undefined,
+        });
       } else if (elementType === "table") {
         updateTableLabel(id, label);
+        updateTable(id, {
+          label,
+          shape: tableShape,
+          size: {
+            width: Math.max(40, width),
+            height: Math.max(40, height),
+          },
+        });
       } else if (elementType === "structure") {
         updateStructureLabel(id, label);
+        updateStructure(id, {
+          label,
+          type: structureType,
+          color: structureColor,
+          size: {
+            width: Math.max(40, width),
+            height: Math.max(40, height),
+          },
+        });
       }
     } else if (selectedIds.length > 1 && pattern) {
       updateSelectedLabels(pattern);
     }
 
     // Handle section assignment
-    if (sectionId === "new" && newSectionName) {
-      addSection(
+    if (
+      hasSectionAssignableSelection &&
+      sectionId === "new" &&
+      newSectionName
+    ) {
+      const createdSectionId = addSection(
         newSectionName,
         newSectionColor,
         parseInt(newSectionNumber) || 1,
         newSectionPrice ? parseFloat(newSectionPrice) : undefined,
       );
+      applySectionToSelection(createdSectionId);
+    } else if (hasSectionAssignableSelection && selectedIds.length > 1) {
+      applySectionToSelection(sectionId || undefined);
     }
 
     onClose();
@@ -182,6 +359,287 @@ export function EditSelectionModal({
                   </select>
                 </div>
               )}
+
+              {elementType === "area" && (
+                <>
+                  <div>
+                    <label
+                      className={`block text-sm font-medium ${colors.textSecondary} mb-1`}
+                    >
+                      Shape
+                    </label>
+                    <select
+                      value={areaShape}
+                      onChange={(e) =>
+                        setAreaShape(e.target.value as AreaShape)
+                      }
+                      className={`w-full px-3 py-2 border ${colors.border} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${colors.textPrimary} ${colors.bgPrimary}`}
+                    >
+                      <option value="rectangle">Rectangle</option>
+                      <option value="square">Square</option>
+                      <option value="circle">Circle</option>
+                      <option value="oval">Oval</option>
+                      <option value="line">Line</option>
+                    </select>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label
+                        className={`block text-sm font-medium ${colors.textSecondary} mb-1`}
+                      >
+                        Width
+                      </label>
+                      <input
+                        type="number"
+                        value={width}
+                        onChange={(e) =>
+                          setWidth(Math.max(10, parseInt(e.target.value) || 10))
+                        }
+                        className={`w-full px-3 py-2 border ${colors.border} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${colors.textPrimary} ${colors.bgPrimary}`}
+                      />
+                    </div>
+                    <div>
+                      <label
+                        className={`block text-sm font-medium ${colors.textSecondary} mb-1`}
+                      >
+                        Height
+                      </label>
+                      <input
+                        type="number"
+                        value={height}
+                        onChange={(e) =>
+                          setHeight(
+                            Math.max(10, parseInt(e.target.value) || 10),
+                          )
+                        }
+                        className={`w-full px-3 py-2 border ${colors.border} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${colors.textPrimary} ${colors.bgPrimary}`}
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label
+                      className={`block text-sm font-medium ${colors.textSecondary} mb-1`}
+                    >
+                      Color
+                    </label>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="color"
+                        value={areaColor}
+                        onChange={(e) => setAreaColor(e.target.value)}
+                        className={`w-10 h-9 rounded cursor-pointer border ${colors.border}`}
+                      />
+                      <input
+                        type="text"
+                        value={areaColor}
+                        onChange={(e) => setAreaColor(e.target.value)}
+                        className={`flex-1 px-2 py-2 text-sm border ${colors.border} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${colors.textPrimary} ${colors.bgPrimary}`}
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label
+                      className={`block text-sm font-medium ${colors.textSecondary} mb-1`}
+                    >
+                      Opacity: {Math.round(areaOpacity * 100)}%
+                    </label>
+                    <input
+                      type="range"
+                      min={0}
+                      max={1}
+                      step={0.1}
+                      value={areaOpacity}
+                      onChange={(e) =>
+                        setAreaOpacity(parseFloat(e.target.value))
+                      }
+                      className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                    />
+                  </div>
+
+                  {areaShape === "line" && (
+                    <>
+                      <div>
+                        <label
+                          className={`block text-sm font-medium ${colors.textSecondary} mb-1`}
+                        >
+                          Line Type
+                        </label>
+                        <select
+                          value={lineType}
+                          onChange={(e) =>
+                            setLineType(
+                              e.target.value as "straight" | "freehand",
+                            )
+                          }
+                          className={`w-full px-3 py-2 border ${colors.border} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${colors.textPrimary} ${colors.bgPrimary}`}
+                        >
+                          <option value="straight">Straight</option>
+                          <option value="freehand">Freehand</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label
+                          className={`block text-sm font-medium ${colors.textSecondary} mb-1`}
+                        >
+                          Stroke Width
+                        </label>
+                        <input
+                          type="number"
+                          min={1}
+                          value={lineStrokeWidth}
+                          onChange={(e) =>
+                            setLineStrokeWidth(
+                              Math.max(1, parseInt(e.target.value) || 1),
+                            )
+                          }
+                          className={`w-full px-3 py-2 border ${colors.border} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${colors.textPrimary} ${colors.bgPrimary}`}
+                        />
+                      </div>
+                    </>
+                  )}
+                </>
+              )}
+
+              {elementType === "table" && (
+                <>
+                  <div>
+                    <label
+                      className={`block text-sm font-medium ${colors.textSecondary} mb-1`}
+                    >
+                      Shape
+                    </label>
+                    <select
+                      value={tableShape}
+                      onChange={(e) =>
+                        setTableShape(e.target.value as TableShape)
+                      }
+                      className={`w-full px-3 py-2 border ${colors.border} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${colors.textPrimary} ${colors.bgPrimary}`}
+                    >
+                      <option value="round">Round</option>
+                      <option value="rectangular">Rectangular</option>
+                    </select>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label
+                        className={`block text-sm font-medium ${colors.textSecondary} mb-1`}
+                      >
+                        Width
+                      </label>
+                      <input
+                        type="number"
+                        value={width}
+                        onChange={(e) =>
+                          setWidth(Math.max(40, parseInt(e.target.value) || 40))
+                        }
+                        className={`w-full px-3 py-2 border ${colors.border} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${colors.textPrimary} ${colors.bgPrimary}`}
+                      />
+                    </div>
+                    <div>
+                      <label
+                        className={`block text-sm font-medium ${colors.textSecondary} mb-1`}
+                      >
+                        Height
+                      </label>
+                      <input
+                        type="number"
+                        value={height}
+                        onChange={(e) =>
+                          setHeight(
+                            Math.max(40, parseInt(e.target.value) || 40),
+                          )
+                        }
+                        className={`w-full px-3 py-2 border ${colors.border} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${colors.textPrimary} ${colors.bgPrimary}`}
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {elementType === "structure" && (
+                <>
+                  <div>
+                    <label
+                      className={`block text-sm font-medium ${colors.textSecondary} mb-1`}
+                    >
+                      Type
+                    </label>
+                    <select
+                      value={structureType}
+                      onChange={(e) =>
+                        setStructureType(e.target.value as StructureType)
+                      }
+                      className={`w-full px-3 py-2 border ${colors.border} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${colors.textPrimary} ${colors.bgPrimary}`}
+                    >
+                      <option value="stage">Stage</option>
+                      <option value="bar">Bar</option>
+                      <option value="entrance">Entrance</option>
+                      <option value="exit">Exit</option>
+                      <option value="custom">Custom</option>
+                    </select>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label
+                        className={`block text-sm font-medium ${colors.textSecondary} mb-1`}
+                      >
+                        Width
+                      </label>
+                      <input
+                        type="number"
+                        value={width}
+                        onChange={(e) =>
+                          setWidth(Math.max(40, parseInt(e.target.value) || 40))
+                        }
+                        className={`w-full px-3 py-2 border ${colors.border} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${colors.textPrimary} ${colors.bgPrimary}`}
+                      />
+                    </div>
+                    <div>
+                      <label
+                        className={`block text-sm font-medium ${colors.textSecondary} mb-1`}
+                      >
+                        Height
+                      </label>
+                      <input
+                        type="number"
+                        value={height}
+                        onChange={(e) =>
+                          setHeight(
+                            Math.max(40, parseInt(e.target.value) || 40),
+                          )
+                        }
+                        className={`w-full px-3 py-2 border ${colors.border} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${colors.textPrimary} ${colors.bgPrimary}`}
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label
+                      className={`block text-sm font-medium ${colors.textSecondary} mb-1`}
+                    >
+                      Color
+                    </label>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="color"
+                        value={structureColor}
+                        onChange={(e) => setStructureColor(e.target.value)}
+                        className={`w-10 h-9 rounded cursor-pointer border ${colors.border}`}
+                      />
+                      <input
+                        type="text"
+                        value={structureColor}
+                        onChange={(e) => setStructureColor(e.target.value)}
+                        className={`flex-1 px-2 py-2 text-sm border ${colors.border} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${colors.textPrimary} ${colors.bgPrimary}`}
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
             </>
           ) : (
             <div>
@@ -204,9 +662,7 @@ export function EditSelectionModal({
           )}
 
           {/* Section Assignment (only for rows and seats) */}
-          {(elementType === "row" ||
-            elementType === "seat" ||
-            elementType === "multiple") && (
+          {hasSectionAssignableSelection && (
             <div>
               <label
                 className={`block text-sm font-medium ${colors.textSecondary} mb-1`}

@@ -16,8 +16,7 @@ import { CreateStructureModal } from "../modals/CreateStructureModal";
 import { CreateLineModal } from "../modals/CreateLineModal";
 import { ContextMenu } from "../ContextMenu";
 import { EditSelectionModal } from "../modals/EditSelectionModal";
-import { ResizeHandles } from "./ResizeHandles";
-import { RotateHandle } from "./RotateHandle";
+import { ConfirmationModal } from "../modals/ConfirmationModal";
 import type {
   Position,
   TableShape,
@@ -46,6 +45,7 @@ export function SeatMapCanvas() {
   const [showStructureModal, setShowStructureModal] = useState(false);
   const [showLineModal, setShowLineModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
   const [contextMenu, setContextMenu] = useState<{
     x: number;
     y: number;
@@ -79,6 +79,7 @@ export function SeatMapCanvas() {
     addMultipleRows,
     addStructure,
     setActiveTool,
+    deleteSelected,
     moveRow,
     moveArea,
     moveTable,
@@ -100,8 +101,28 @@ export function SeatMapCanvas() {
 
   // Handle keyboard events for shift key, spacebar, rotation and layer shortcuts
   useEffect(() => {
+    const isTypingTarget = (target: EventTarget | null): boolean => {
+      if (!(target instanceof HTMLElement)) return false;
+
+      const tagName = target.tagName;
+      if (
+        tagName === "INPUT" ||
+        tagName === "TEXTAREA" ||
+        tagName === "SELECT"
+      ) {
+        return true;
+      }
+
+      return (
+        target.isContentEditable || !!target.closest("[contenteditable='true']")
+      );
+    };
+
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Shift") setIsShiftPressed(true);
+      if (e.key === " " && isTypingTarget(e.target)) {
+        return;
+      }
       if (e.key === " " && !isSpacePressed) {
         e.preventDefault();
         setIsSpacePressed(true);
@@ -141,6 +162,9 @@ export function SeatMapCanvas() {
     };
     const handleKeyUp = (e: KeyboardEvent) => {
       if (e.key === "Shift") setIsShiftPressed(false);
+      if (e.key === " " && isTypingTarget(e.target)) {
+        return;
+      }
       if (e.key === " " && isSpacePressed) {
         e.preventDefault();
         setIsSpacePressed(false);
@@ -371,6 +395,17 @@ export function SeatMapCanvas() {
     if (canEdit()) {
       setShowEditModal(true);
     }
+  };
+
+  const handleDeleteRequest = () => {
+    if (selectedIds.length > 0) {
+      setShowDeleteConfirmModal(true);
+    }
+  };
+
+  const handleConfirmDelete = () => {
+    deleteSelected();
+    setShowDeleteConfirmModal(false);
   };
 
   // Handle mouse move (for panning, element dragging, and box selection)
@@ -761,34 +796,23 @@ export function SeatMapCanvas() {
                 rotateStructure(id as StructureId, degrees);
             });
           }}
-          onDelete={() => {
-            selectedIds.forEach((id) => {
-              if (id.startsWith("row_")) {
-                const row = rows[id as RowId];
-                if (row) {
-                  row.seats.forEach((seatId) => delete seats[seatId]);
-                  delete rows[id as RowId];
-                }
-              } else if (id.startsWith("area_")) {
-                delete areas[id as AreaId];
-              } else if (id.startsWith("table_")) {
-                const table = tables[id as TableId];
-                if (table) {
-                  table.seats.forEach((seatId) => delete seats[seatId]);
-                  delete tables[id as TableId];
-                }
-              } else if (id.startsWith("structure_")) {
-                delete structures[id as StructureId];
-              } else if (id.startsWith("seat_")) {
-                delete seats[id as SeatId];
-              }
-            });
-            clearSelection();
-          }}
+          onDelete={handleDeleteRequest}
           onEdit={handleEdit}
           canEdit={canEdit()}
         />
       )}
+
+      <ConfirmationModal
+        isOpen={showDeleteConfirmModal}
+        onClose={() => setShowDeleteConfirmModal(false)}
+        onConfirm={handleConfirmDelete}
+        title="Delete selected items"
+        message={`Are you sure you want to delete ${selectedIds.length} selected item${selectedIds.length === 1 ? "" : "s"}?`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        confirmVariant="danger"
+      />
+
       {/* Edit Selection Modal */}
       <EditSelectionModal
         isOpen={showEditModal}
