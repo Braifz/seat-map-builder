@@ -129,6 +129,10 @@ export function SeatMapCanvas() {
   const [curveDraggingRowId, setCurveDraggingRowId] = useState<RowId | null>(
     null,
   );
+  const [startDraggingRowId, setStartDraggingRowId] = useState<RowId | null>(
+    null,
+  );
+  const [endDraggingRowId, setEndDraggingRowId] = useState<RowId | null>(null);
 
   const {
     rows,
@@ -163,8 +167,11 @@ export function SeatMapCanvas() {
     rotateTable,
     rotateStructure,
     updateRowCurve,
+    updateRowGeometry,
     undo,
     redo,
+    copySelected,
+    pasteClipboard,
   } = useSeatMapStore();
 
   // Drag state for moving elements
@@ -214,6 +221,22 @@ export function SeatMapCanvas() {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "y") {
         e.preventDefault();
         redo();
+        return;
+      }
+
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "c") {
+        if (!isTyping && selectedIds.length > 0) {
+          e.preventDefault();
+          copySelected();
+        }
+        return;
+      }
+
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "v") {
+        if (!isTyping) {
+          e.preventDefault();
+          pasteClipboard();
+        }
         return;
       }
 
@@ -296,6 +319,8 @@ export function SeatMapCanvas() {
     sendToBack,
     undo,
     redo,
+    copySelected,
+    pasteClipboard,
   ]);
 
   // Convert screen coordinates to SVG coordinates
@@ -322,11 +347,35 @@ export function SeatMapCanvas() {
       const curveHandle = target.closest(
         "[data-row-curve-handle='true']",
       ) as SVGElement | null;
+      const startHandle = target.closest(
+        "[data-row-start-handle='true']",
+      ) as SVGElement | null;
+      const endHandle = target.closest(
+        "[data-row-end-handle='true']",
+      ) as SVGElement | null;
       if (activeTool === "select" && curveHandle) {
         const rowId = curveHandle.getAttribute("data-row-id");
         if (rowId && rows[rowId]) {
           e.stopPropagation();
           setCurveDraggingRowId(rowId as RowId);
+          return;
+        }
+      }
+
+      if (activeTool === "select" && startHandle) {
+        const rowId = startHandle.getAttribute("data-row-id");
+        if (rowId && rows[rowId]) {
+          e.stopPropagation();
+          setStartDraggingRowId(rowId as RowId);
+          return;
+        }
+      }
+
+      if (activeTool === "select" && endHandle) {
+        const rowId = endHandle.getAttribute("data-row-id");
+        if (rowId && rows[rowId]) {
+          e.stopPropagation();
+          setEndDraggingRowId(rowId as RowId);
           return;
         }
       }
@@ -544,6 +593,38 @@ export function SeatMapCanvas() {
         return;
       }
 
+      if (startDraggingRowId) {
+        const row = rows[startDraggingRowId];
+        if (!row) return;
+
+        const rowSeats = row.seats
+          .map((seatId) => seats[seatId])
+          .filter((seat): seat is NonNullable<typeof seat> => Boolean(seat));
+        const start = row.start || rowSeats[0]?.position;
+        const end = row.end || rowSeats[rowSeats.length - 1]?.position;
+        if (!start || !end) return;
+
+        const svgPoint = screenToSVG(e.clientX, e.clientY);
+        updateRowGeometry(startDraggingRowId, svgPoint, end, row.curve ?? 0);
+        return;
+      }
+
+      if (endDraggingRowId) {
+        const row = rows[endDraggingRowId];
+        if (!row) return;
+
+        const rowSeats = row.seats
+          .map((seatId) => seats[seatId])
+          .filter((seat): seat is NonNullable<typeof seat> => Boolean(seat));
+        const start = row.start || rowSeats[0]?.position;
+        const end = row.end || rowSeats[rowSeats.length - 1]?.position;
+        if (!start || !end) return;
+
+        const svgPoint = screenToSVG(e.clientX, e.clientY);
+        updateRowGeometry(endDraggingRowId, start, svgPoint, row.curve ?? 0);
+        return;
+      }
+
       // Draft row drawing
       if (isDrawingRow) {
         const svgPoint = screenToSVG(e.clientX, e.clientY);
@@ -600,6 +681,8 @@ export function SeatMapCanvas() {
       isDragging,
       isDrawingRow,
       curveDraggingRowId,
+      startDraggingRowId,
+      endDraggingRowId,
       isElementDragging,
       isBoxSelecting,
       activeTool,
@@ -617,6 +700,7 @@ export function SeatMapCanvas() {
       rows,
       seats,
       updateRowCurve,
+      updateRowGeometry,
     ],
   );
 
@@ -624,6 +708,16 @@ export function SeatMapCanvas() {
   const handleMouseUp = useCallback(() => {
     if (curveDraggingRowId) {
       setCurveDraggingRowId(null);
+      return;
+    }
+
+    if (startDraggingRowId) {
+      setStartDraggingRowId(null);
+      return;
+    }
+
+    if (endDraggingRowId) {
+      setEndDraggingRowId(null);
       return;
     }
 
@@ -724,6 +818,8 @@ export function SeatMapCanvas() {
     setIsBoxSelecting(false);
   }, [
     curveDraggingRowId,
+    startDraggingRowId,
+    endDraggingRowId,
     isDrawingRow,
     rowDraftStart,
     rowDraftEnd,
@@ -841,6 +937,30 @@ export function SeatMapCanvas() {
 
                 return (
                   <g key={`row-curve-handle-${rowId}`}>
+                    <circle
+                      cx={start.x}
+                      cy={start.y}
+                      r={8 / zoom}
+                      fill="#ffffff"
+                      stroke="#16a34a"
+                      strokeWidth={2 / zoom}
+                      data-row-start-handle="true"
+                      data-row-id={rowId}
+                      className="cursor-ew-resize"
+                    />
+
+                    <circle
+                      cx={end.x}
+                      cy={end.y}
+                      r={8 / zoom}
+                      fill="#ffffff"
+                      stroke="#dc2626"
+                      strokeWidth={2 / zoom}
+                      data-row-end-handle="true"
+                      data-row-id={rowId}
+                      className="cursor-ew-resize"
+                    />
+
                     <circle
                       cx={control.x}
                       cy={control.y}

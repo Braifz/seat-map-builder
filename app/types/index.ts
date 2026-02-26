@@ -39,6 +39,7 @@ export interface Seat {
   position: Position;
   type: SeatType;
   status: ElementStatus;
+  price?: number;
   rowId?: RowId;
   tableId?: TableId;
   sectionId?: SectionId;
@@ -158,6 +159,7 @@ export interface SeatMapActions {
   removeRows: (rowIds: RowId[]) => void;
   updateRowLabel: (rowId: RowId, label: string) => void;
   updateRowSection: (rowId: RowId, sectionId?: SectionId) => void;
+  updateRowSeatPrice: (rowId: RowId, price?: number) => void;
   updateRowCurve: (rowId: RowId, curve: number) => void;
   updateRowSeatCount: (rowId: RowId, seatCount: number) => void;
   updateRowGeometry: (
@@ -181,6 +183,7 @@ export interface SeatMapActions {
   updateSeatLabel: (seatId: SeatId, label: string) => void;
   updateSeatType: (seatId: SeatId, type: SeatType) => void;
   updateSeatSection: (seatId: SeatId, sectionId?: SectionId) => void;
+  updateSeatPrice: (seatId: SeatId, price?: number) => void;
   removeSeat: (seatId: SeatId) => void;
   removeSeats: (seatIds: SeatId[]) => void;
 
@@ -260,6 +263,8 @@ export interface SeatMapActions {
   // Bulk operations
   deleteSelected: () => void;
   updateSelectedLabels: (pattern: string) => void;
+  copySelected: () => void;
+  pasteClipboard: () => void;
 
   // View
   setZoom: (zoom: number) => void;

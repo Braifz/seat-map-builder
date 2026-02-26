@@ -42,11 +42,13 @@ export function EditSelectionModal({
   const {
     updateRowLabel,
     updateRowSection,
+    updateRowSeatPrice,
     updateRowCurve,
     updateRowSeatCount,
     updateSeatLabel,
     updateSeatType,
     updateSeatSection,
+    updateSeatPrice,
     updateAreaLabel,
     updateArea,
     updateTableLabel,
@@ -63,11 +65,21 @@ export function EditSelectionModal({
     if (selectedIds.length === 1) {
       const id = selectedIds[0];
       if (id.startsWith("row_") && rows[id]) {
+        const rowSeats = rows[id].seats
+          .map((seatId) => seats[seatId])
+          .filter((seat): seat is Seat => Boolean(seat));
+        const distinctSeatPrices = Array.from(
+          new Set(rowSeats.map((seat) => seat.price)),
+        );
+        const rowSeatPrice =
+          distinctSeatPrices.length === 1 ? distinctSeatPrices[0] : undefined;
+
         return {
           type: "row",
           label: rows[id].label,
           seatType: "seat" as SeatType,
           sectionId: rows[id].sectionId,
+          seatPrice: rowSeatPrice,
           rowCurve: rows[id].curve ?? 0,
           rowSeatCount: rows[id].seats.length,
           width: 0,
@@ -87,6 +99,7 @@ export function EditSelectionModal({
           label: seats[id].label,
           seatType: seats[id].type,
           sectionId: seats[id].sectionId,
+          seatPrice: seats[id].price,
           rowCurve: 0,
           rowSeatCount: 0,
           width: 0,
@@ -107,6 +120,7 @@ export function EditSelectionModal({
           label: area.label,
           seatType: "seat" as SeatType,
           sectionId: "",
+          seatPrice: undefined,
           rowCurve: 0,
           rowSeatCount: 0,
           width: area.size.width,
@@ -127,6 +141,7 @@ export function EditSelectionModal({
           label: table.label,
           seatType: "seat" as SeatType,
           sectionId: "",
+          seatPrice: undefined,
           rowCurve: 0,
           rowSeatCount: 0,
           width: table.size.width,
@@ -147,6 +162,7 @@ export function EditSelectionModal({
           label: structure.label,
           seatType: "seat" as SeatType,
           sectionId: "",
+          seatPrice: undefined,
           rowCurve: 0,
           rowSeatCount: 0,
           width: structure.size.width,
@@ -167,6 +183,7 @@ export function EditSelectionModal({
       label: "",
       seatType: "seat" as SeatType,
       sectionId: "",
+      seatPrice: undefined,
       rowCurve: 0,
       rowSeatCount: 0,
       width: 0,
@@ -190,6 +207,9 @@ export function EditSelectionModal({
   );
   const [rowCurve, setRowCurve] = useState(elementInfo.rowCurve);
   const [rowSeatCount, setRowSeatCount] = useState(elementInfo.rowSeatCount);
+  const [seatPrice, setSeatPrice] = useState(
+    elementInfo.seatPrice !== undefined ? String(elementInfo.seatPrice) : "",
+  );
   const [width, setWidth] = useState(elementInfo.width);
   const [height, setHeight] = useState(elementInfo.height);
   const [areaShape, setAreaShape] = useState<AreaShape>(elementInfo.areaShape);
@@ -246,12 +266,26 @@ export function EditSelectionModal({
         updateRowLabel(id, label);
         updateRowCurve(id, rowCurve);
         updateRowSeatCount(id, rowSeatCount);
+        const parsedRowSeatPrice =
+          seatPrice.trim() === "" ? undefined : Number.parseFloat(seatPrice);
+        updateRowSeatPrice(
+          id,
+          Number.isNaN(parsedRowSeatPrice as number)
+            ? undefined
+            : parsedRowSeatPrice,
+        );
         if (sectionId !== "new") {
           updateRowSection(id, sectionId || undefined);
         }
       } else if (elementType === "seat") {
         updateSeatLabel(id, label);
         updateSeatType(id, seatType);
+        const parsedSeatPrice =
+          seatPrice.trim() === "" ? undefined : Number.parseFloat(seatPrice);
+        updateSeatPrice(
+          id,
+          Number.isNaN(parsedSeatPrice as number) ? undefined : parsedSeatPrice,
+        );
         if (sectionId !== "new") {
           updateSeatSection(id, sectionId || undefined);
         }
@@ -357,23 +391,42 @@ export function EditSelectionModal({
               </div>
 
               {elementType === "seat" && (
-                <div>
-                  <label
-                    className={`block text-sm font-medium ${colors.textSecondary} mb-1`}
-                  >
-                    Seat Type
-                  </label>
-                  <select
-                    value={seatType}
-                    onChange={(e) => setSeatType(e.target.value as SeatType)}
-                    className={`w-full px-3 py-2 border ${colors.border} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${colors.textPrimary} ${colors.bgPrimary}`}
-                  >
-                    <option value="seat">Standard Seat</option>
-                    <option value="vip">VIP</option>
-                    <option value="wheelchair">Wheelchair</option>
-                    <option value="companion">Companion</option>
-                  </select>
-                </div>
+                <>
+                  <div>
+                    <label
+                      className={`block text-sm font-medium ${colors.textSecondary} mb-1`}
+                    >
+                      Seat Type
+                    </label>
+                    <select
+                      value={seatType}
+                      onChange={(e) => setSeatType(e.target.value as SeatType)}
+                      className={`w-full px-3 py-2 border ${colors.border} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${colors.textPrimary} ${colors.bgPrimary}`}
+                    >
+                      <option value="seat">Standard Seat</option>
+                      <option value="vip">VIP</option>
+                      <option value="wheelchair">Wheelchair</option>
+                      <option value="companion">Companion</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label
+                      className={`block text-sm font-medium ${colors.textSecondary} mb-1`}
+                    >
+                      Price (€)
+                    </label>
+                    <input
+                      type="number"
+                      min={0}
+                      step={0.01}
+                      value={seatPrice}
+                      onChange={(e) => setSeatPrice(e.target.value)}
+                      placeholder="Leave empty to use section price"
+                      className={`w-full px-3 py-2 border ${colors.border} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${colors.textPrimary} ${colors.bgPrimary}`}
+                    />
+                  </div>
+                </>
               )}
 
               {elementType === "row" && (
@@ -411,6 +464,23 @@ export function EditSelectionModal({
                       value={rowCurve}
                       onChange={(e) => setRowCurve(parseFloat(e.target.value))}
                       className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                    />
+                  </div>
+
+                  <div>
+                    <label
+                      className={`block text-sm font-medium ${colors.textSecondary} mb-1`}
+                    >
+                      Price per Seat (€)
+                    </label>
+                    <input
+                      type="number"
+                      min={0}
+                      step={0.01}
+                      value={seatPrice}
+                      onChange={(e) => setSeatPrice(e.target.value)}
+                      placeholder="Leave empty to use section price"
+                      className={`w-full px-3 py-2 border ${colors.border} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${colors.textPrimary} ${colors.bgPrimary}`}
                     />
                   </div>
                 </>

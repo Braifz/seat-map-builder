@@ -56,6 +56,7 @@ export function Seat({
   const size = SEAT_SIZE;
   const halfSize = size / 2;
   const seatColors = getSeatColor();
+  const effectivePrice = seat.price ?? section?.price;
 
   return (
     <g
@@ -132,7 +133,7 @@ export function Seat({
             fontWeight="bold"
             style={{ fontSize: `13px` }}
           >
-            €{section?.price || "—"}
+            {effectivePrice !== undefined ? `€${effectivePrice}` : "—"}
           </text>
         </g>
       )}

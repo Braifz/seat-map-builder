@@ -98,6 +98,14 @@ function HelpModal({ onClose }: HelpModalProps) {
                 keys={["Delete", "/", "Backspace"]}
                 description="Open delete confirmation"
               />
+              <ShortcutItem
+                keys={["Ctrl/Cmd", "C"]}
+                description="Copy selection"
+              />
+              <ShortcutItem
+                keys={["Ctrl/Cmd", "V"]}
+                description="Paste selection"
+              />
               <ShortcutItem keys={["Ctrl", "Z"]} description="Undo" />
               <ShortcutItem keys={["Ctrl", "Shift", "Z"]} description="Redo" />
               <ShortcutItem keys={["Ctrl", "A"]} description="Select all" />

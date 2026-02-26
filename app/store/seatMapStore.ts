@@ -11,6 +11,8 @@ import type {
   ElementId,
   Seat,
   Row,
+  Area,
+  Table,
   Section,
   Structure,
   Position,
@@ -27,6 +29,7 @@ const MIN_ZOOM = 0.1;
 const MAX_ZOOM = 5;
 const CURVE_LIMIT = 1.5;
 const HISTORY_LIMIT = 50;
+const CLIPBOARD_PASTE_OFFSET = 24;
 
 type HistorySnapshot = {
   name: string;
@@ -37,6 +40,16 @@ type HistorySnapshot = {
   structures: SeatMapStore["structures"];
   sections: Record<SectionId, Section>;
   selectedIds: ElementId[];
+};
+
+type ClipboardSnapshot = {
+  rows: Row[];
+  rowSeats: Seat[];
+  tables: Table[];
+  tableSeats: Seat[];
+  areas: Area[];
+  structures: Structure[];
+  standaloneSeats: Seat[];
 };
 
 const createHistorySnapshot = (state: SeatMapStore): HistorySnapshot => ({
@@ -52,6 +65,11 @@ const createHistorySnapshot = (state: SeatMapStore): HistorySnapshot => ({
 
 const clampCurve = (curve: number): number =>
   Math.max(-CURVE_LIMIT, Math.min(CURVE_LIMIT, curve));
+
+const offsetPosition = (position: Position, delta: number): Position => ({
+  x: position.x + delta,
+  y: position.y + delta,
+});
 
 const inferRowEndpoints = (
   row: Row,
@@ -184,6 +202,8 @@ const initialState = {
 let historyPast: HistorySnapshot[] = [];
 let historyFuture: HistorySnapshot[] = [];
 let isHistorySuspended = false;
+let clipboardSnapshot: ClipboardSnapshot | null = null;
+let clipboardPasteCount = 0;
 
 export const useSeatMapStore = create<SeatMapStore>()(
   persist(
@@ -337,6 +357,7 @@ export const useSeatMapStore = create<SeatMapStore>()(
                 position: positions[index],
                 type: existingSeat?.type || "seat",
                 status: existingSeat?.status || "available",
+                price: existingSeat?.price,
                 rowId,
                 sectionId:
                   currentRow.sectionId !== undefined
@@ -572,6 +593,28 @@ export const useSeatMapStore = create<SeatMapStore>()(
           });
         },
 
+        updateRowSeatPrice: (rowId, price) => {
+          const row = get().rows[rowId];
+          if (!row) return;
+          recordHistory();
+
+          set((state) => {
+            const updatedSeats = { ...state.seats };
+            row.seats.forEach((seatId) => {
+              if (updatedSeats[seatId]) {
+                updatedSeats[seatId] = {
+                  ...updatedSeats[seatId],
+                  price,
+                };
+              }
+            });
+
+            return {
+              seats: updatedSeats,
+            };
+          });
+        },
+
         addSection: (
           label: string,
           color: string,
@@ -640,6 +683,16 @@ export const useSeatMapStore = create<SeatMapStore>()(
             seats: {
               ...state.seats,
               [seatId]: { ...state.seats[seatId], sectionId },
+            },
+          }));
+        },
+
+        updateSeatPrice: (seatId, price) => {
+          recordHistory();
+          set((state) => ({
+            seats: {
+              ...state.seats,
+              [seatId]: { ...state.seats[seatId], price },
             },
           }));
         },
@@ -1491,6 +1544,246 @@ export const useSeatMapStore = create<SeatMapStore>()(
               get().updateStructureLabel(id as StructureId, label);
               counter++;
             }
+          });
+        },
+
+        copySelected: () => {
+          const state = get();
+          const selectedRows = new Set<RowId>();
+          const selectedTables = new Set<TableId>();
+
+          state.selectedIds.forEach((id) => {
+            if (id.startsWith("row_") && state.rows[id as RowId]) {
+              selectedRows.add(id as RowId);
+            }
+            if (id.startsWith("table_") && state.tables[id as TableId]) {
+              selectedTables.add(id as TableId);
+            }
+          });
+
+          const rows: Row[] = [];
+          const rowSeats: Seat[] = [];
+          const tables: Table[] = [];
+          const tableSeats: Seat[] = [];
+          const areas: Area[] = [];
+          const structures: Structure[] = [];
+          const standaloneSeats: Seat[] = [];
+
+          state.selectedIds.forEach((id) => {
+            if (id.startsWith("row_")) {
+              const row = state.rows[id as RowId];
+              if (!row) return;
+              rows.push(structuredClone(row));
+              row.seats.forEach((seatId) => {
+                const seat = state.seats[seatId];
+                if (seat) {
+                  rowSeats.push(structuredClone(seat));
+                }
+              });
+              return;
+            }
+
+            if (id.startsWith("table_")) {
+              const table = state.tables[id as TableId];
+              if (!table) return;
+              tables.push(structuredClone(table));
+              table.seats.forEach((seatId) => {
+                const seat = state.seats[seatId];
+                if (seat) {
+                  tableSeats.push(structuredClone(seat));
+                }
+              });
+              return;
+            }
+
+            if (id.startsWith("area_")) {
+              const area = state.areas[id as AreaId];
+              if (area) {
+                areas.push(structuredClone(area));
+              }
+              return;
+            }
+
+            if (id.startsWith("structure_")) {
+              const structure = state.structures[id as StructureId];
+              if (structure) {
+                structures.push(structuredClone(structure));
+              }
+              return;
+            }
+
+            if (id.startsWith("seat_")) {
+              const seat = state.seats[id as SeatId];
+              if (!seat) return;
+              if (seat.rowId && selectedRows.has(seat.rowId)) return;
+              if (seat.tableId && selectedTables.has(seat.tableId)) return;
+              standaloneSeats.push(structuredClone(seat));
+            }
+          });
+
+          clipboardSnapshot = {
+            rows,
+            rowSeats,
+            tables,
+            tableSeats,
+            areas,
+            structures,
+            standaloneSeats,
+          };
+          clipboardPasteCount = 0;
+        },
+
+        pasteClipboard: () => {
+          if (!clipboardSnapshot) return;
+
+          recordHistory();
+
+          const state = get();
+          const delta = CLIPBOARD_PASTE_OFFSET * (clipboardPasteCount + 1);
+          const rows = { ...state.rows };
+          const seats = { ...state.seats };
+          const areas = { ...state.areas };
+          const tables = { ...state.tables };
+          const structures = { ...state.structures };
+          const pastedSelection: ElementId[] = [];
+
+          const rowSeatsByRow = new Map<RowId, Seat[]>();
+          clipboardSnapshot.rowSeats.forEach((seat) => {
+            if (!seat.rowId) return;
+            const existing = rowSeatsByRow.get(seat.rowId) || [];
+            existing.push(seat);
+            rowSeatsByRow.set(seat.rowId, existing);
+          });
+
+          clipboardSnapshot.rows.forEach((sourceRow) => {
+            const newRowId = generateId("row") as RowId;
+            const newSeatIds: SeatId[] = [];
+            const sourceSeats = rowSeatsByRow.get(sourceRow.id) || [];
+            const sourceSeatById = new Map(
+              sourceSeats.map((seat) => [seat.id, seat]),
+            );
+
+            sourceRow.seats.forEach((sourceSeatId) => {
+              const sourceSeat = sourceSeatById.get(sourceSeatId);
+              if (!sourceSeat) return;
+
+              const newSeatId = generateId("seat") as SeatId;
+              newSeatIds.push(newSeatId);
+              seats[newSeatId] = {
+                ...sourceSeat,
+                id: newSeatId,
+                position: offsetPosition(sourceSeat.position, delta),
+                rowId: newRowId,
+                tableId: undefined,
+              };
+            });
+
+            rows[newRowId] = {
+              ...sourceRow,
+              id: newRowId,
+              seats: newSeatIds,
+              position: offsetPosition(sourceRow.position, delta),
+              start: sourceRow.start
+                ? offsetPosition(sourceRow.start, delta)
+                : sourceRow.start,
+              end: sourceRow.end
+                ? offsetPosition(sourceRow.end, delta)
+                : sourceRow.end,
+            };
+
+            pastedSelection.push(newRowId);
+          });
+
+          const tableSeatsByTable = new Map<TableId, Seat[]>();
+          clipboardSnapshot.tableSeats.forEach((seat) => {
+            if (!seat.tableId) return;
+            const existing = tableSeatsByTable.get(seat.tableId) || [];
+            existing.push(seat);
+            tableSeatsByTable.set(seat.tableId, existing);
+          });
+
+          clipboardSnapshot.tables.forEach((sourceTable) => {
+            const newTableId = generateId("table") as TableId;
+            const newSeatIds: SeatId[] = [];
+            const sourceSeats = tableSeatsByTable.get(sourceTable.id) || [];
+            const sourceSeatById = new Map(
+              sourceSeats.map((seat) => [seat.id, seat]),
+            );
+
+            sourceTable.seats.forEach((sourceSeatId) => {
+              const sourceSeat = sourceSeatById.get(sourceSeatId);
+              if (!sourceSeat) return;
+
+              const newSeatId = generateId("seat") as SeatId;
+              newSeatIds.push(newSeatId);
+              seats[newSeatId] = {
+                ...sourceSeat,
+                id: newSeatId,
+                position: offsetPosition(sourceSeat.position, delta),
+                tableId: newTableId,
+                rowId: undefined,
+              };
+            });
+
+            tables[newTableId] = {
+              ...sourceTable,
+              id: newTableId,
+              seats: newSeatIds,
+              position: offsetPosition(sourceTable.position, delta),
+            };
+
+            pastedSelection.push(newTableId);
+          });
+
+          clipboardSnapshot.areas.forEach((sourceArea) => {
+            const newAreaId = generateId("area") as AreaId;
+            areas[newAreaId] = {
+              ...sourceArea,
+              id: newAreaId,
+              position: offsetPosition(sourceArea.position, delta),
+              lineConfig: sourceArea.lineConfig
+                ? {
+                    ...sourceArea.lineConfig,
+                    points: sourceArea.lineConfig.points.map((point) =>
+                      offsetPosition(point, delta),
+                    ),
+                  }
+                : sourceArea.lineConfig,
+            };
+            pastedSelection.push(newAreaId);
+          });
+
+          clipboardSnapshot.structures.forEach((sourceStructure) => {
+            const newStructureId = generateId("structure") as StructureId;
+            structures[newStructureId] = {
+              ...sourceStructure,
+              id: newStructureId,
+              position: offsetPosition(sourceStructure.position, delta),
+            };
+            pastedSelection.push(newStructureId);
+          });
+
+          clipboardSnapshot.standaloneSeats.forEach((sourceSeat) => {
+            const newSeatId = generateId("seat") as SeatId;
+            seats[newSeatId] = {
+              ...sourceSeat,
+              id: newSeatId,
+              position: offsetPosition(sourceSeat.position, delta),
+              rowId: undefined,
+              tableId: undefined,
+            };
+            pastedSelection.push(newSeatId);
+          });
+
+          clipboardPasteCount += 1;
+
+          set({
+            rows,
+            seats,
+            areas,
+            tables,
+            structures,
+            selectedIds: pastedSelection,
           });
         },
 
