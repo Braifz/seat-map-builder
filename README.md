@@ -104,8 +104,50 @@ interface Table {
 - ✅ "New map" with confirmation
 - ✅ Persistence in localStorage
 - ✅ Edit selected elements modal
+- ✅ Dark/Light mode theme toggle with persistence
+- ✅ Floating UI with tooltips (Excalidraw-style)
+- ✅ Context menu with Edit option
+- ✅ Help & Shortcuts modal
 
-### Controls
+## Development Best Practices
+
+### Next.js Best Practices
+- **App Router**: Using Next.js 16+ App Router with file-based routing
+- **Server Components**: Leveraging React Server Components for better performance
+- **Client Components**: Interactive components marked with "use client" directive
+- **Image Optimization**: Using Next.js Image component for optimized images
+- **Font Optimization**: Using next/font for automatic font optimization
+- **Metadata API**: Defining metadata for SEO in layout files
+- **Streaming**: Using React Suspense boundaries for streaming
+- **Caching**: Implementing proper caching strategies with fetch
+
+### Vercel React Best Practices
+- **Performance**: Code splitting with dynamic imports
+- **State Management**: Using Zustand for lightweight global state
+- **TypeScript**: Strict typing with explicit return types
+- **Accessibility**: ARIA labels, keyboard navigation, focus management
+- **Error Handling**: Error boundaries and graceful fallbacks
+- **Testing**: Component and integration testing patterns
+- **Security**: CSP headers, XSS prevention, input sanitization
+
+### UI/UX Best Practices
+- **Tailwind CSS**: Utility-first CSS with consistent spacing scale
+- **Lucide Icons**: Consistent iconography across the application
+- **Theme System**: CSS variables for light/dark mode support
+- **Responsive Design**: Mobile-first approach with breakpoints
+- **Animation**: Smooth transitions with hardware acceleration
+
+## MCPs Used
+
+This project uses the following Model Context Protocol (MCP) servers:
+
+- **context7**: Documentation retrieval for libraries and frameworks
+- **linear**: Issue tracking and project management integration
+- **mastra**: AI agent orchestration capabilities
+- **memory**: Persistent memory for conversation context
+- **next-devtools**: Next.js development and debugging tools
+
+## Controls
 | Action | Method |
 |--------|--------|
 | Select | Click |
@@ -170,10 +212,5 @@ app/
 
 ## Future Improvements
 
-- Undo/Redo with action history
-- Drag elements to reposition
-- Rotation of rows and tables
-- Row curvature
-- Custom colors per area
-- Print preview
-- Real-time collaboration
+- Further improvements to UI and user experience
+- Additional features and functionality
