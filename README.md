@@ -1,49 +1,51 @@
 # SeatMapBuilder
 
-Editor visual interactivo para diseñar mapas de asientos. Inspirado en Seats.io, permite crear y editar filas, asientos, áreas y mesas.
+Interactive visual editor for designing seat maps. Inspired by Seats.io, it allows creating and editing rows, seats, areas, and tables.
 
 ## Setup
 
 ```bash
-# Instalar dependencias
+# Install dependencies
 npm install
 
-# Iniciar servidor de desarrollo
+# Start development server
 npm run dev
 ```
 
-La aplicación estará disponible en `http://localhost:3000`.
+The application will be available at `http://localhost:3000`.
 
-## Decisiones Técnicas
+Developed with **Windsurf IDE** and **Kimi k2.5** LLM model.
+
+## Technical Decisions
 
 ### Stack
-- **Next.js 16.1.6** - Framework React con App Router
-- **React 19** - Biblioteca UI con latest features
-- **TypeScript** - Tipado estático para robustez
-- **Tailwind CSS 4** - Estilos utilitarios
-- **Zustand** - Gestión de estado global con persistencia
+- **Next.js 16.1.6** - React framework with App Router
+- **React 19** - UI library with latest features
+- **TypeScript** - Static typing for robustness
+- **Tailwind CSS 4** - Utility-first styling
+- **Zustand** - Global state management with persistence
 
-### Arquitectura
+### Architecture
 
-#### Canvas SVG
-Se eligió SVG sobre Canvas HTML porque:
-- Eventos por elemento nativos (click, hover)
-- CSS styling directo
-- Escalabilidad vectorial
-- Mejor para interacción directa con elementos individuales
+#### SVG Canvas
+SVG was chosen over HTML Canvas because:
+- Native per-element events (click, hover)
+- Direct CSS styling
+- Vector scalability
+- Better for direct interaction with individual elements
 
-#### Gestión de Estado (Zustand)
-- Store centralizado con todas las entidades (rows, seats, areas, tables)
-- Persistencia automática en localStorage
-- Acciones inmutables con spread operator
-- Selector automático de estado
+#### State Management (Zustand)
+- Centralized store with all entities (rows, seats, areas, tables)
+- Automatic persistence in localStorage
+- Immutable actions with spread operator
+- Automatic state selection
 
 #### Coordinate System
-- Coordenadas virtuales "mundiales"
-- Transformación SVG para zoom/pan
-- Conversión screen-to-SVG para interacciones precisas
+- Virtual "world" coordinates
+- SVG transformation for zoom/pan
+- Screen-to-SVG conversion for precise interactions
 
-### Estructura de Datos
+### Data Structure
 
 ```typescript
 interface Seat {
@@ -81,41 +83,57 @@ interface Table {
 }
 ```
 
-## Features Implementadas
+## Implemented Features
 
-### MVP Completado
-- ✅ Visualización de filas, asientos, áreas y mesas
-- ✅ Crear filas con cantidad configurable de asientos
-- ✅ Selección individual y múltiple (Shift+click)
-- ✅ Etiquetado de todos los elementos
-- ✅ Bulk labeling con patrones ({n}, {N}, prefijos)
-- ✅ Zoom y pan del canvas
-- ✅ Import/Export JSON completo
-- ✅ "Nuevo mapa" con confirmación
-- ✅ Persistencia en localStorage
+### MVP Completed
+- ✅ Visualization of rows, seats, areas, tables, and structures
+- ✅ Create rows with configurable number of seats
+- ✅ Create multiple rows at once with bulk configuration
+- ✅ Individual and multiple selection (Shift+click, box selection)
+- ✅ Labeling of all elements with bulk patterns ({n}, {N}, prefixes)
+- ✅ Canvas zoom, pan, and spacebar temporary pan mode
+- ✅ Multi-element drag to reposition
+- ✅ Element rotation (areas, tables, structures)
+- ✅ Element resizing (areas, tables, structures)
+- ✅ Layer management (bring to front, send to back)
+- ✅ Section system with colors, pricing, and seat inheritance
+- ✅ Structures (stage, bar, entrance, exit, custom)
+- ✅ Lines and freehand drawing
+- ✅ Complete JSON Import/Export
+- ✅ Context menu for quick actions
+- ✅ "New map" with confirmation
+- ✅ Persistence in localStorage
+- ✅ Edit selected elements modal
 
-### Controles
-| Acción | Método |
+### Controls
+| Action | Method |
 |--------|--------|
-| Seleccionar | Click |
-| Multi-selección | Shift + Click |
-| Pan | Alt + Drag o tool Pan |
-| Zoom | Mouse wheel o botones +/- |
-| Crear fila | Tool "Add Row" + click |
-| Crear área | Tool "Add Area" + click |
-| Crear mesa | Tool "Add Table" + click |
-| Eliminar | Botón Delete o confirmación |
+| Select | Click |
+| Multi-selection | Shift + Click or Box selection |
+| Pan | Alt + Drag, Spacebar hold, or Pan tool |
+| Zoom | Mouse wheel or +/- buttons |
+| Create row | "Add Row" tool + click |
+| Create multiple rows | "Add Multiple Rows" tool + click |
+| Create area | "Add Area" tool + click |
+| Create table | "Add Table" tool + click |
+| Create structure | "Add Structure" tool + click |
+| Create line | "Add Line" tool + click and drag |
+| Delete | Delete button, confirmation, or context menu |
+| Context menu | Right-click on element |
+| Rotate | Rotate handle on selected elements |
+| Resize | Resize handles on selected elements |
+| Layer order | Bring to front / Send to back buttons |
 
-## Supuestos Asumidos
+## Assumptions
 
-1. Estado en memoria (localStorage) sin backend requerido
-2. Un solo mapa activo por sesión
-3. Navegador moderno (ES2020+)
-4. Resolución mínima 1280x720
-5. Mapa 2D (no 3D)
-6. Asientos posicionados automáticamente en filas/mesas
+1. In-memory state (localStorage) with no backend required
+2. Only one active map per session
+3. Modern browser (ES2020+)
+4. Minimum resolution 1280x720
+5. 2D map (no 3D)
+6. Seats automatically positioned in rows/tables
 
-## Estructura del Proyecto
+## Project Structure
 
 ```
 app/
@@ -125,11 +143,24 @@ app/
 │   │   ├── Seat.tsx
 │   │   ├── Row.tsx
 │   │   ├── Area.tsx
-│   │   └── Table.tsx
+│   │   ├── Table.tsx
+│   │   ├── Structure.tsx
+│   │   ├── ResizeHandles.tsx
+│   │   └── RotateHandle.tsx
 │   ├── toolbar/
 │   │   └── Toolbar.tsx
-│   └── inspector/
-│       └── InspectorPanel.tsx
+│   ├── inspector/
+│   │   └── InspectorPanel.tsx
+│   ├── modals/
+│   │   ├── CreateRowModal.tsx
+│   │   ├── CreateMultipleRowsModal.tsx
+│   │   ├── CreateAreaModal.tsx
+│   │   ├── CreateTableModal.tsx
+│   │   ├── CreateStructureModal.tsx
+│   │   ├── CreateLineModal.tsx
+│   │   ├── EditSelectionModal.tsx
+│   │   └── ConfirmationModal.tsx
+│   └── ContextMenu.tsx
 ├── store/
 │   └── seatMapStore.ts
 ├── types/
@@ -137,13 +168,12 @@ app/
 └── page.tsx
 ```
 
-## Posibles Mejoras Futuras
+## Future Improvements
 
-- Undo/Redo con histórico de acciones
-- Drag de elementos para reposicionar
-- Rotación de filas y mesas
-- Curvatura de filas
-- Colores personalizables por área
-- Preview de impresión
-- Colaboración en tiempo real
-
+- Undo/Redo with action history
+- Drag elements to reposition
+- Rotation of rows and tables
+- Row curvature
+- Custom colors per area
+- Print preview
+- Real-time collaboration
