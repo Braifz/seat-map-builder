@@ -94,7 +94,12 @@ function HelpModal({ onClose }: HelpModalProps) {
                 keys={["Ctrl", "Shift", "["]}
                 description="Send to back"
               />
-              <ShortcutItem keys={["Delete"]} description="Delete selection" />
+              <ShortcutItem
+                keys={["Delete", "/", "Backspace"]}
+                description="Open delete confirmation"
+              />
+              <ShortcutItem keys={["Ctrl", "Z"]} description="Undo" />
+              <ShortcutItem keys={["Ctrl", "Shift", "Z"]} description="Redo" />
               <ShortcutItem keys={["Ctrl", "A"]} description="Select all" />
             </div>
           </section>
@@ -206,10 +211,10 @@ function ShortcutItem({
 
   return (
     <div
-      className={`flex items-center justify-between py-2 px-3 ${colors.bgSecondary} rounded-lg`}
+      className={`flex flex-col items-start gap-2 py-2 px-3 ${colors.bgSecondary} rounded-lg`}
     >
       <span className={`text-sm ${colors.textPrimary}`}>{description}</span>
-      <div className="flex items-center gap-1">
+      <div className="flex flex-wrap items-center gap-1 max-w-full">
         {keys.map((key, index) => (
           <span key={index} className="flex items-center">
             <kbd

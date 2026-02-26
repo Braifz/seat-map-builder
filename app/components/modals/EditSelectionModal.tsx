@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useSeatMapStore } from "../../store/seatMapStore";
 import { useThemeColors } from "../../hooks/useThemeColors";
 import type {
@@ -42,6 +42,8 @@ export function EditSelectionModal({
   const {
     updateRowLabel,
     updateRowSection,
+    updateRowCurve,
+    updateRowSeatCount,
     updateSeatLabel,
     updateSeatType,
     updateSeatSection,
@@ -66,6 +68,8 @@ export function EditSelectionModal({
           label: rows[id].label,
           seatType: "seat" as SeatType,
           sectionId: rows[id].sectionId,
+          rowCurve: rows[id].curve ?? 0,
+          rowSeatCount: rows[id].seats.length,
           width: 0,
           height: 0,
           areaShape: "rectangle" as AreaShape,
@@ -83,6 +87,8 @@ export function EditSelectionModal({
           label: seats[id].label,
           seatType: seats[id].type,
           sectionId: seats[id].sectionId,
+          rowCurve: 0,
+          rowSeatCount: 0,
           width: 0,
           height: 0,
           areaShape: "rectangle" as AreaShape,
@@ -101,6 +107,8 @@ export function EditSelectionModal({
           label: area.label,
           seatType: "seat" as SeatType,
           sectionId: "",
+          rowCurve: 0,
+          rowSeatCount: 0,
           width: area.size.width,
           height: area.size.height,
           areaShape: area.shape || "rectangle",
@@ -119,6 +127,8 @@ export function EditSelectionModal({
           label: table.label,
           seatType: "seat" as SeatType,
           sectionId: "",
+          rowCurve: 0,
+          rowSeatCount: 0,
           width: table.size.width,
           height: table.size.height,
           areaShape: "rectangle" as AreaShape,
@@ -137,6 +147,8 @@ export function EditSelectionModal({
           label: structure.label,
           seatType: "seat" as SeatType,
           sectionId: "",
+          rowCurve: 0,
+          rowSeatCount: 0,
           width: structure.size.width,
           height: structure.size.height,
           areaShape: "rectangle" as AreaShape,
@@ -155,6 +167,8 @@ export function EditSelectionModal({
       label: "",
       seatType: "seat" as SeatType,
       sectionId: "",
+      rowCurve: 0,
+      rowSeatCount: 0,
       width: 0,
       height: 0,
       areaShape: "rectangle" as AreaShape,
@@ -168,50 +182,50 @@ export function EditSelectionModal({
     };
   }, [selectedIds, rows, seats, areas, tables, structures]);
 
-  const [label, setLabel] = useState("");
+  const [label, setLabel] = useState(elementInfo.label);
   const [pattern, setPattern] = useState("{n}");
-  const [seatType, setSeatType] = useState<SeatType>("seat");
-  const [sectionId, setSectionId] = useState<string>("");
-  const [width, setWidth] = useState(100);
-  const [height, setHeight] = useState(80);
-  const [areaShape, setAreaShape] = useState<AreaShape>("rectangle");
-  const [areaColor, setAreaColor] = useState("#e5e7eb");
-  const [areaOpacity, setAreaOpacity] = useState(0.8);
-  const [tableShape, setTableShape] = useState<TableShape>("round");
-  const [structureType, setStructureType] = useState<StructureType>("custom");
-  const [structureColor, setStructureColor] = useState("#6b7280");
-  const [lineType, setLineType] = useState<"straight" | "freehand">("straight");
-  const [lineStrokeWidth, setLineStrokeWidth] = useState(2);
+  const [seatType, setSeatType] = useState<SeatType>(elementInfo.seatType);
+  const [sectionId, setSectionId] = useState<string>(
+    elementInfo.sectionId || "",
+  );
+  const [rowCurve, setRowCurve] = useState(elementInfo.rowCurve);
+  const [rowSeatCount, setRowSeatCount] = useState(elementInfo.rowSeatCount);
+  const [width, setWidth] = useState(elementInfo.width);
+  const [height, setHeight] = useState(elementInfo.height);
+  const [areaShape, setAreaShape] = useState<AreaShape>(elementInfo.areaShape);
+  const [areaColor, setAreaColor] = useState(elementInfo.areaColor);
+  const [areaOpacity, setAreaOpacity] = useState(elementInfo.areaOpacity);
+  const [tableShape, setTableShape] = useState<TableShape>(
+    elementInfo.tableShape,
+  );
+  const [structureType, setStructureType] = useState<StructureType>(
+    elementInfo.structureType,
+  );
+  const [structureColor, setStructureColor] = useState(
+    elementInfo.structureColor,
+  );
+  const [lineType, setLineType] = useState<"straight" | "freehand">(
+    elementInfo.lineType,
+  );
+  const [lineStrokeWidth, setLineStrokeWidth] = useState(
+    elementInfo.lineStrokeWidth,
+  );
   const [newSectionName, setNewSectionName] = useState("");
   const [newSectionColor, setNewSectionColor] = useState("#3b82f6");
   const [newSectionNumber, setNewSectionNumber] = useState("");
   const [newSectionPrice, setNewSectionPrice] = useState("");
 
   const elementType = elementInfo.type;
+  const selectedSection =
+    sectionId && sectionId !== "new" ? sections[sectionId] : undefined;
+  const currentSection = elementInfo.sectionId
+    ? sections[elementInfo.sectionId]
+    : undefined;
   const hasSectionAssignableSelection = useMemo(
     () =>
       selectedIds.some((id) => id.startsWith("row_") || id.startsWith("seat_")),
     [selectedIds],
   );
-
-  useEffect(() => {
-    if (!isOpen) return;
-
-    setLabel(elementInfo.label);
-    setSeatType(elementInfo.seatType);
-    setSectionId(elementInfo.sectionId || "");
-    setWidth(elementInfo.width);
-    setHeight(elementInfo.height);
-    setAreaShape(elementInfo.areaShape);
-    setAreaColor(elementInfo.areaColor);
-    setAreaOpacity(elementInfo.areaOpacity);
-    setTableShape(elementInfo.tableShape);
-    setStructureType(elementInfo.structureType);
-    setStructureColor(elementInfo.structureColor);
-    setLineType(elementInfo.lineType);
-    setLineStrokeWidth(elementInfo.lineStrokeWidth);
-    setPattern("{n}");
-  }, [isOpen, elementInfo]);
 
   if (!isOpen) return null;
 
@@ -230,6 +244,8 @@ export function EditSelectionModal({
       const id = selectedIds[0];
       if (elementType === "row") {
         updateRowLabel(id, label);
+        updateRowCurve(id, rowCurve);
+        updateRowSeatCount(id, rowSeatCount);
         if (sectionId !== "new") {
           updateRowSection(id, sectionId || undefined);
         }
@@ -358,6 +374,46 @@ export function EditSelectionModal({
                     <option value="companion">Companion</option>
                   </select>
                 </div>
+              )}
+
+              {elementType === "row" && (
+                <>
+                  <div>
+                    <label
+                      className={`block text-sm font-medium ${colors.textSecondary} mb-1`}
+                    >
+                      Number of Seats
+                    </label>
+                    <input
+                      type="number"
+                      min={1}
+                      max={200}
+                      value={rowSeatCount}
+                      onChange={(e) =>
+                        setRowSeatCount(
+                          Math.max(1, parseInt(e.target.value, 10) || 1),
+                        )
+                      }
+                      className={`w-full px-3 py-2 border ${colors.border} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${colors.textPrimary} ${colors.bgPrimary}`}
+                    />
+                  </div>
+                  <div>
+                    <label
+                      className={`block text-sm font-medium ${colors.textSecondary} mb-1`}
+                    >
+                      Curvature: {rowCurve.toFixed(2)}
+                    </label>
+                    <input
+                      type="range"
+                      min={-1.5}
+                      max={1.5}
+                      step={0.05}
+                      value={rowCurve}
+                      onChange={(e) => setRowCurve(parseFloat(e.target.value))}
+                      className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                    />
+                  </div>
+                </>
               )}
 
               {elementType === "area" && (
@@ -745,6 +801,36 @@ export function EditSelectionModal({
                       placeholder="25.00"
                       className={`w-full px-3 py-2 border ${colors.border} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${colors.textPrimary} ${colors.bgPrimary}`}
                     />
+                  </div>
+                </div>
+              )}
+
+              {sectionId !== "new" && (selectedSection || currentSection) && (
+                <div className={`mt-3 p-3 rounded-md border ${colors.border}`}>
+                  <p className={`text-xs ${colors.textMuted} mb-2`}>
+                    Section details
+                  </p>
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2">
+                      <span
+                        className="w-3 h-3 rounded-full border"
+                        style={{
+                          backgroundColor:
+                            selectedSection?.color || currentSection?.color,
+                        }}
+                      />
+                      <span className={`text-sm ${colors.textPrimary}`}>
+                        {selectedSection?.label || currentSection?.label}
+                      </span>
+                    </div>
+                    <span
+                      className={`text-sm font-medium ${colors.textPrimary}`}
+                    >
+                      {(selectedSection?.price ?? currentSection?.price) !==
+                      undefined
+                        ? `€${selectedSection?.price ?? currentSection?.price}`
+                        : "No price"}
+                    </span>
                   </div>
                 </div>
               )}

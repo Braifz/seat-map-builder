@@ -8,7 +8,6 @@ import { Row } from "./Row";
 import { Area } from "./Area";
 import { Table } from "./Table";
 import { Structure } from "./Structure";
-import { CreateRowModal } from "../modals/CreateRowModal";
 import { CreateTableModal } from "../modals/CreateTableModal";
 import { CreateAreaModal } from "../modals/CreateAreaModal";
 import { CreateMultipleRowsModal } from "../modals/CreateMultipleRowsModal";
@@ -30,6 +29,73 @@ import type {
   LineConfig,
 } from "../../types";
 
+const DEFAULT_ROW_SEAT_COUNT = 8;
+
+const clampCurve = (curve: number): number =>
+  Math.max(-1.5, Math.min(1.5, curve));
+
+const getCurvedRowControlPoint = (
+  start: Position,
+  end: Position,
+  curve: number,
+): Position => {
+  const dx = end.x - start.x;
+  const dy = end.y - start.y;
+  const length = Math.hypot(dx, dy) || 1;
+  const ux = dx / length;
+  const uy = dy / length;
+  const nx = -uy;
+  const ny = ux;
+  const midpoint = {
+    x: (start.x + end.x) / 2,
+    y: (start.y + end.y) / 2,
+  };
+  const sagitta = clampCurve(curve) * length * 0.35;
+
+  return {
+    x: midpoint.x + nx * sagitta,
+    y: midpoint.y + ny * sagitta,
+  };
+};
+
+const computeCurveFromPoint = (
+  start: Position,
+  end: Position,
+  point: Position,
+): number => {
+  const dx = end.x - start.x;
+  const dy = end.y - start.y;
+  const length = Math.hypot(dx, dy) || 1;
+  const nx = -dy / length;
+  const ny = dx / length;
+  const midpoint = {
+    x: (start.x + end.x) / 2,
+    y: (start.y + end.y) / 2,
+  };
+  const projection = (point.x - midpoint.x) * nx + (point.y - midpoint.y) * ny;
+  return clampCurve(projection / (length * 0.35));
+};
+
+const computeCurvedSeatPositions = (
+  start: Position,
+  end: Position,
+  curve: number,
+  seatCount: number,
+): Position[] => {
+  if (seatCount <= 0) return [];
+  const control = getCurvedRowControlPoint(start, end, curve);
+
+  return Array.from({ length: seatCount }, (_, index) => {
+    const t = seatCount === 1 ? 0.5 : index / (seatCount - 1);
+    const mt = 1 - t;
+
+    return {
+      x: mt * mt * start.x + 2 * mt * t * control.x + t * t * end.x,
+      y: mt * mt * start.y + 2 * mt * t * control.y + t * t * end.y,
+    };
+  });
+};
+
 export function SeatMapCanvas() {
   const svgRef = useRef<SVGSVGElement>(null);
   const { colors } = useThemeColors();
@@ -38,7 +104,6 @@ export function SeatMapCanvas() {
   const [lastPan, setLastPan] = useState<Position>({ x: 0, y: 0 });
   const [isShiftPressed, setIsShiftPressed] = useState(false);
   const [pendingClick, setPendingClick] = useState<Position | null>(null);
-  const [showRowModal, setShowRowModal] = useState(false);
   const [showTableModal, setShowTableModal] = useState(false);
   const [showAreaModal, setShowAreaModal] = useState(false);
   const [showMultipleRowsModal, setShowMultipleRowsModal] = useState(false);
@@ -57,6 +122,13 @@ export function SeatMapCanvas() {
   const [isBoxSelecting, setIsBoxSelecting] = useState(false);
   const [boxStart, setBoxStart] = useState<Position>({ x: 0, y: 0 });
   const [boxEnd, setBoxEnd] = useState<Position>({ x: 0, y: 0 });
+  const [isDrawingRow, setIsDrawingRow] = useState(false);
+  const [rowDraftStart, setRowDraftStart] = useState<Position | null>(null);
+  const [rowDraftEnd, setRowDraftEnd] = useState<Position | null>(null);
+  const [rowDraftCurve] = useState(0.35);
+  const [curveDraggingRowId, setCurveDraggingRowId] = useState<RowId | null>(
+    null,
+  );
 
   const {
     rows,
@@ -73,7 +145,7 @@ export function SeatMapCanvas() {
     clearSelection,
     setPan,
     setZoom,
-    addRow,
+    addCurvedRow,
     addArea,
     addTable,
     addMultipleRows,
@@ -90,6 +162,9 @@ export function SeatMapCanvas() {
     rotateArea,
     rotateTable,
     rotateStructure,
+    updateRowCurve,
+    undo,
+    redo,
   } = useSeatMapStore();
 
   // Drag state for moving elements
@@ -119,10 +194,37 @@ export function SeatMapCanvas() {
     };
 
     const handleKeyDown = (e: KeyboardEvent) => {
+      const isTyping = isTypingTarget(e.target);
+
       if (e.key === "Shift") setIsShiftPressed(true);
-      if (e.key === " " && isTypingTarget(e.target)) {
+      if (e.key === " " && isTyping) {
         return;
       }
+
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "z") {
+        e.preventDefault();
+        if (e.shiftKey) {
+          redo();
+        } else {
+          undo();
+        }
+        return;
+      }
+
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "y") {
+        e.preventDefault();
+        redo();
+        return;
+      }
+
+      if (!isTyping && (e.key === "Delete" || e.key === "Backspace")) {
+        if (selectedIds.length > 0) {
+          e.preventDefault();
+          setShowDeleteConfirmModal(true);
+        }
+        return;
+      }
+
       if (e.key === " " && !isSpacePressed) {
         e.preventDefault();
         setIsSpacePressed(true);
@@ -192,6 +294,8 @@ export function SeatMapCanvas() {
     rotateStructure,
     bringToFront,
     sendToBack,
+    undo,
+    redo,
   ]);
 
   // Convert screen coordinates to SVG coordinates
@@ -214,6 +318,25 @@ export function SeatMapCanvas() {
 
       const target = e.target as Element;
       const svgPoint = screenToSVG(e.clientX, e.clientY);
+
+      const curveHandle = target.closest(
+        "[data-row-curve-handle='true']",
+      ) as SVGElement | null;
+      if (activeTool === "select" && curveHandle) {
+        const rowId = curveHandle.getAttribute("data-row-id");
+        if (rowId && rows[rowId]) {
+          e.stopPropagation();
+          setCurveDraggingRowId(rowId as RowId);
+          return;
+        }
+      }
+
+      if (activeTool === "addRow" && e.target === svgRef.current) {
+        setIsDrawingRow(true);
+        setRowDraftStart(svgPoint);
+        setRowDraftEnd(svgPoint);
+        return;
+      }
 
       // Check if clicking on a selected element for dragging
       const clickedElementId = selectedIds.find((id) => {
@@ -244,9 +367,6 @@ export function SeatMapCanvas() {
         setIsDragging(true);
         setDragStart({ x: e.clientX, y: e.clientY });
         setLastPan(pan);
-      } else if (activeTool === "addRow") {
-        setPendingClick(svgPoint);
-        setShowRowModal(true);
       } else if (activeTool === "addMultipleRows") {
         setPendingClick(svgPoint);
         setShowMultipleRowsModal(true);
@@ -269,21 +389,16 @@ export function SeatMapCanvas() {
         }
       }
     },
-    [activeTool, pan, screenToSVG, clearSelection, selectedIds, isShiftPressed],
+    [
+      activeTool,
+      pan,
+      screenToSVG,
+      clearSelection,
+      selectedIds,
+      isShiftPressed,
+      rows,
+    ],
   );
-
-  // Handle row creation from modal
-  const handleCreateRow = (
-    label: string,
-    seatCount: number,
-    sectionId?: string,
-  ) => {
-    if (pendingClick) {
-      addRow(label, seatCount, pendingClick, sectionId);
-      setPendingClick(null);
-      setActiveTool("select");
-    }
-  };
 
   // Handle multiple rows creation from modal
   const handleCreateMultipleRows = (
@@ -411,6 +526,31 @@ export function SeatMapCanvas() {
   // Handle mouse move (for panning, element dragging, and box selection)
   const handleMouseMove = useCallback(
     (e: React.MouseEvent) => {
+      // Curvature handle drag
+      if (curveDraggingRowId) {
+        const row = rows[curveDraggingRowId];
+        if (!row) return;
+
+        const rowSeats = row.seats
+          .map((seatId) => seats[seatId])
+          .filter((seat): seat is NonNullable<typeof seat> => Boolean(seat));
+        const start = row.start || rowSeats[0]?.position;
+        const end = row.end || rowSeats[rowSeats.length - 1]?.position;
+        if (!start || !end) return;
+
+        const svgPoint = screenToSVG(e.clientX, e.clientY);
+        const curve = computeCurveFromPoint(start, end, svgPoint);
+        updateRowCurve(curveDraggingRowId, curve);
+        return;
+      }
+
+      // Draft row drawing
+      if (isDrawingRow) {
+        const svgPoint = screenToSVG(e.clientX, e.clientY);
+        setRowDraftEnd(svgPoint);
+        return;
+      }
+
       // Box selection
       if (isBoxSelecting) {
         const svgPoint = screenToSVG(e.clientX, e.clientY);
@@ -458,6 +598,8 @@ export function SeatMapCanvas() {
     },
     [
       isDragging,
+      isDrawingRow,
+      curveDraggingRowId,
       isElementDragging,
       isBoxSelecting,
       activeTool,
@@ -472,11 +614,44 @@ export function SeatMapCanvas() {
       moveTable,
       moveStructure,
       moveSeat,
+      rows,
+      seats,
+      updateRowCurve,
     ],
   );
 
   // Handle mouse up
   const handleMouseUp = useCallback(() => {
+    if (curveDraggingRowId) {
+      setCurveDraggingRowId(null);
+      return;
+    }
+
+    if (isDrawingRow && rowDraftStart && rowDraftEnd) {
+      const length = Math.hypot(
+        rowDraftEnd.x - rowDraftStart.x,
+        rowDraftEnd.y - rowDraftStart.y,
+      );
+
+      if (length >= 20) {
+        const rowLabel = `Row ${Object.keys(rows).length + 1}`;
+        const rowId = addCurvedRow(
+          rowLabel,
+          DEFAULT_ROW_SEAT_COUNT,
+          rowDraftStart,
+          rowDraftEnd,
+          rowDraftCurve,
+        );
+        selectElement(rowId, false);
+        setActiveTool("select");
+      }
+
+      setIsDrawingRow(false);
+      setRowDraftStart(null);
+      setRowDraftEnd(null);
+      return;
+    }
+
     // Finish box selection and select elements inside
     if (isBoxSelecting) {
       const minX = Math.min(boxStart.x, boxEnd.x);
@@ -548,16 +723,23 @@ export function SeatMapCanvas() {
     setIsElementDragging(false);
     setIsBoxSelecting(false);
   }, [
+    curveDraggingRowId,
+    isDrawingRow,
+    rowDraftStart,
+    rowDraftEnd,
+    addCurvedRow,
+    selectElement,
+    setActiveTool,
+    rowDraftCurve,
+    rows,
     isBoxSelecting,
     boxStart,
     boxEnd,
-    rows,
     seats,
     areas,
     tables,
     structures,
     selectedIds,
-    selectElement,
   ]);
 
   // Handle wheel for zoom
@@ -638,6 +820,42 @@ export function SeatMapCanvas() {
               />
             ))}
 
+          {/* Row curve handles (only in select mode) */}
+          {activeTool === "select" &&
+            selectedIds
+              .filter((id) => id.startsWith("row_") && rows[id])
+              .map((rowId) => {
+                const row = rows[rowId];
+                const rowSeats = row.seats
+                  .map((seatId) => seats[seatId])
+                  .filter(Boolean);
+                if (rowSeats.length === 0) return null;
+
+                const start = row.start || rowSeats[0].position;
+                const end = row.end || rowSeats[rowSeats.length - 1].position;
+                const control = getCurvedRowControlPoint(
+                  start,
+                  end,
+                  row.curve ?? 0,
+                );
+
+                return (
+                  <g key={`row-curve-handle-${rowId}`}>
+                    <circle
+                      cx={control.x}
+                      cy={control.y}
+                      r={10 / zoom}
+                      fill="#ffffff"
+                      stroke="#2563eb"
+                      strokeWidth={2 / zoom}
+                      data-row-curve-handle="true"
+                      data-row-id={rowId}
+                      className="cursor-grab"
+                    />
+                  </g>
+                );
+              })}
+
           {/* Render structures sorted by zIndex */}
           {[...Object.values(structures)]
             .sort((a, b) => (a.zIndex || 0) - (b.zIndex || 0))
@@ -712,21 +930,54 @@ export function SeatMapCanvas() {
               strokeDasharray={`${4 / zoom} ${4 / zoom}`}
             />
           )}
+
+          {/* Draft curved row preview */}
+          {isDrawingRow &&
+            rowDraftStart &&
+            rowDraftEnd &&
+            (() => {
+              const control = getCurvedRowControlPoint(
+                rowDraftStart,
+                rowDraftEnd,
+                rowDraftCurve,
+              );
+              const draftPositions = computeCurvedSeatPositions(
+                rowDraftStart,
+                rowDraftEnd,
+                rowDraftCurve,
+                DEFAULT_ROW_SEAT_COUNT,
+              );
+              const path = `M ${rowDraftStart.x} ${rowDraftStart.y} Q ${control.x} ${control.y} ${rowDraftEnd.x} ${rowDraftEnd.y}`;
+
+              return (
+                <g>
+                  <path
+                    d={path}
+                    fill="none"
+                    stroke="#2563eb"
+                    strokeDasharray={`${6 / zoom} ${6 / zoom}`}
+                    strokeWidth={2 / zoom}
+                    opacity={0.9}
+                  />
+                  {draftPositions.map((position, index) => (
+                    <circle
+                      key={`draft-seat-${index}`}
+                      cx={position.x}
+                      cy={position.y}
+                      r={8 / zoom}
+                      fill="#93c5fd"
+                      stroke="#2563eb"
+                      strokeWidth={1.5 / zoom}
+                      opacity={0.9}
+                    />
+                  ))}
+                </g>
+              );
+            })()}
         </g>
       </svg>
 
       {/* Modals */}
-      <CreateRowModal
-        isOpen={showRowModal}
-        onClose={() => {
-          setShowRowModal(false);
-          setPendingClick(null);
-          setActiveTool("select");
-        }}
-        onCreate={handleCreateRow}
-        defaultPosition={pendingClick || undefined}
-      />
-
       <CreateMultipleRowsModal
         isOpen={showMultipleRowsModal}
         onClose={() => {
@@ -815,6 +1066,7 @@ export function SeatMapCanvas() {
 
       {/* Edit Selection Modal */}
       <EditSelectionModal
+        key={`${showEditModal}-${selectedIds.join("|")}`}
         isOpen={showEditModal}
         onClose={() => setShowEditModal(false)}
         selectedIds={selectedIds}

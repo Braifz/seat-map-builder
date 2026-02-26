@@ -29,15 +29,39 @@ export function Row({
 
   if (!firstSeat || !lastSeat) return null;
 
+  const start = row.start || firstSeat.position;
+  const end = row.end || lastSeat.position;
+  const curve = row.curve ?? 0;
+  const dx = end.x - start.x;
+  const dy = end.y - start.y;
+  const length = Math.hypot(dx, dy) || 1;
+  const ux = dx / length;
+  const uy = dy / length;
+  const nx = -uy;
+  const ny = ux;
+  const midpoint = {
+    x: (start.x + end.x) / 2,
+    y: (start.y + end.y) / 2,
+  };
+  const sagitta = curve * length * 0.35;
+  const control = {
+    x: midpoint.x + nx * sagitta,
+    y: midpoint.y + ny * sagitta,
+  };
+  const connectionPath = `M ${start.x} ${start.y} Q ${control.x} ${control.y} ${end.x} ${end.y}`;
+
+  const minX = Math.min(...seats.map((seat) => seat.position.x));
+  const maxX = Math.max(...seats.map((seat) => seat.position.x));
+  const minY = Math.min(...seats.map((seat) => seat.position.y));
+  const maxY = Math.max(...seats.map((seat) => seat.position.y));
+
   return (
     <g className="cursor-pointer" onClick={onClick} data-element-id={row.id}>
       {/* Connection line between seats */}
       {seats.length > 1 && (
-        <line
-          x1={firstSeat.position.x}
-          y1={firstSeat.position.y}
-          x2={lastSeat.position.x}
-          y2={lastSeat.position.y}
+        <path
+          d={connectionPath}
+          fill="none"
           className="stroke-gray-300"
           strokeWidth={2}
         />
@@ -46,10 +70,10 @@ export function Row({
       {/* Selection highlight for the entire row */}
       {isSelected && (
         <rect
-          x={firstSeat.position.x - 30}
-          y={firstSeat.position.y - 20}
-          width={lastSeat.position.x - firstSeat.position.x + 60}
-          height={40}
+          x={minX - 24}
+          y={minY - 24}
+          width={maxX - minX + 48}
+          height={maxY - minY + 48}
           rx={4}
           fill="none"
           className="stroke-blue-500"

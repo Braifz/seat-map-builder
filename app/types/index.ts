@@ -50,6 +50,8 @@ export interface Row {
   position: Position;
   seats: SeatId[];
   curve?: number;
+  start?: Position;
+  end?: Position;
   sectionId?: SectionId;
   zIndex?: number;
 }
@@ -139,6 +141,14 @@ export interface SeatMapActions {
     position?: Position,
     sectionId?: SectionId,
   ) => RowId;
+  addCurvedRow: (
+    label: string,
+    seatCount: number,
+    start: Position,
+    end: Position,
+    curve?: number,
+    sectionId?: SectionId,
+  ) => RowId;
   addMultipleRows: (
     rowConfigs: RowConfig[],
     basePosition: Position,
@@ -148,6 +158,14 @@ export interface SeatMapActions {
   removeRows: (rowIds: RowId[]) => void;
   updateRowLabel: (rowId: RowId, label: string) => void;
   updateRowSection: (rowId: RowId, sectionId?: SectionId) => void;
+  updateRowCurve: (rowId: RowId, curve: number) => void;
+  updateRowSeatCount: (rowId: RowId, seatCount: number) => void;
+  updateRowGeometry: (
+    rowId: RowId,
+    start: Position,
+    end: Position,
+    curve?: number,
+  ) => void;
 
   // Section actions
   addSection: (
@@ -250,6 +268,8 @@ export interface SeatMapActions {
   zoomOut: () => void;
   resetView: () => void;
   setActiveTool: (tool: ToolType) => void;
+  undo: () => void;
+  redo: () => void;
 
   // Import/Export
   exportMap: () => string;
