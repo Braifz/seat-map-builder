@@ -95,63 +95,43 @@ export function Seat({
         {seat.label}
       </text>
 
-      {/* Hover Tooltip */}
+      {/* Hover Tooltip - Minimalist Style */}
       {isHovered && (
-        <g transform={`translate(0, -${size + 10})`}>
+        <g transform={`translate(0, -${size + 12})`}>
+          {/* White card background with subtle shadow */}
           <rect
-            x={-70}
-            y={-60}
-            width={140}
-            height={55}
+            x={-60}
+            y={-55}
+            width={120}
+            height={50}
             rx={8}
-            fill="#1f2937"
-            stroke="#374151"
+            fill="white"
+            stroke="#e5e7eb"
             strokeWidth={1}
+            filter="drop-shadow(0 2px 4px rgba(0,0,0,0.1))"
           />
-          {/* Section header */}
-          <text
-            x={0}
-            y={-42}
-            textAnchor="middle"
-            className="fill-gray-400 text-xs uppercase tracking-wider"
-            style={{ fontSize: `${8 / scale}px` }}
-          >
-            {section ? `SECTION ${section.sectionNumber}` : "NO SECTION"}
-          </text>
-          {/* Section name */}
-          <text
-            x={0}
-            y={-25}
-            textAnchor="middle"
-            className="fill-white font-semibold"
-            style={{ fontSize: `${12 / scale}px` }}
-          >
-            {section?.label || "General"}
-          </text>
           {/* Row | Seat info */}
           <text
             x={0}
-            y={-8}
+            y={-38}
             textAnchor="middle"
-            className="fill-gray-300"
-            style={{ fontSize: `${10 / scale}px` }}
+            className="fill-gray-500"
+            style={{ fontSize: `${9 / scale}px` }}
           >
             {rowLabel
-              ? `Row ${rowLabel} | Seat ${seat.label}`
+              ? `Row ${rowLabel} • Seat ${seat.label}`
               : `Seat ${seat.label}`}
           </text>
           {/* Price */}
-          {section?.price && (
-            <text
-              x={0}
-              y={8}
-              textAnchor="middle"
-              className="fill-green-400 font-semibold"
-              style={{ fontSize: `${11 / scale}px` }}
-            >
-              €{section.price}
-            </text>
-          )}
+          <text
+            x={0}
+            y={-22}
+            textAnchor="middle"
+            className="fill-gray-900 font-bold"
+            style={{ fontSize: `${13 / scale}px` }}
+          >
+            €{section?.price || "—"}
+          </text>
         </g>
       )}
     </g>
