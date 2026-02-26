@@ -1,5 +1,7 @@
 "use client";
 
+import { useThemeColors } from "../../hooks/useThemeColors";
+
 interface ConfirmationModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -21,19 +23,25 @@ export function ConfirmationModal({
   cancelText = "Cancel",
   confirmVariant = "danger",
 }: ConfirmationModalProps) {
+  const { colors } = useThemeColors();
+
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-xl w-96 p-6">
-        <h2 className="text-lg font-semibold mb-2 text-black">{title}</h2>
-        <p className="text-gray-600 mb-6">{message}</p>
+      <div
+        className={`${colors.bgPrimary} rounded-lg shadow-xl w-96 p-6 border ${colors.border}`}
+      >
+        <h2 className={`text-lg font-semibold mb-2 ${colors.textPrimary}`}>
+          {title}
+        </h2>
+        <p className={`${colors.textSecondary} mb-6`}>{message}</p>
 
         <div className="flex gap-3">
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors"
+            className={`flex-1 px-4 py-2 border ${colors.border} rounded-md ${colors.textPrimary} ${colors.bgHover} transition-colors`}
           >
             {cancelText}
           </button>
