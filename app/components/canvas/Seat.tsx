@@ -1,13 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { memo, useState } from "react";
 import type { Seat as SeatType, Section } from "../../types";
 import { useThemeColors } from "../../hooks/useThemeColors";
 
 interface SeatProps {
   seat: SeatType;
   isSelected: boolean;
-  onClick: (e: React.MouseEvent) => void;
+  onClick: (seatId: string, e: React.MouseEvent) => void;
   scale?: number;
   section?: Section;
   rowLabel?: string;
@@ -15,7 +15,7 @@ interface SeatProps {
 
 const SEAT_SIZE = 24;
 
-export function Seat({
+export const Seat = memo(function Seat({
   seat,
   isSelected,
   onClick,
@@ -62,7 +62,7 @@ export function Seat({
     <g
       transform={`translate(${seat.position.x}, ${seat.position.y})`}
       className="cursor-pointer"
-      onClick={onClick}
+      onClick={(e) => onClick(seat.id, e)}
       data-element-id={seat.id}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -139,4 +139,4 @@ export function Seat({
       )}
     </g>
   );
-}
+});

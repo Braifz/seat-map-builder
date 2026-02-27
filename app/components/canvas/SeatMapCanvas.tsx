@@ -1,6 +1,7 @@
 "use client";
 
-import { useRef, useState, useCallback, useEffect } from "react";
+import { useRef, useState, useCallback, useEffect, useMemo } from "react";
+import { useShallow } from "zustand/react/shallow";
 import { useSeatMapStore } from "../../store/seatMapStore";
 import { useThemeColors } from "../../hooks/useThemeColors";
 import { Seat } from "./Seat";
@@ -145,6 +146,22 @@ export function SeatMapCanvas() {
     zoom,
     pan,
     activeTool,
+  } = useSeatMapStore(
+    useShallow((state) => ({
+      rows: state.rows,
+      seats: state.seats,
+      areas: state.areas,
+      tables: state.tables,
+      structures: state.structures,
+      sections: state.sections,
+      selectedIds: state.selectedIds,
+      zoom: state.zoom,
+      pan: state.pan,
+      activeTool: state.activeTool,
+    })),
+  );
+
+  const {
     selectElement,
     clearSelection,
     setPan,
@@ -172,7 +189,37 @@ export function SeatMapCanvas() {
     redo,
     copySelected,
     pasteClipboard,
-  } = useSeatMapStore();
+  } = useSeatMapStore(
+    useShallow((state) => ({
+      selectElement: state.selectElement,
+      clearSelection: state.clearSelection,
+      setPan: state.setPan,
+      setZoom: state.setZoom,
+      addCurvedRow: state.addCurvedRow,
+      addArea: state.addArea,
+      addTable: state.addTable,
+      addMultipleRows: state.addMultipleRows,
+      addStructure: state.addStructure,
+      setActiveTool: state.setActiveTool,
+      deleteSelected: state.deleteSelected,
+      moveRow: state.moveRow,
+      moveArea: state.moveArea,
+      moveTable: state.moveTable,
+      moveStructure: state.moveStructure,
+      moveSeat: state.moveSeat,
+      bringToFront: state.bringToFront,
+      sendToBack: state.sendToBack,
+      rotateArea: state.rotateArea,
+      rotateTable: state.rotateTable,
+      rotateStructure: state.rotateStructure,
+      updateRowCurve: state.updateRowCurve,
+      updateRowGeometry: state.updateRowGeometry,
+      undo: state.undo,
+      redo: state.redo,
+      copySelected: state.copySelected,
+      pasteClipboard: state.pasteClipboard,
+    })),
+  );
 
   // Drag state for moving elements
   const [isElementDragging, setIsElementDragging] = useState(false);
@@ -180,6 +227,62 @@ export function SeatMapCanvas() {
     x: 0,
     y: 0,
   });
+  const mouseMoveRafRef = useRef<number | null>(null);
+  const scheduledMouseMoveRef = useRef<(() => void) | null>(null);
+
+  const selectedIdSet = useMemo(() => new Set(selectedIds), [selectedIds]);
+  const sortedAreas = useMemo(
+    () =>
+      [...Object.values(areas)].sort(
+        (a, b) => (a.zIndex || 0) - (b.zIndex || 0),
+      ),
+    [areas],
+  );
+  const sortedStructures = useMemo(
+    () =>
+      [...Object.values(structures)].sort(
+        (a, b) => (a.zIndex || 0) - (b.zIndex || 0),
+      ),
+    [structures],
+  );
+  const sortedRows = useMemo(
+    () =>
+      [...Object.values(rows)].sort(
+        (a, b) => (a.zIndex || 0) - (b.zIndex || 0),
+      ),
+    [rows],
+  );
+  const sortedTables = useMemo(
+    () =>
+      [...Object.values(tables)].sort(
+        (a, b) => (a.zIndex || 0) - (b.zIndex || 0),
+      ),
+    [tables],
+  );
+  const standaloneSeats = useMemo(
+    () => Object.values(seats).filter((seat) => !seat.rowId && !seat.tableId),
+    [seats],
+  );
+
+  const scheduleMouseMove = useCallback((callback: () => void) => {
+    scheduledMouseMoveRef.current = callback;
+    if (mouseMoveRafRef.current !== null) return;
+
+    mouseMoveRafRef.current = window.requestAnimationFrame(() => {
+      mouseMoveRafRef.current = null;
+      const scheduled = scheduledMouseMoveRef.current;
+      scheduledMouseMoveRef.current = null;
+      scheduled?.();
+    });
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (mouseMoveRafRef.current !== null) {
+        window.cancelAnimationFrame(mouseMoveRafRef.current);
+      }
+    };
+  }, []);
 
   // Handle keyboard events for shift key, spacebar, rotation and layer shortcuts
   useEffect(() => {
@@ -575,106 +678,111 @@ export function SeatMapCanvas() {
   // Handle mouse move (for panning, element dragging, and box selection)
   const handleMouseMove = useCallback(
     (e: React.MouseEvent) => {
-      // Curvature handle drag
-      if (curveDraggingRowId) {
-        const row = rows[curveDraggingRowId];
-        if (!row) return;
+      const clientX = e.clientX;
+      const clientY = e.clientY;
 
-        const rowSeats = row.seats
-          .map((seatId) => seats[seatId])
-          .filter((seat): seat is NonNullable<typeof seat> => Boolean(seat));
-        const start = row.start || rowSeats[0]?.position;
-        const end = row.end || rowSeats[rowSeats.length - 1]?.position;
-        if (!start || !end) return;
+      scheduleMouseMove(() => {
+        // Curvature handle drag
+        if (curveDraggingRowId) {
+          const row = rows[curveDraggingRowId];
+          if (!row) return;
 
-        const svgPoint = screenToSVG(e.clientX, e.clientY);
-        const curve = computeCurveFromPoint(start, end, svgPoint);
-        updateRowCurve(curveDraggingRowId, curve);
-        return;
-      }
+          const rowSeats = row.seats
+            .map((seatId) => seats[seatId])
+            .filter((seat): seat is NonNullable<typeof seat> => Boolean(seat));
+          const start = row.start || rowSeats[0]?.position;
+          const end = row.end || rowSeats[rowSeats.length - 1]?.position;
+          if (!start || !end) return;
 
-      if (startDraggingRowId) {
-        const row = rows[startDraggingRowId];
-        if (!row) return;
+          const svgPoint = screenToSVG(clientX, clientY);
+          const curve = computeCurveFromPoint(start, end, svgPoint);
+          updateRowCurve(curveDraggingRowId, curve);
+          return;
+        }
 
-        const rowSeats = row.seats
-          .map((seatId) => seats[seatId])
-          .filter((seat): seat is NonNullable<typeof seat> => Boolean(seat));
-        const start = row.start || rowSeats[0]?.position;
-        const end = row.end || rowSeats[rowSeats.length - 1]?.position;
-        if (!start || !end) return;
+        if (startDraggingRowId) {
+          const row = rows[startDraggingRowId];
+          if (!row) return;
 
-        const svgPoint = screenToSVG(e.clientX, e.clientY);
-        updateRowGeometry(startDraggingRowId, svgPoint, end, row.curve ?? 0);
-        return;
-      }
+          const rowSeats = row.seats
+            .map((seatId) => seats[seatId])
+            .filter((seat): seat is NonNullable<typeof seat> => Boolean(seat));
+          const start = row.start || rowSeats[0]?.position;
+          const end = row.end || rowSeats[rowSeats.length - 1]?.position;
+          if (!start || !end) return;
 
-      if (endDraggingRowId) {
-        const row = rows[endDraggingRowId];
-        if (!row) return;
+          const svgPoint = screenToSVG(clientX, clientY);
+          updateRowGeometry(startDraggingRowId, svgPoint, end, row.curve ?? 0);
+          return;
+        }
 
-        const rowSeats = row.seats
-          .map((seatId) => seats[seatId])
-          .filter((seat): seat is NonNullable<typeof seat> => Boolean(seat));
-        const start = row.start || rowSeats[0]?.position;
-        const end = row.end || rowSeats[rowSeats.length - 1]?.position;
-        if (!start || !end) return;
+        if (endDraggingRowId) {
+          const row = rows[endDraggingRowId];
+          if (!row) return;
 
-        const svgPoint = screenToSVG(e.clientX, e.clientY);
-        updateRowGeometry(endDraggingRowId, start, svgPoint, row.curve ?? 0);
-        return;
-      }
+          const rowSeats = row.seats
+            .map((seatId) => seats[seatId])
+            .filter((seat): seat is NonNullable<typeof seat> => Boolean(seat));
+          const start = row.start || rowSeats[0]?.position;
+          const end = row.end || rowSeats[rowSeats.length - 1]?.position;
+          if (!start || !end) return;
 
-      // Draft row drawing
-      if (isDrawingRow) {
-        const svgPoint = screenToSVG(e.clientX, e.clientY);
-        setRowDraftEnd(svgPoint);
-        return;
-      }
+          const svgPoint = screenToSVG(clientX, clientY);
+          updateRowGeometry(endDraggingRowId, start, svgPoint, row.curve ?? 0);
+          return;
+        }
 
-      // Box selection
-      if (isBoxSelecting) {
-        const svgPoint = screenToSVG(e.clientX, e.clientY);
-        setBoxEnd(svgPoint);
-        return;
-      }
+        // Draft row drawing
+        if (isDrawingRow) {
+          const svgPoint = screenToSVG(clientX, clientY);
+          setRowDraftEnd(svgPoint);
+          return;
+        }
 
-      // Element dragging - move all selected elements
-      if (isElementDragging) {
-        const svgPoint = screenToSVG(e.clientX, e.clientY);
-        const delta = {
-          x: svgPoint.x - dragElementStart.x,
-          y: svgPoint.y - dragElementStart.y,
-        };
+        // Box selection
+        if (isBoxSelecting) {
+          const svgPoint = screenToSVG(clientX, clientY);
+          setBoxEnd(svgPoint);
+          return;
+        }
 
-        // Move all selected elements
-        selectedIds.forEach((id) => {
-          if (id.startsWith("row_")) {
-            moveRow(id as RowId, delta);
-          } else if (id.startsWith("area_")) {
-            moveArea(id as AreaId, delta);
-          } else if (id.startsWith("table_")) {
-            moveTable(id as TableId, delta);
-          } else if (id.startsWith("structure_")) {
-            moveStructure(id as StructureId, delta);
-          } else if (id.startsWith("seat_")) {
-            moveSeat(id as SeatId, delta);
-          }
+        // Element dragging - move all selected elements
+        if (isElementDragging) {
+          const svgPoint = screenToSVG(clientX, clientY);
+          const delta = {
+            x: svgPoint.x - dragElementStart.x,
+            y: svgPoint.y - dragElementStart.y,
+          };
+
+          // Move all selected elements
+          selectedIds.forEach((id) => {
+            if (id.startsWith("row_")) {
+              moveRow(id as RowId, delta);
+            } else if (id.startsWith("area_")) {
+              moveArea(id as AreaId, delta);
+            } else if (id.startsWith("table_")) {
+              moveTable(id as TableId, delta);
+            } else if (id.startsWith("structure_")) {
+              moveStructure(id as StructureId, delta);
+            } else if (id.startsWith("seat_")) {
+              moveSeat(id as SeatId, delta);
+            }
+          });
+
+          setDragElementStart(svgPoint);
+          return;
+        }
+
+        // Panning
+        if (!isDragging || activeTool !== "pan") return;
+
+        const dx = clientX - dragStart.x;
+        const dy = clientY - dragStart.y;
+
+        setPan({
+          x: lastPan.x + dx,
+          y: lastPan.y + dy,
         });
-
-        setDragElementStart(svgPoint);
-        return;
-      }
-
-      // Panning
-      if (!isDragging || activeTool !== "pan") return;
-
-      const dx = e.clientX - dragStart.x;
-      const dy = e.clientY - dragStart.y;
-
-      setPan({
-        x: lastPan.x + dx,
-        y: lastPan.y + dy,
       });
     },
     [
@@ -701,6 +809,7 @@ export function SeatMapCanvas() {
       seats,
       updateRowCurve,
       updateRowGeometry,
+      scheduleMouseMove,
     ],
   );
 
@@ -807,7 +916,7 @@ export function SeatMapCanvas() {
 
       // Select all elements in box
       elementsInBox.forEach((id) => {
-        if (!selectedIds.includes(id)) {
+        if (!selectedIdSet.has(id)) {
           selectElement(id, true);
         }
       });
@@ -835,7 +944,7 @@ export function SeatMapCanvas() {
     areas,
     tables,
     structures,
-    selectedIds,
+    selectedIdSet,
   ]);
 
   // Handle wheel for zoom
@@ -904,17 +1013,15 @@ export function SeatMapCanvas() {
       >
         <g transform={`translate(${pan.x}, ${pan.y}) scale(${zoom})`}>
           {/* Render areas sorted by zIndex */}
-          {[...Object.values(areas)]
-            .sort((a, b) => (a.zIndex || 0) - (b.zIndex || 0))
-            .map((area) => (
-              <Area
-                key={area.id}
-                area={area}
-                isSelected={selectedIds.includes(area.id)}
-                onClick={(e) => handleAreaClick(area.id, e)}
-                scale={zoom}
-              />
-            ))}
+          {sortedAreas.map((area) => (
+            <Area
+              key={area.id}
+              area={area}
+              isSelected={selectedIdSet.has(area.id)}
+              onClick={(e) => handleAreaClick(area.id, e)}
+              scale={zoom}
+            />
+          ))}
 
           {/* Row curve handles (only in select mode) */}
           {activeTool === "select" &&
@@ -977,65 +1084,55 @@ export function SeatMapCanvas() {
               })}
 
           {/* Render structures sorted by zIndex */}
-          {[...Object.values(structures)]
-            .sort((a, b) => (a.zIndex || 0) - (b.zIndex || 0))
-            .map((structure) => (
-              <Structure
-                key={structure.id}
-                structure={structure}
-                isSelected={selectedIds.includes(structure.id)}
-                onClick={(e) => handleStructureClick(structure.id, e)}
-                scale={zoom}
-              />
-            ))}
+          {sortedStructures.map((structure) => (
+            <Structure
+              key={structure.id}
+              structure={structure}
+              isSelected={selectedIdSet.has(structure.id)}
+              onClick={(e) => handleStructureClick(structure.id, e)}
+              scale={zoom}
+            />
+          ))}
 
           {/* Render rows sorted by zIndex */}
-          {[...Object.values(rows)]
-            .sort((a, b) => (a.zIndex || 0) - (b.zIndex || 0))
-            .map((row) => (
-              <Row
-                key={row.id}
-                row={row}
-                seats={row.seats.map((seatId) => seats[seatId]).filter(Boolean)}
-                isSelected={selectedIds.includes(row.id)}
-                onClick={(e) => handleRowClick(row.id, e)}
-                onSeatClick={handleSeatClick}
-                selectedIds={selectedIds}
-                scale={zoom}
-                section={row.sectionId ? sections[row.sectionId] : undefined}
-              />
-            ))}
+          {sortedRows.map((row) => (
+            <Row
+              key={row.id}
+              row={row}
+              seats={row.seats.map((seatId) => seats[seatId]).filter(Boolean)}
+              isSelected={selectedIdSet.has(row.id)}
+              onClick={(e) => handleRowClick(row.id, e)}
+              onSeatClick={handleSeatClick}
+              selectedIdSet={selectedIdSet}
+              scale={zoom}
+              section={row.sectionId ? sections[row.sectionId] : undefined}
+            />
+          ))}
 
           {/* Render tables sorted by zIndex */}
-          {[...Object.values(tables)]
-            .sort((a, b) => (a.zIndex || 0) - (b.zIndex || 0))
-            .map((table) => (
-              <Table
-                key={table.id}
-                table={table}
-                seats={table.seats
-                  .map((seatId) => seats[seatId])
-                  .filter(Boolean)}
-                isSelected={selectedIds.includes(table.id)}
-                onClick={(e) => handleTableClick(table.id, e)}
-                onSeatClick={handleSeatClick}
-                selectedIds={selectedIds}
-                scale={zoom}
-              />
-            ))}
+          {sortedTables.map((table) => (
+            <Table
+              key={table.id}
+              table={table}
+              seats={table.seats.map((seatId) => seats[seatId]).filter(Boolean)}
+              isSelected={selectedIdSet.has(table.id)}
+              onClick={(e) => handleTableClick(table.id, e)}
+              onSeatClick={handleSeatClick}
+              selectedIdSet={selectedIdSet}
+              scale={zoom}
+            />
+          ))}
 
           {/* Render individual seats (not in rows or tables) */}
-          {Object.values(seats)
-            .filter((seat) => !seat.rowId && !seat.tableId)
-            .map((seat) => (
-              <Seat
-                key={seat.id}
-                seat={seat}
-                isSelected={selectedIds.includes(seat.id)}
-                onClick={(e) => handleSeatClick(seat.id, e)}
-                scale={zoom}
-              />
-            ))}
+          {standaloneSeats.map((seat) => (
+            <Seat
+              key={seat.id}
+              seat={seat}
+              isSelected={selectedIdSet.has(seat.id)}
+              onClick={handleSeatClick}
+              scale={zoom}
+            />
+          ))}
 
           {/* Box selection rectangle */}
           {isBoxSelecting && (

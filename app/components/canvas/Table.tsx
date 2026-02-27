@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import type { Table as TableType, Seat as SeatType } from "../../types";
 import { Seat } from "./Seat";
 
@@ -9,17 +10,17 @@ interface TableProps {
   isSelected: boolean;
   onClick: (e: React.MouseEvent) => void;
   onSeatClick: (seatId: string, e: React.MouseEvent) => void;
-  selectedIds: string[];
+  selectedIdSet?: Set<string>;
   scale?: number;
 }
 
-export function Table({
+export const Table = memo(function Table({
   table,
   seats,
   isSelected,
   onClick,
   onSeatClick,
-  selectedIds,
+  selectedIdSet,
   scale: _scale = 1,
 }: TableProps) {
   const centerX = table.position.x + table.size.width / 2;
@@ -93,12 +94,12 @@ export function Table({
         <g key={seat.id} data-element-id={seat.id}>
           <Seat
             seat={seat}
-            isSelected={selectedIds.includes(seat.id)}
-            onClick={(e) => onSeatClick(seat.id, e)}
+            isSelected={selectedIdSet?.has(seat.id) ?? false}
+            onClick={onSeatClick}
             scale={_scale}
           />
         </g>
       ))}
     </g>
   );
-}
+});

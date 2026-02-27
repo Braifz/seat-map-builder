@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import type { Row as RowType, Seat as SeatType, Section } from "../../types";
 import { Seat } from "./Seat";
 
@@ -9,18 +10,18 @@ interface RowProps {
   isSelected: boolean;
   onClick: (e: React.MouseEvent) => void;
   onSeatClick: (seatId: string, e: React.MouseEvent) => void;
-  selectedIds: string[];
+  selectedIdSet?: Set<string>;
   scale?: number;
   section?: Section;
 }
 
-export function Row({
+export const Row = memo(function Row({
   row,
   seats,
   isSelected,
   onClick,
   onSeatClick,
-  selectedIds,
+  selectedIdSet,
   scale = 1,
   section,
 }: RowProps) {
@@ -87,8 +88,8 @@ export function Row({
         <g key={seat.id} data-element-id={seat.id}>
           <Seat
             seat={seat}
-            isSelected={selectedIds.includes(seat.id)}
-            onClick={(e) => onSeatClick(seat.id, e)}
+            isSelected={selectedIdSet?.has(seat.id) ?? false}
+            onClick={onSeatClick}
             scale={scale}
             section={section}
             rowLabel={row.label}
@@ -97,4 +98,4 @@ export function Row({
       ))}
     </g>
   );
-}
+});
