@@ -25,6 +25,7 @@ import type {
   TableId,
   SeatId,
   StructureId,
+  ElementId,
   ToolType,
   AreaShape,
   LineConfig,
@@ -143,9 +144,11 @@ export function SeatMapCanvas() {
     structures,
     sections,
     selectedIds,
+    purchaseSelectedSeatIds,
     zoom,
     pan,
     activeTool,
+    appMode,
   } = useSeatMapStore(
     useShallow((state) => ({
       rows: state.rows,
@@ -155,9 +158,11 @@ export function SeatMapCanvas() {
       structures: state.structures,
       sections: state.sections,
       selectedIds: state.selectedIds,
+      purchaseSelectedSeatIds: state.purchaseSelectedSeatIds,
       zoom: state.zoom,
       pan: state.pan,
       activeTool: state.activeTool,
+      appMode: state.appMode,
     })),
   );
 
@@ -189,6 +194,9 @@ export function SeatMapCanvas() {
     redo,
     copySelected,
     pasteClipboard,
+    togglePurchaseSeat,
+    lockElements,
+    unlockElements,
   } = useSeatMapStore(
     useShallow((state) => ({
       selectElement: state.selectElement,
@@ -218,7 +226,48 @@ export function SeatMapCanvas() {
       redo: state.redo,
       copySelected: state.copySelected,
       pasteClipboard: state.pasteClipboard,
+      togglePurchaseSeat: state.togglePurchaseSeat,
+      lockElements: state.lockElements,
+      unlockElements: state.unlockElements,
     })),
+  );
+
+  const isElementLockedById = useCallback(
+    (id: string): boolean => {
+      if (id.startsWith("row_")) return Boolean(rows[id]?.isLocked);
+      if (id.startsWith("seat_")) return Boolean(seats[id as SeatId]?.isLocked);
+      if (id.startsWith("area_")) return Boolean(areas[id]?.isLocked);
+      if (id.startsWith("table_"))
+        return Boolean(tables[id as TableId]?.isLocked);
+      if (id.startsWith("structure_"))
+        return Boolean(structures[id as StructureId]?.isLocked);
+      return false;
+    },
+    [rows, seats, areas, tables, structures],
+  );
+
+  const getUnlockedElementIdAtPoint = useCallback(
+    (clientX: number, clientY: number): string | null => {
+      const elementsAtPoint = document.elementsFromPoint(clientX, clientY);
+      for (const element of elementsAtPoint) {
+        const elementId = element.getAttribute("data-element-id");
+        if (!elementId) continue;
+        if (isElementLockedById(elementId)) continue;
+        return elementId;
+      }
+      return null;
+    },
+    [isElementLockedById],
+  );
+
+  const selectUnlockedElementAtPointer = useCallback(
+    (e: React.MouseEvent, multi = false): boolean => {
+      const unlockedId = getUnlockedElementIdAtPoint(e.clientX, e.clientY);
+      if (!unlockedId) return false;
+      selectElement(unlockedId as ElementId, multi);
+      return true;
+    },
+    [getUnlockedElementIdAtPoint, selectElement],
   );
 
   // Drag state for moving elements
@@ -231,6 +280,116 @@ export function SeatMapCanvas() {
   const scheduledMouseMoveRef = useRef<(() => void) | null>(null);
 
   const selectedIdSet = useMemo(() => new Set(selectedIds), [selectedIds]);
+  const selectedHasLocked = useMemo(
+    () => selectedIds.some((id) => isElementLockedById(id)),
+    [selectedIds, isElementLockedById],
+  );
+  const hasDraggableSelected = useMemo(
+    () => selectedIds.some((id) => !isElementLockedById(id)),
+    [selectedIds, isElementLockedById],
+  );
+  const shouldRenderSelectionDragHandle = useMemo(() => {
+    if (selectedIds.length > 1) return true;
+    if (selectedIds.length === 1) {
+      return selectedIds[0].startsWith("row_");
+    }
+    return false;
+  }, [selectedIds]);
+  const multiSelectionBounds = useMemo(() => {
+    if (selectedIds.length === 0) return null;
+
+    let minX = Number.POSITIVE_INFINITY;
+    let minY = Number.POSITIVE_INFINITY;
+    let maxX = Number.NEGATIVE_INFINITY;
+    let maxY = Number.NEGATIVE_INFINITY;
+    let hasBounds = false;
+
+    selectedIds.forEach((id) => {
+      if (id.startsWith("row_")) {
+        const row = rows[id];
+        if (!row) return;
+        const rowSeats = row.seats
+          .map((seatId) => seats[seatId])
+          .filter((seat): seat is NonNullable<typeof seat> => Boolean(seat));
+        if (rowSeats.length === 0) return;
+
+        const rowMinX =
+          Math.min(...rowSeats.map((seat) => seat.position.x)) - 24;
+        const rowMaxX =
+          Math.max(...rowSeats.map((seat) => seat.position.x)) + 24;
+        const rowMinY =
+          Math.min(...rowSeats.map((seat) => seat.position.y)) - 24;
+        const rowMaxY =
+          Math.max(...rowSeats.map((seat) => seat.position.y)) + 24;
+
+        minX = Math.min(minX, rowMinX);
+        maxX = Math.max(maxX, rowMaxX);
+        minY = Math.min(minY, rowMinY);
+        maxY = Math.max(maxY, rowMaxY);
+        hasBounds = true;
+        return;
+      }
+
+      if (id.startsWith("seat_")) {
+        const seat = seats[id as SeatId];
+        if (!seat) return;
+        minX = Math.min(minX, seat.position.x - 14);
+        maxX = Math.max(maxX, seat.position.x + 14);
+        minY = Math.min(minY, seat.position.y - 14);
+        maxY = Math.max(maxY, seat.position.y + 14);
+        hasBounds = true;
+        return;
+      }
+
+      if (id.startsWith("area_")) {
+        const area = areas[id];
+        if (!area) return;
+        minX = Math.min(minX, area.position.x - 8);
+        maxX = Math.max(maxX, area.position.x + area.size.width + 8);
+        minY = Math.min(minY, area.position.y - 8);
+        maxY = Math.max(maxY, area.position.y + area.size.height + 8);
+        hasBounds = true;
+        return;
+      }
+
+      if (id.startsWith("table_")) {
+        const table = tables[id as TableId];
+        if (!table) return;
+        minX = Math.min(minX, table.position.x - 12);
+        maxX = Math.max(maxX, table.position.x + table.size.width + 12);
+        minY = Math.min(minY, table.position.y - 12);
+        maxY = Math.max(maxY, table.position.y + table.size.height + 12);
+        hasBounds = true;
+        return;
+      }
+
+      if (id.startsWith("structure_")) {
+        const structure = structures[id as StructureId];
+        if (!structure) return;
+        minX = Math.min(minX, structure.position.x - 8);
+        maxX = Math.max(maxX, structure.position.x + structure.size.width + 8);
+        minY = Math.min(minY, structure.position.y - 8);
+        maxY = Math.max(maxY, structure.position.y + structure.size.height + 8);
+        hasBounds = true;
+      }
+    });
+
+    if (!hasBounds) return null;
+
+    return {
+      x: minX,
+      y: minY,
+      width: maxX - minX,
+      height: maxY - minY,
+    };
+  }, [selectedIds, rows, seats, areas, tables, structures]);
+  const lockActionLabel: "Block" | "Unblock" = selectedHasLocked
+    ? "Unblock"
+    : "Block";
+  const purchaseSelectedSeatSet = useMemo(
+    () => new Set(purchaseSelectedSeatIds),
+    [purchaseSelectedSeatIds],
+  );
   const sortedAreas = useMemo(
     () =>
       [...Object.values(areas)].sort(
@@ -312,6 +471,7 @@ export function SeatMapCanvas() {
       }
 
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "z") {
+        if (appMode !== "editor") return;
         e.preventDefault();
         if (e.shiftKey) {
           redo();
@@ -322,12 +482,14 @@ export function SeatMapCanvas() {
       }
 
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "y") {
+        if (appMode !== "editor") return;
         e.preventDefault();
         redo();
         return;
       }
 
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "c") {
+        if (appMode !== "editor") return;
         if (!isTyping && selectedIds.length > 0) {
           e.preventDefault();
           copySelected();
@@ -336,6 +498,7 @@ export function SeatMapCanvas() {
       }
 
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "v") {
+        if (appMode !== "editor") return;
         if (!isTyping) {
           e.preventDefault();
           pasteClipboard();
@@ -344,6 +507,7 @@ export function SeatMapCanvas() {
       }
 
       if (!isTyping && (e.key === "Delete" || e.key === "Backspace")) {
+        if (appMode !== "editor") return;
         if (selectedIds.length > 0) {
           e.preventDefault();
           setShowDeleteConfirmModal(true);
@@ -359,6 +523,7 @@ export function SeatMapCanvas() {
       }
       // Rotation shortcuts
       if (e.key === "r" || e.key === "R") {
+        if (appMode !== "editor") return;
         if (selectedIds.length > 0) {
           const degrees = e.shiftKey ? -90 : 90;
           selectedIds.forEach((id) => {
@@ -376,6 +541,7 @@ export function SeatMapCanvas() {
         (e.ctrlKey || e.metaKey) &&
         e.shiftKey
       ) {
+        if (appMode !== "editor") return;
         e.preventDefault();
         bringToFront(selectedIds);
       }
@@ -384,6 +550,7 @@ export function SeatMapCanvas() {
         (e.ctrlKey || e.metaKey) &&
         e.shiftKey
       ) {
+        if (appMode !== "editor") return;
         e.preventDefault();
         sendToBack(selectedIds);
       }
@@ -410,6 +577,7 @@ export function SeatMapCanvas() {
       window.removeEventListener("keyup", handleKeyUp);
     };
   }, [
+    appMode,
     activeTool,
     isSpacePressed,
     previousTool,
@@ -450,15 +618,40 @@ export function SeatMapCanvas() {
       const curveHandle = target.closest(
         "[data-row-curve-handle='true']",
       ) as SVGElement | null;
+      const selectionDragHandle = target.closest(
+        "[data-selection-drag-handle='true']",
+      ) as SVGElement | null;
       const startHandle = target.closest(
         "[data-row-start-handle='true']",
       ) as SVGElement | null;
       const endHandle = target.closest(
         "[data-row-end-handle='true']",
       ) as SVGElement | null;
+
+      if (appMode === "purchase") {
+        if (activeTool === "pan" || e.altKey) {
+          setIsDragging(true);
+          setDragStart({ x: e.clientX, y: e.clientY });
+          setLastPan(pan);
+        }
+        return;
+      }
+
+      if (
+        activeTool === "select" &&
+        selectionDragHandle &&
+        hasDraggableSelected &&
+        shouldRenderSelectionDragHandle
+      ) {
+        e.stopPropagation();
+        setIsElementDragging(true);
+        setDragElementStart(svgPoint);
+        return;
+      }
+
       if (activeTool === "select" && curveHandle) {
         const rowId = curveHandle.getAttribute("data-row-id");
-        if (rowId && rows[rowId]) {
+        if (rowId && rows[rowId] && !rows[rowId].isLocked) {
           e.stopPropagation();
           setCurveDraggingRowId(rowId as RowId);
           return;
@@ -467,7 +660,7 @@ export function SeatMapCanvas() {
 
       if (activeTool === "select" && startHandle) {
         const rowId = startHandle.getAttribute("data-row-id");
-        if (rowId && rows[rowId]) {
+        if (rowId && rows[rowId] && !rows[rowId].isLocked) {
           e.stopPropagation();
           setStartDraggingRowId(rowId as RowId);
           return;
@@ -476,7 +669,7 @@ export function SeatMapCanvas() {
 
       if (activeTool === "select" && endHandle) {
         const rowId = endHandle.getAttribute("data-row-id");
-        if (rowId && rows[rowId]) {
+        if (rowId && rows[rowId] && !rows[rowId].isLocked) {
           e.stopPropagation();
           setEndDraggingRowId(rowId as RowId);
           return;
@@ -490,13 +683,16 @@ export function SeatMapCanvas() {
         return;
       }
 
+      const unlockedElementId = getUnlockedElementIdAtPoint(
+        e.clientX,
+        e.clientY,
+      );
+
       // Check if clicking on a selected element for dragging
-      const clickedElementId = selectedIds.find((id) => {
-        if (target.closest(`[data-element-id="${id}"]`)) {
-          return true;
-        }
-        return false;
-      });
+      const clickedElementId =
+        unlockedElementId && selectedIdSet.has(unlockedElementId)
+          ? unlockedElementId
+          : null;
 
       if (clickedElementId && activeTool === "select") {
         setIsElementDragging(true);
@@ -505,7 +701,10 @@ export function SeatMapCanvas() {
       }
 
       // Start box selection on empty canvas with select tool
-      if (activeTool === "select" && e.target === svgRef.current) {
+      if (
+        activeTool === "select" &&
+        (e.target === svgRef.current || !unlockedElementId)
+      ) {
         setIsBoxSelecting(true);
         setBoxStart(svgPoint);
         setBoxEnd(svgPoint);
@@ -542,11 +741,15 @@ export function SeatMapCanvas() {
       }
     },
     [
+      appMode,
       activeTool,
       pan,
       screenToSVG,
+      getUnlockedElementIdAtPoint,
       clearSelection,
-      selectedIds,
+      selectedIdSet,
+      hasDraggableSelected,
+      shouldRenderSelectionDragHandle,
       isShiftPressed,
       rows,
     ],
@@ -637,13 +840,40 @@ export function SeatMapCanvas() {
   };
 
   // Handle context menu
-  const handleContextMenu = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-    setContextMenu({ x: e.clientX, y: e.clientY });
-  }, []);
+  const handleContextMenu = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      if (appMode !== "editor") {
+        setContextMenu(null);
+        return;
+      }
+
+      const target = e.target as Element;
+      const clickedElement = target.closest("[data-element-id]");
+      const clickedElementId = clickedElement?.getAttribute("data-element-id");
+      if (clickedElementId && isElementLockedById(clickedElementId)) {
+        const didSelectUnlocked = selectUnlockedElementAtPointer(e, false);
+        if (!didSelectUnlocked) {
+          selectElement(clickedElementId as ElementId, false);
+        }
+      } else if (clickedElementId && !selectedIdSet.has(clickedElementId)) {
+        selectElement(clickedElementId as ElementId, false);
+      }
+
+      setContextMenu({ x: e.clientX, y: e.clientY });
+    },
+    [
+      appMode,
+      isElementLockedById,
+      selectedIdSet,
+      selectElement,
+      selectUnlockedElementAtPointer,
+    ],
+  );
 
   const canEdit = () => {
     if (selectedIds.length === 0) return false;
+    if (selectedIds.some((id) => isElementLockedById(id))) return false;
     if (selectedIds.length === 1) return true;
     const sectionIds = new Set<string | undefined>();
     for (const id of selectedIds) {
@@ -665,7 +895,7 @@ export function SeatMapCanvas() {
   };
 
   const handleDeleteRequest = () => {
-    if (selectedIds.length > 0) {
+    if (selectedIds.some((id) => !isElementLockedById(id))) {
       setShowDeleteConfirmModal(true);
     }
   };
@@ -916,7 +1146,7 @@ export function SeatMapCanvas() {
 
       // Select all elements in box
       elementsInBox.forEach((id) => {
-        if (!selectedIdSet.has(id)) {
+        if (!selectedIdSet.has(id) && !isElementLockedById(id)) {
           selectElement(id, true);
         }
       });
@@ -945,6 +1175,7 @@ export function SeatMapCanvas() {
     tables,
     structures,
     selectedIdSet,
+    isElementLockedById,
   ]);
 
   // Handle wheel for zoom
@@ -962,41 +1193,100 @@ export function SeatMapCanvas() {
   const handleRowClick = useCallback(
     (rowId: string, e: React.MouseEvent) => {
       e.stopPropagation();
+      if (appMode !== "editor") return;
+      if (isElementLockedById(rowId)) {
+        selectUnlockedElementAtPointer(e, isShiftPressed);
+        return;
+      }
       selectElement(rowId, isShiftPressed);
     },
-    [selectElement, isShiftPressed],
+    [
+      appMode,
+      isElementLockedById,
+      selectElement,
+      isShiftPressed,
+      selectUnlockedElementAtPointer,
+    ],
   );
 
   const handleSeatClick = useCallback(
     (seatId: string, e: React.MouseEvent) => {
       e.stopPropagation();
+      if (appMode === "purchase") {
+        togglePurchaseSeat(seatId);
+        return;
+      }
+      if (isElementLockedById(seatId)) {
+        selectUnlockedElementAtPointer(e, isShiftPressed);
+        return;
+      }
       selectElement(seatId, isShiftPressed);
     },
-    [selectElement, isShiftPressed],
+    [
+      appMode,
+      togglePurchaseSeat,
+      isElementLockedById,
+      selectElement,
+      isShiftPressed,
+      selectUnlockedElementAtPointer,
+    ],
   );
 
   const handleAreaClick = useCallback(
     (areaId: string, e: React.MouseEvent) => {
       e.stopPropagation();
+      if (appMode !== "editor") return;
+      if (isElementLockedById(areaId)) {
+        selectUnlockedElementAtPointer(e, isShiftPressed);
+        return;
+      }
       selectElement(areaId, isShiftPressed);
     },
-    [selectElement, isShiftPressed],
+    [
+      appMode,
+      isElementLockedById,
+      selectElement,
+      isShiftPressed,
+      selectUnlockedElementAtPointer,
+    ],
   );
 
   const handleTableClick = useCallback(
     (tableId: string, e: React.MouseEvent) => {
       e.stopPropagation();
+      if (appMode !== "editor") return;
+      if (isElementLockedById(tableId)) {
+        selectUnlockedElementAtPointer(e, isShiftPressed);
+        return;
+      }
       selectElement(tableId, isShiftPressed);
     },
-    [selectElement, isShiftPressed],
+    [
+      appMode,
+      isElementLockedById,
+      selectElement,
+      isShiftPressed,
+      selectUnlockedElementAtPointer,
+    ],
   );
 
   const handleStructureClick = useCallback(
     (structureId: string, e: React.MouseEvent) => {
       e.stopPropagation();
+      if (appMode !== "editor") return;
+      if (isElementLockedById(structureId)) {
+        selectUnlockedElementAtPointer(e, isShiftPressed);
+        return;
+      }
       selectElement(structureId, isShiftPressed);
     },
-    [selectElement, isShiftPressed],
+    [
+      appMode,
+      isElementLockedById,
+      selectElement,
+      isShiftPressed,
+      selectUnlockedElementAtPointer,
+    ],
   );
 
   return (
@@ -1017,16 +1307,19 @@ export function SeatMapCanvas() {
             <Area
               key={area.id}
               area={area}
-              isSelected={selectedIdSet.has(area.id)}
+              isSelected={appMode === "editor" && selectedIdSet.has(area.id)}
               onClick={(e) => handleAreaClick(area.id, e)}
               scale={zoom}
             />
           ))}
 
           {/* Row curve handles (only in select mode) */}
-          {activeTool === "select" &&
+          {appMode === "editor" &&
+            activeTool === "select" &&
             selectedIds
-              .filter((id) => id.startsWith("row_") && rows[id])
+              .filter(
+                (id) => id.startsWith("row_") && rows[id] && !rows[id].isLocked,
+              )
               .map((rowId) => {
                 const row = rows[rowId];
                 const rowSeats = row.seats
@@ -1088,7 +1381,9 @@ export function SeatMapCanvas() {
             <Structure
               key={structure.id}
               structure={structure}
-              isSelected={selectedIdSet.has(structure.id)}
+              isSelected={
+                appMode === "editor" && selectedIdSet.has(structure.id)
+              }
               onClick={(e) => handleStructureClick(structure.id, e)}
               scale={zoom}
             />
@@ -1100,10 +1395,12 @@ export function SeatMapCanvas() {
               key={row.id}
               row={row}
               seats={row.seats.map((seatId) => seats[seatId]).filter(Boolean)}
-              isSelected={selectedIdSet.has(row.id)}
+              isSelected={appMode === "editor" && selectedIdSet.has(row.id)}
               onClick={(e) => handleRowClick(row.id, e)}
               onSeatClick={handleSeatClick}
-              selectedIdSet={selectedIdSet}
+              selectedIdSet={
+                appMode === "purchase" ? purchaseSelectedSeatSet : selectedIdSet
+              }
               scale={zoom}
               section={row.sectionId ? sections[row.sectionId] : undefined}
             />
@@ -1115,10 +1412,12 @@ export function SeatMapCanvas() {
               key={table.id}
               table={table}
               seats={table.seats.map((seatId) => seats[seatId]).filter(Boolean)}
-              isSelected={selectedIdSet.has(table.id)}
+              isSelected={appMode === "editor" && selectedIdSet.has(table.id)}
               onClick={(e) => handleTableClick(table.id, e)}
               onSeatClick={handleSeatClick}
-              selectedIdSet={selectedIdSet}
+              selectedIdSet={
+                appMode === "purchase" ? purchaseSelectedSeatSet : selectedIdSet
+              }
               scale={zoom}
             />
           ))}
@@ -1128,11 +1427,46 @@ export function SeatMapCanvas() {
             <Seat
               key={seat.id}
               seat={seat}
-              isSelected={selectedIdSet.has(seat.id)}
+              isSelected={
+                appMode === "purchase"
+                  ? purchaseSelectedSeatSet.has(seat.id)
+                  : selectedIdSet.has(seat.id)
+              }
               onClick={handleSeatClick}
               scale={zoom}
             />
           ))}
+
+          {/* Expanded drag handle for multi-selection */}
+          {appMode === "editor" &&
+            activeTool === "select" &&
+            multiSelectionBounds &&
+            hasDraggableSelected &&
+            shouldRenderSelectionDragHandle && (
+              <g>
+                <rect
+                  x={multiSelectionBounds.x - 16}
+                  y={multiSelectionBounds.y - 16}
+                  width={multiSelectionBounds.width + 32}
+                  height={multiSelectionBounds.height + 32}
+                  fill="transparent"
+                  pointerEvents="all"
+                  data-selection-drag-handle="true"
+                  className="cursor-move"
+                />
+                <rect
+                  x={multiSelectionBounds.x}
+                  y={multiSelectionBounds.y}
+                  width={multiSelectionBounds.width}
+                  height={multiSelectionBounds.height}
+                  fill="none"
+                  stroke="#3b82f6"
+                  strokeWidth={1.5 / zoom}
+                  strokeDasharray={`${5 / zoom} ${5 / zoom}`}
+                  pointerEvents="none"
+                />
+              </g>
+            )}
 
           {/* Box selection rectangle */}
           {isBoxSelecting && (
@@ -1247,12 +1581,20 @@ export function SeatMapCanvas() {
       />
 
       {/* Context Menu */}
-      {contextMenu && (
+      {appMode === "editor" && contextMenu && (
         <ContextMenu
           x={contextMenu.x}
           y={contextMenu.y}
           selectedIds={selectedIds}
           onClose={() => setContextMenu(null)}
+          onToggleLock={() => {
+            if (selectedHasLocked) {
+              unlockElements(selectedIds);
+              return;
+            }
+            lockElements(selectedIds);
+          }}
+          lockActionLabel={lockActionLabel}
           onBringToFront={() => bringToFront(selectedIds)}
           onSendToBack={() => sendToBack(selectedIds)}
           onRotate={(degrees) => {

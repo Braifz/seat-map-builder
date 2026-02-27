@@ -115,7 +115,9 @@ export function Area({
 
   return (
     <g
-      className="cursor-pointer"
+      className={
+        area.isLocked ? "cursor-not-allowed opacity-80" : "cursor-pointer"
+      }
       onClick={onClick}
       data-element-id={area.id}
       transform={transform}

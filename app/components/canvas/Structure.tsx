@@ -131,7 +131,9 @@ export function Structure({
 
   return (
     <g
-      className="cursor-pointer"
+      className={
+        structure.isLocked ? "cursor-not-allowed opacity-80" : "cursor-pointer"
+      }
       onClick={onClick}
       data-element-id={structure.id}
       transform={transform}

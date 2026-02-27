@@ -8,6 +8,8 @@ interface ContextMenuProps {
   y: number;
   selectedIds: ElementId[];
   onClose: () => void;
+  onToggleLock: () => void;
+  lockActionLabel: "Block" | "Unblock";
   onBringToFront: () => void;
   onSendToBack: () => void;
   onRotate: (degrees: number) => void;
@@ -29,6 +31,8 @@ export function ContextMenu({
   y,
   selectedIds,
   onClose,
+  onToggleLock,
+  lockActionLabel,
   onBringToFront,
   onSendToBack,
   onRotate,
@@ -50,6 +54,12 @@ export function ContextMenu({
           { type: "separator" as const },
         ]
       : []),
+    {
+      type: "action",
+      label: lockActionLabel === "Unblock" ? "🔓 Unblock" : "🔒 Block",
+      onClick: onToggleLock,
+    },
+    { type: "separator" },
     {
       type: "action",
       label: "🔼 Bring to Front",

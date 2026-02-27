@@ -39,6 +39,7 @@ export interface Seat {
   position: Position;
   type: SeatType;
   status: ElementStatus;
+  isLocked?: boolean;
   price?: number;
   rowId?: RowId;
   tableId?: TableId;
@@ -50,6 +51,7 @@ export interface Row {
   label: string;
   position: Position;
   seats: SeatId[];
+  isLocked?: boolean;
   curve?: number;
   start?: Position;
   end?: Position;
@@ -62,6 +64,7 @@ export interface Area {
   label: string;
   position: Position;
   size: Size;
+  isLocked?: boolean;
   color?: string;
   shape?: AreaShape;
   opacity?: number;
@@ -89,6 +92,7 @@ export interface Table {
   shape: TableShape;
   size: Size;
   seats: SeatId[];
+  isLocked?: boolean;
   rotation?: number;
   zIndex?: number;
 }
@@ -99,6 +103,7 @@ export interface Structure {
   type: StructureType;
   position: Position;
   size: Size;
+  isLocked?: boolean;
   color?: string;
   rotation?: number;
   zIndex?: number;
@@ -113,6 +118,8 @@ export type ToolType =
   | "addTable"
   | "addStructure"
   | "pan";
+
+export type AppMode = "editor" | "purchase";
 
 export interface RowConfig {
   label: string;
@@ -129,9 +136,11 @@ export interface SeatMapState {
   structures: Record<StructureId, Structure>;
   sections: Record<SectionId, Section>;
   selectedIds: ElementId[];
+  purchaseSelectedSeatIds: SeatId[];
   zoom: number;
   pan: Position;
   activeTool: ToolType;
+  appMode: AppMode;
 }
 
 export interface SeatMapActions {
@@ -259,6 +268,9 @@ export interface SeatMapActions {
   deselectElement: (id: ElementId) => void;
   clearSelection: () => void;
   selectAll: () => void;
+  lockElements: (elementIds: ElementId[]) => void;
+  unlockElements: (elementIds: ElementId[]) => void;
+  toggleLockElements: (elementIds: ElementId[]) => void;
 
   // Bulk operations
   deleteSelected: () => void;
@@ -273,8 +285,15 @@ export interface SeatMapActions {
   zoomOut: () => void;
   resetView: () => void;
   setActiveTool: (tool: ToolType) => void;
+  setAppMode: (mode: AppMode) => void;
+  toggleAppMode: () => void;
   undo: () => void;
   redo: () => void;
+
+  // Purchase mode actions
+  togglePurchaseSeat: (seatId: SeatId) => void;
+  clearPurchaseSelection: () => void;
+  purchaseSelectedSeats: () => void;
 
   // Import/Export
   exportMap: () => string;

@@ -57,7 +57,13 @@ export const Row = memo(function Row({
   const maxY = Math.max(...seats.map((seat) => seat.position.y));
 
   return (
-    <g className="cursor-pointer" onClick={onClick} data-element-id={row.id}>
+    <g
+      className={
+        row.isLocked ? "cursor-not-allowed opacity-80" : "cursor-pointer"
+      }
+      onClick={onClick}
+      data-element-id={row.id}
+    >
       {/* Connection line between seats */}
       {seats.length > 1 && (
         <path

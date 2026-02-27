@@ -34,7 +34,9 @@ export const Table = memo(function Table({
 
   return (
     <g
-      className="cursor-pointer"
+      className={
+        table.isLocked ? "cursor-not-allowed opacity-80" : "cursor-pointer"
+      }
       onClick={onClick}
       data-element-id={table.id}
       transform={transform}

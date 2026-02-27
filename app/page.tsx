@@ -6,6 +6,8 @@ import { ZoomControls } from "./components/ui/ZoomControls";
 import { FileActions } from "./components/ui/FileActions";
 import { HelpButton } from "./components/ui/HelpButton";
 import { ThemeToggle } from "./components/ui/ThemeToggle";
+import { ModeSwitch } from "./components/ui/ModeSwitch";
+import { PurchasePanel } from "./components/ui/PurchasePanel";
 import { useThemeColors } from "./hooks/useThemeColors";
 
 export default function Home() {
@@ -20,10 +22,12 @@ export default function Home() {
 
       {/* Floating UI Controls */}
       <FloatingToolbar />
+      <ModeSwitch />
       <ZoomControls />
       <FileActions />
       <HelpButton />
       <ThemeToggle />
+      <PurchasePanel />
     </main>
   );
 }

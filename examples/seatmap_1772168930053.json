@@ -1,0 +1,3616 @@
+{
+  "name": "Concert Hall - Theater Style",
+  "rows": {
+    "row_left_1": {
+      "id": "row_left_1",
+      "label": "A",
+      "position": {
+        "x": 188.4319117214499,
+        "y": 173.04280313925705
+      },
+      "seats": [
+        "s_l1_1",
+        "s_l1_2",
+        "s_l1_3",
+        "s_l1_4",
+        "s_l1_5",
+        "s_l1_6"
+      ],
+      "sectionId": "section_orange_1",
+      "start": {
+        "x": 100.93191172144992,
+        "y": 173.04280313925705
+      },
+      "end": {
+        "x": 275.93191172144986,
+        "y": 173.04280313925705
+      },
+      "curve": 0
+    },
+    "row_left_2": {
+      "id": "row_left_2",
+      "label": "B",
+      "position": {
+        "x": 188.4319117214499,
+        "y": 208.04280313925705
+      },
+      "seats": [
+        "s_l2_1",
+        "s_l2_2",
+        "s_l2_3",
+        "s_l2_4",
+        "s_l2_5",
+        "s_l2_6"
+      ],
+      "sectionId": "section_orange_1",
+      "start": {
+        "x": 100.93191172144992,
+        "y": 208.04280313925705
+      },
+      "end": {
+        "x": 275.93191172144986,
+        "y": 208.04280313925705
+      },
+      "curve": 0
+    },
+    "row_left_3": {
+      "id": "row_left_3",
+      "label": "C",
+      "position": {
+        "x": 188.4319117214499,
+        "y": 243.04280313925705
+      },
+      "seats": [
+        "s_l3_1",
+        "s_l3_2",
+        "s_l3_3",
+        "s_l3_4",
+        "s_l3_5",
+        "s_l3_6"
+      ],
+      "sectionId": "section_orange_1",
+      "start": {
+        "x": 100.93191172144992,
+        "y": 243.04280313925705
+      },
+      "end": {
+        "x": 275.93191172144986,
+        "y": 243.04280313925705
+      },
+      "curve": 0
+    },
+    "row_left_4": {
+      "id": "row_left_4",
+      "label": "D",
+      "position": {
+        "x": 190.9319117214499,
+        "y": 278.04280313925705
+      },
+      "seats": [
+        "s_l4_1",
+        "s_l4_2",
+        "s_l4_3",
+        "s_l4_4",
+        "s_l4_5"
+      ],
+      "sectionId": "section_orange_1",
+      "start": {
+        "x": 120.93191172144992,
+        "y": 278.04280313925705
+      },
+      "end": {
+        "x": 260.93191172144986,
+        "y": 278.04280313925705
+      },
+      "curve": 0
+    },
+    "row_left_5": {
+      "id": "row_left_5",
+      "label": "E",
+      "position": {
+        "x": 193.43191172144992,
+        "y": 313.04280313925705
+      },
+      "seats": [
+        "s_l5_1",
+        "s_l5_2",
+        "s_l5_3",
+        "s_l5_4"
+      ],
+      "sectionId": "section_orange_1",
+      "start": {
+        "x": 140.93191172144992,
+        "y": 313.04280313925705
+      },
+      "end": {
+        "x": 245.9319117214499,
+        "y": 313.04280313925705
+      },
+      "curve": 0
+    },
+    "row_center_1": {
+      "id": "row_center_1",
+      "label": "A",
+      "position": {
+        "x": 511.13487459174195,
+        "y": 165.72439241695142
+      },
+      "seats": [
+        "s_c1_1",
+        "s_c1_2",
+        "s_c1_3",
+        "s_c1_4",
+        "s_c1_5",
+        "s_c1_6",
+        "s_c1_7",
+        "s_c1_8"
+      ],
+      "sectionId": "section_purple_2",
+      "start": {
+        "x": 388.634874591742,
+        "y": 165.72439241695142
+      },
+      "end": {
+        "x": 633.6348745917419,
+        "y": 165.72439241695142
+      },
+      "curve": 0
+    },
+    "row_center_2": {
+      "id": "row_center_2",
+      "label": "B",
+      "position": {
+        "x": 512.6795910167502,
+        "y": 209.81382526696805
+      },
+      "seats": [
+        "s_c2_1",
+        "s_c2_2",
+        "s_c2_3",
+        "s_c2_4",
+        "s_c2_5",
+        "s_c2_6",
+        "s_c2_7",
+        "s_c2_8"
+      ],
+      "sectionId": "section_purple_2",
+      "start": {
+        "x": 390.17959101675035,
+        "y": 209.81382526696805
+      },
+      "end": {
+        "x": 635.1795910167502,
+        "y": 209.81382526696805
+      },
+      "curve": 0
+    },
+    "row_center_3": {
+      "id": "row_center_3",
+      "label": "C",
+      "position": {
+        "x": 390.23740099246294,
+        "y": 282.7636311508236
+      },
+      "seats": [
+        "s_c3_1",
+        "s_c3_2",
+        "s_c3_3",
+        "s_c3_4",
+        "s_c3_5",
+        "s_c3_6",
+        "s_c3_7",
+        "s_c3_8"
+      ],
+      "sectionId": "section_purple_2"
+    },
+    "row_center_4": {
+      "id": "row_center_4",
+      "label": "D",
+      "position": {
+        "x": 390.542766963464,
+        "y": 366.5807057883361
+      },
+      "seats": [
+        "s_c4_1",
+        "s_c4_2",
+        "s_c4_3",
+        "s_c4_4",
+        "s_c4_5",
+        "s_c4_6",
+        "s_c4_7",
+        "s_c4_8"
+      ],
+      "sectionId": "section_purple_2"
+    },
+    "row_center_6": {
+      "id": "row_center_6",
+      "label": "F",
+      "position": {
+        "x": 512.1159002407743,
+        "y": 429.46598569723824
+      },
+      "seats": [
+        "s_c6_1",
+        "s_c6_2",
+        "s_c6_3",
+        "s_c6_4",
+        "s_c6_5",
+        "s_c6_6"
+      ],
+      "sectionId": "section_purple_2",
+      "curve": 0.004436966725840034,
+      "start": {
+        "x": 424.61590024077424,
+        "y": 429.46598569723824
+      },
+      "end": {
+        "x": 599.6159002407743,
+        "y": 429.46598569723824
+      }
+    },
+    "row_right_1": {
+      "id": "row_right_1",
+      "label": "A",
+      "position": {
+        "x": 822.9562951145141,
+        "y": 168.08586675444585
+      },
+      "seats": [
+        "s_r1_1",
+        "s_r1_2",
+        "s_r1_3",
+        "s_r1_4",
+        "s_r1_5",
+        "s_r1_6"
+      ],
+      "sectionId": "section_gray_3",
+      "start": {
+        "x": 735.4562951145141,
+        "y": 168.08586675444585
+      },
+      "end": {
+        "x": 910.4562951145141,
+        "y": 168.08586675444585
+      },
+      "curve": 0
+    },
+    "row_right_2": {
+      "id": "row_right_2",
+      "label": "B",
+      "position": {
+        "x": 822.9562951145141,
+        "y": 203.08586675444585
+      },
+      "seats": [
+        "s_r2_1",
+        "s_r2_2",
+        "s_r2_3",
+        "s_r2_4",
+        "s_r2_5",
+        "s_r2_6"
+      ],
+      "sectionId": "section_gray_3",
+      "start": {
+        "x": 735.4562951145141,
+        "y": 203.08586675444585
+      },
+      "end": {
+        "x": 910.4562951145141,
+        "y": 203.08586675444585
+      },
+      "curve": 0
+    },
+    "row_right_3": {
+      "id": "row_right_3",
+      "label": "C",
+      "position": {
+        "x": 822.9562951145141,
+        "y": 238.08586675444587
+      },
+      "seats": [
+        "s_r3_1",
+        "s_r3_2",
+        "s_r3_3",
+        "s_r3_4",
+        "s_r3_5",
+        "s_r3_6"
+      ],
+      "sectionId": "section_gray_3",
+      "start": {
+        "x": 735.4562951145141,
+        "y": 238.08586675444587
+      },
+      "end": {
+        "x": 910.4562951145141,
+        "y": 238.08586675444587
+      },
+      "curve": 0
+    },
+    "row_right_4": {
+      "id": "row_right_4",
+      "label": "D",
+      "position": {
+        "x": 825.4562951145141,
+        "y": 273.085866754446
+      },
+      "seats": [
+        "s_r4_1",
+        "s_r4_2",
+        "s_r4_3",
+        "s_r4_4",
+        "s_r4_5"
+      ],
+      "sectionId": "section_gray_3",
+      "start": {
+        "x": 755.4562951145141,
+        "y": 273.085866754446
+      },
+      "end": {
+        "x": 895.4562951145141,
+        "y": 273.085866754446
+      },
+      "curve": 0
+    },
+    "row_rear_1": {
+      "id": "row_rear_1",
+      "label": "H",
+      "position": {
+        "x": 190.66395556426534,
+        "y": 414.06776571131763
+      },
+      "seats": [
+        "s_re1_1",
+        "s_re1_2",
+        "s_re1_3",
+        "s_re1_4",
+        "s_re1_5",
+        "s_re1_6",
+        "s_re1_7"
+      ],
+      "sectionId": "section_yellow_4",
+      "start": {
+        "x": 85.66395556426552,
+        "y": 414.06776571131763
+      },
+      "end": {
+        "x": 295.66395556426517,
+        "y": 414.06776571131763
+      },
+      "curve": 0
+    },
+    "row_rear_2": {
+      "id": "row_rear_2",
+      "label": "I",
+      "position": {
+        "x": 190.66395556426534,
+        "y": 455.07828411853023
+      },
+      "seats": [
+        "s_re2_1",
+        "s_re2_2",
+        "s_re2_3",
+        "s_re2_4",
+        "s_re2_5",
+        "s_re2_6",
+        "s_re2_7"
+      ],
+      "sectionId": "section_yellow_4",
+      "start": {
+        "x": 85.66395556426552,
+        "y": 455.07828411853023
+      },
+      "end": {
+        "x": 295.66395556426517,
+        "y": 455.07828411853023
+      },
+      "curve": 0
+    },
+    "row_rear_3": {
+      "id": "row_rear_3",
+      "label": "J",
+      "position": {
+        "x": 827.2409117515381,
+        "y": 411.96123680877827
+      },
+      "seats": [
+        "s_re3_1",
+        "s_re3_2",
+        "s_re3_3",
+        "s_re3_4",
+        "s_re3_5",
+        "s_re3_6",
+        "s_re3_7"
+      ],
+      "sectionId": "section_yellow_4",
+      "start": {
+        "x": 722.2409117515381,
+        "y": 411.96123680877827
+      },
+      "end": {
+        "x": 932.2409117515381,
+        "y": 411.96123680877827
+      },
+      "curve": 0
+    },
+    "row_rear_4": {
+      "id": "row_rear_4",
+      "label": "K",
+      "position": {
+        "x": 829.3021320557949,
+        "y": 458.2979484821903
+      },
+      "seats": [
+        "s_re4_1",
+        "s_re4_2",
+        "s_re4_3",
+        "s_re4_4",
+        "s_re4_5",
+        "s_re4_6",
+        "s_re4_7"
+      ],
+      "sectionId": "section_yellow_4",
+      "start": {
+        "x": 724.3021320557949,
+        "y": 458.2979484821903
+      },
+      "end": {
+        "x": 934.3021320557949,
+        "y": 458.2979484821903
+      },
+      "curve": 0
+    },
+    "row_1772061330626_1jqcfqbh2": {
+      "id": "row_1772061330626_1jqcfqbh2",
+      "label": "A",
+      "position": {
+        "x": 439.7462571787065,
+        "y": 655.0663722998205
+      },
+      "seats": [
+        "seat_1772061330626_dzyi3z7f1",
+        "seat_1772061330626_31bqavxxv",
+        "seat_1772061330626_mls6aos07",
+        "seat_1772061330626_0whxfylnn",
+        "seat_1772061330626_x0lcnr1as",
+        "seat_1772061330626_stnvluvj3"
+      ],
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "row_1772061330626_lc80ve16o": {
+      "id": "row_1772061330626_lc80ve16o",
+      "label": "B",
+      "position": {
+        "x": 439.7462571787065,
+        "y": 698.4722582516046
+      },
+      "seats": [
+        "seat_1772061330626_nf477esph",
+        "seat_1772061330626_iu79acyao",
+        "seat_1772061330626_nvhmncy6d",
+        "seat_1772061330626_42cwz3iva",
+        "seat_1772061330626_81phzfoja",
+        "seat_1772061330626_egnlb4j3u"
+      ],
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "row_1772061330626_bzncrexjg": {
+      "id": "row_1772061330626_bzncrexjg",
+      "label": "C",
+      "position": {
+        "x": 436.9202083008997,
+        "y": 741.8781442033886
+      },
+      "seats": [
+        "seat_1772061330626_gk80dbyt4",
+        "seat_1772061330626_x5be9hfej",
+        "seat_1772061330626_r92r548ia",
+        "seat_1772061330626_kqohl6d9i",
+        "seat_1772061330626_d450ya9qq",
+        "seat_1772061330626_974ycff26"
+      ],
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "row_1772168491113_0phcsgx32": {
+      "id": "row_1772168491113_0phcsgx32",
+      "label": "A",
+      "position": {
+        "x": 509.96206305780646,
+        "y": 248.46095266280076
+      },
+      "seats": [
+        "seat_1772168491114_wpt2avtfx",
+        "seat_1772168491114_k8xndq9k1",
+        "seat_1772168491114_bpq6owapn",
+        "seat_1772168491114_dtmmqwbc2",
+        "seat_1772168491114_v4rkn1ifc",
+        "seat_1772168491114_07xoqyn5t",
+        "seat_1772168491114_l4j9ydall",
+        "seat_1772168491114_hjunz9nk8"
+      ],
+      "sectionId": "section_purple_2",
+      "start": {
+        "x": 387.4620630578065,
+        "y": 248.46095266280076
+      },
+      "end": {
+        "x": 632.4620630578064,
+        "y": 248.46095266280076
+      },
+      "curve": 0
+    },
+    "row_1772168491114_bf8ovbhf3": {
+      "id": "row_1772168491114_bf8ovbhf3",
+      "label": "B",
+      "position": {
+        "x": 511.5067794828148,
+        "y": 292.5503855128174
+      },
+      "seats": [
+        "seat_1772168491114_hzqbo5vzu",
+        "seat_1772168491114_8s53q5hyg",
+        "seat_1772168491114_0ua1igz1s",
+        "seat_1772168491114_efxxordso",
+        "seat_1772168491114_7rtjac4my",
+        "seat_1772168491114_d1gv1n7ed",
+        "seat_1772168491114_igruasnu4",
+        "seat_1772168491114_bb1qi7wns"
+      ],
+      "sectionId": "section_purple_2",
+      "start": {
+        "x": 389.00677948281486,
+        "y": 292.5503855128174
+      },
+      "end": {
+        "x": 634.0067794828147,
+        "y": 292.5503855128174
+      },
+      "curve": 0
+    },
+    "row_1772168524430_or4hnr4we": {
+      "id": "row_1772168524430_or4hnr4we",
+      "label": "F",
+      "position": {
+        "x": 512.9665624298923,
+        "y": 466.0928972304465
+      },
+      "seats": [
+        "seat_1772168524430_fxieaesui",
+        "seat_1772168524430_u6kd3dqlp",
+        "seat_1772168524430_lheir6hqh",
+        "seat_1772168524430_72dsxpwdh",
+        "seat_1772168524430_c6cfqm1we",
+        "seat_1772168524430_bay2hi8ul"
+      ],
+      "sectionId": "section_purple_2",
+      "curve": 0.004436966725840034,
+      "start": {
+        "x": 425.46656242989224,
+        "y": 466.0928972304465
+      },
+      "end": {
+        "x": 600.4665624298923,
+        "y": 466.0928972304465
+      }
+    },
+    "row_1772168699024_rfdp1bjuf": {
+      "id": "row_1772168699024_rfdp1bjuf",
+      "label": "D",
+      "position": {
+        "x": 824.7740606360205,
+        "y": 316.5718413427304
+      },
+      "seats": [
+        "seat_1772168699024_hp9upgt3s",
+        "seat_1772168699024_j9a085bup",
+        "seat_1772168699024_oq3cjmhx6",
+        "seat_1772168699024_otmay41j8",
+        "seat_1772168699024_5zsav25ri"
+      ],
+      "sectionId": "section_gray_3",
+      "start": {
+        "x": 754.7740606360205,
+        "y": 316.5718413427304
+      },
+      "end": {
+        "x": 894.7740606360205,
+        "y": 316.5718413427304
+      },
+      "curve": 0
+    },
+    "row_1772168712339_fxkekz8uj": {
+      "id": "row_1772168712339_fxkekz8uj",
+      "label": "1",
+      "position": {
+        "x": 998.9809638927145,
+        "y": 16.887844643179886
+      },
+      "seats": [
+        "seat_1772168712339_i499e6oqt",
+        "seat_1772168712339_cjcp34l0m",
+        "seat_1772168712339_pb4maz94f",
+        "seat_1772168712339_bqam0wuf6",
+        "seat_1772168712339_3gukaeusj",
+        "seat_1772168712339_4lrdkwopy",
+        "seat_1772168712339_cik9h5ega",
+        "seat_1772168712339_rcgdyaw6y"
+      ],
+      "curve": 0.35,
+      "start": {
+        "x": 963.9062096338025,
+        "y": 97.42987294142222
+      },
+      "end": {
+        "x": 1034.0557181516265,
+        "y": -63.65418365506245
+      },
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "row_1772168718121_159f88855": {
+      "id": "row_1772168718121_159f88855",
+      "label": "2",
+      "position": {
+        "x": 1042.466938480999,
+        "y": 46.084104533389066
+      },
+      "seats": [
+        "seat_1772168718121_5pnu76hmi",
+        "seat_1772168718121_dnykrhwkp",
+        "seat_1772168718121_p8e9fa33r",
+        "seat_1772168718121_be5vulsdv",
+        "seat_1772168718121_hq8rnsmxb",
+        "seat_1772168718121_a2vt4aadr",
+        "seat_1772168718121_jxl79dxrm",
+        "seat_1772168718121_4n8vgalax"
+      ],
+      "curve": 0.35,
+      "start": {
+        "x": 1007.392184222087,
+        "y": 126.62613283163137
+      },
+      "end": {
+        "x": 1077.541692739911,
+        "y": -34.45792376485324
+      },
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "row_1772168733625_72ygsw7zo": {
+      "id": "row_1772168733625_72ygsw7zo",
+      "label": "3",
+      "position": {
+        "x": 1087.9669145125467,
+        "y": 65.60278111389091
+      },
+      "seats": [
+        "seat_1772168733625_v1oa3jv6k",
+        "seat_1772168733625_np15yfiby",
+        "seat_1772168733625_kcjlrd1tc",
+        "seat_1772168733625_lbtvw9nqk",
+        "seat_1772168733625_z6lg0llt8",
+        "seat_1772168733625_qwp0qetld",
+        "seat_1772168733625_uidwgr4vz",
+        "seat_1772168733625_dwd8elx2o"
+      ],
+      "curve": 0.35,
+      "start": {
+        "x": 1041.8501079869404,
+        "y": 166.28031648669378
+      },
+      "end": {
+        "x": 1134.0837210381533,
+        "y": -35.07475425891196
+      },
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "row_1772168748466_frfpsnsap": {
+      "id": "row_1772168748466_frfpsnsap",
+      "label": "1",
+      "position": {
+        "x": 29.22896188242657,
+        "y": 41.570079121673416
+      },
+      "seats": [
+        "seat_1772168748466_faovgix9f",
+        "seat_1772168748466_pvtj73bix",
+        "seat_1772168748466_8qryaugdm",
+        "seat_1772168748466_j46hqfhzo",
+        "seat_1772168748467_bri286zdm",
+        "seat_1772168748467_22qees48g",
+        "seat_1772168748467_r8z2fubzk",
+        "seat_1772168748467_oyif2u41a"
+      ],
+      "curve": 0.35,
+      "start": {
+        "x": -1.2990649725524168,
+        "y": -44.16820906677804
+      },
+      "end": {
+        "x": 59.75698873740556,
+        "y": 127.30836731012488
+      },
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "row_1772168755983_xo6jlsljp": {
+      "id": "row_1772168755983_xo6jlsljp",
+      "label": "2",
+      "position": {
+        "x": -12.990649725522939,
+        "y": 59.756988737405656
+      },
+      "seats": [
+        "seat_1772168755983_wvqk8vx6b",
+        "seat_1772168755983_b1ixqby71",
+        "seat_1772168755983_ocsd8fad5",
+        "seat_1772168755983_fof753x9i",
+        "seat_1772168755983_jtyg2mjcf",
+        "seat_1772168755983_5imavqwzh",
+        "seat_1772168755983_ct64akkf4",
+        "seat_1772168755983_kvtocerp3"
+      ],
+      "curve": 0.35,
+      "start": {
+        "x": -57.15885879230098,
+        "y": -49.36446895698721
+      },
+      "end": {
+        "x": 31.177559341255105,
+        "y": 168.87844643179852
+      },
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "row_1772168763288_pqfzpcfmb": {
+      "id": "row_1772168763288_pqfzpcfmb",
+      "label": "3",
+      "position": {
+        "x": -54.56072884719638,
+        "y": 72.74763846292849
+      },
+      "seats": [
+        "seat_1772168763288_xuyt5w4a1",
+        "seat_1772168763288_9z6dmc32t",
+        "seat_1772168763288_hb8gcyzkg",
+        "seat_1772168763288_siim2yjo0",
+        "seat_1772168763288_wxjof30c1",
+        "seat_1772168763288_ijjmaov64",
+        "seat_1772168763288_7ge89p1ij",
+        "seat_1772168763288_mmc35yjqd"
+      ],
+      "curve": 0.35,
+      "start": {
+        "x": -100.02800288652674,
+        "y": -58.457923764853284
+      },
+      "end": {
+        "x": -9.093454807866024,
+        "y": 203.95320069071028
+      },
+      "sectionId": "section_1772061330626_5a486uax4"
+    }
+  },
+  "seats": {
+    "s_l1_1": {
+      "id": "s_l1_1",
+      "label": "1",
+      "position": {
+        "x": 100.93191172144992,
+        "y": 173.04280313925705
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_left_1",
+      "sectionId": "section_orange_1"
+    },
+    "s_l1_2": {
+      "id": "s_l1_2",
+      "label": "2",
+      "position": {
+        "x": 135.93191172144992,
+        "y": 173.04280313925707
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_left_1",
+      "sectionId": "section_orange_1"
+    },
+    "s_l1_3": {
+      "id": "s_l1_3",
+      "label": "3",
+      "position": {
+        "x": 170.9319117214499,
+        "y": 173.04280313925705
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_left_1",
+      "sectionId": "section_orange_1"
+    },
+    "s_l1_4": {
+      "id": "s_l1_4",
+      "label": "4",
+      "position": {
+        "x": 205.9319117214499,
+        "y": 173.04280313925705
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_left_1",
+      "sectionId": "section_orange_1"
+    },
+    "s_l1_5": {
+      "id": "s_l1_5",
+      "label": "5",
+      "position": {
+        "x": 240.9319117214499,
+        "y": 173.04280313925705
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_left_1",
+      "sectionId": "section_orange_1"
+    },
+    "s_l1_6": {
+      "id": "s_l1_6",
+      "label": "6",
+      "position": {
+        "x": 275.93191172144986,
+        "y": 173.04280313925705
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_left_1",
+      "sectionId": "section_orange_1"
+    },
+    "s_l2_1": {
+      "id": "s_l2_1",
+      "label": "1",
+      "position": {
+        "x": 100.93191172144992,
+        "y": 208.04280313925705
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_left_2",
+      "sectionId": "section_orange_1"
+    },
+    "s_l2_2": {
+      "id": "s_l2_2",
+      "label": "2",
+      "position": {
+        "x": 135.93191172144992,
+        "y": 208.04280313925707
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_left_2",
+      "sectionId": "section_orange_1"
+    },
+    "s_l2_3": {
+      "id": "s_l2_3",
+      "label": "3",
+      "position": {
+        "x": 170.9319117214499,
+        "y": 208.04280313925705
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_left_2",
+      "sectionId": "section_orange_1"
+    },
+    "s_l2_4": {
+      "id": "s_l2_4",
+      "label": "4",
+      "position": {
+        "x": 205.9319117214499,
+        "y": 208.04280313925705
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_left_2",
+      "sectionId": "section_orange_1"
+    },
+    "s_l2_5": {
+      "id": "s_l2_5",
+      "label": "5",
+      "position": {
+        "x": 240.9319117214499,
+        "y": 208.04280313925705
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_left_2",
+      "sectionId": "section_orange_1"
+    },
+    "s_l2_6": {
+      "id": "s_l2_6",
+      "label": "6",
+      "position": {
+        "x": 275.93191172144986,
+        "y": 208.04280313925705
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_left_2",
+      "sectionId": "section_orange_1"
+    },
+    "s_l3_1": {
+      "id": "s_l3_1",
+      "label": "1",
+      "position": {
+        "x": 100.93191172144992,
+        "y": 243.04280313925705
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_left_3",
+      "sectionId": "section_orange_1"
+    },
+    "s_l3_2": {
+      "id": "s_l3_2",
+      "label": "2",
+      "position": {
+        "x": 135.93191172144992,
+        "y": 243.04280313925707
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_left_3",
+      "sectionId": "section_orange_1"
+    },
+    "s_l3_3": {
+      "id": "s_l3_3",
+      "label": "3",
+      "position": {
+        "x": 170.9319117214499,
+        "y": 243.04280313925705
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_left_3",
+      "sectionId": "section_orange_1"
+    },
+    "s_l3_4": {
+      "id": "s_l3_4",
+      "label": "4",
+      "position": {
+        "x": 205.9319117214499,
+        "y": 243.04280313925705
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_left_3",
+      "sectionId": "section_orange_1"
+    },
+    "s_l3_5": {
+      "id": "s_l3_5",
+      "label": "5",
+      "position": {
+        "x": 240.9319117214499,
+        "y": 243.04280313925705
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_left_3",
+      "sectionId": "section_orange_1"
+    },
+    "s_l3_6": {
+      "id": "s_l3_6",
+      "label": "6",
+      "position": {
+        "x": 275.93191172144986,
+        "y": 243.04280313925705
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_left_3",
+      "sectionId": "section_orange_1"
+    },
+    "s_l4_1": {
+      "id": "s_l4_1",
+      "label": "1",
+      "position": {
+        "x": 120.93191172144992,
+        "y": 278.04280313925705
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_left_4",
+      "sectionId": "section_orange_1"
+    },
+    "s_l4_2": {
+      "id": "s_l4_2",
+      "label": "2",
+      "position": {
+        "x": 155.93191172144992,
+        "y": 278.042803139257
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_left_4",
+      "sectionId": "section_orange_1"
+    },
+    "s_l4_3": {
+      "id": "s_l4_3",
+      "label": "3",
+      "position": {
+        "x": 190.9319117214499,
+        "y": 278.04280313925705
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_left_4",
+      "sectionId": "section_orange_1"
+    },
+    "s_l4_4": {
+      "id": "s_l4_4",
+      "label": "4",
+      "position": {
+        "x": 225.9319117214499,
+        "y": 278.04280313925705
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_left_4",
+      "sectionId": "section_orange_1"
+    },
+    "s_l4_5": {
+      "id": "s_l4_5",
+      "label": "5",
+      "position": {
+        "x": 260.93191172144986,
+        "y": 278.04280313925705
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_left_4",
+      "sectionId": "section_orange_1"
+    },
+    "s_l5_1": {
+      "id": "s_l5_1",
+      "label": "1",
+      "position": {
+        "x": 140.93191172144992,
+        "y": 313.04280313925705
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_left_5",
+      "sectionId": "section_orange_1"
+    },
+    "s_l5_2": {
+      "id": "s_l5_2",
+      "label": "2",
+      "position": {
+        "x": 175.93191172144992,
+        "y": 313.04280313925705
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_left_5",
+      "sectionId": "section_orange_1"
+    },
+    "s_l5_3": {
+      "id": "s_l5_3",
+      "label": "3",
+      "position": {
+        "x": 210.93191172144992,
+        "y": 313.04280313925705
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_left_5",
+      "sectionId": "section_orange_1"
+    },
+    "s_l5_4": {
+      "id": "s_l5_4",
+      "label": "4",
+      "position": {
+        "x": 245.9319117214499,
+        "y": 313.04280313925705
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_left_5",
+      "sectionId": "section_orange_1"
+    },
+    "s_c1_1": {
+      "id": "s_c1_1",
+      "label": "1",
+      "position": {
+        "x": 388.634874591742,
+        "y": 165.72439241695142
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_center_1",
+      "sectionId": "section_purple_2"
+    },
+    "s_c1_2": {
+      "id": "s_c1_2",
+      "label": "2",
+      "position": {
+        "x": 423.63487459174206,
+        "y": 165.72439241695145
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_center_1",
+      "sectionId": "section_purple_2"
+    },
+    "s_c1_3": {
+      "id": "s_c1_3",
+      "label": "3",
+      "position": {
+        "x": 458.634874591742,
+        "y": 165.72439241695142
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_center_1",
+      "sectionId": "section_purple_2"
+    },
+    "s_c1_4": {
+      "id": "s_c1_4",
+      "label": "4",
+      "position": {
+        "x": 493.6348745917419,
+        "y": 165.72439241695142
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_center_1",
+      "sectionId": "section_purple_2"
+    },
+    "s_c1_5": {
+      "id": "s_c1_5",
+      "label": "5",
+      "position": {
+        "x": 528.6348745917419,
+        "y": 165.72439241695142
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_center_1",
+      "sectionId": "section_purple_2"
+    },
+    "s_c1_6": {
+      "id": "s_c1_6",
+      "label": "6",
+      "position": {
+        "x": 563.634874591742,
+        "y": 165.72439241695145
+      },
+      "type": "seat",
+      "status": "occupied",
+      "rowId": "row_center_1",
+      "sectionId": "section_purple_2"
+    },
+    "s_c1_7": {
+      "id": "s_c1_7",
+      "label": "7",
+      "position": {
+        "x": 598.6348745917419,
+        "y": 165.72439241695142
+      },
+      "type": "seat",
+      "status": "occupied",
+      "rowId": "row_center_1",
+      "sectionId": "section_purple_2"
+    },
+    "s_c1_8": {
+      "id": "s_c1_8",
+      "label": "8",
+      "position": {
+        "x": 633.6348745917419,
+        "y": 165.72439241695142
+      },
+      "type": "seat",
+      "status": "occupied",
+      "rowId": "row_center_1",
+      "sectionId": "section_purple_2"
+    },
+    "s_c2_1": {
+      "id": "s_c2_1",
+      "label": "1",
+      "position": {
+        "x": 390.17959101675035,
+        "y": 209.81382526696805
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_center_2",
+      "sectionId": "section_purple_2"
+    },
+    "s_c2_2": {
+      "id": "s_c2_2",
+      "label": "2",
+      "position": {
+        "x": 425.1795910167504,
+        "y": 209.8138252669681
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_center_2",
+      "sectionId": "section_purple_2"
+    },
+    "s_c2_3": {
+      "id": "s_c2_3",
+      "label": "3",
+      "position": {
+        "x": 460.1795910167503,
+        "y": 209.81382526696808
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_center_2",
+      "sectionId": "section_purple_2"
+    },
+    "s_c2_4": {
+      "id": "s_c2_4",
+      "label": "4",
+      "position": {
+        "x": 495.17959101675024,
+        "y": 209.81382526696802
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_center_2",
+      "sectionId": "section_purple_2"
+    },
+    "s_c2_5": {
+      "id": "s_c2_5",
+      "label": "5",
+      "position": {
+        "x": 530.1795910167502,
+        "y": 209.81382526696805
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_center_2",
+      "sectionId": "section_purple_2"
+    },
+    "s_c2_6": {
+      "id": "s_c2_6",
+      "label": "6",
+      "position": {
+        "x": 565.1795910167502,
+        "y": 209.81382526696805
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_center_2",
+      "sectionId": "section_purple_2"
+    },
+    "s_c2_7": {
+      "id": "s_c2_7",
+      "label": "7",
+      "position": {
+        "x": 600.1795910167502,
+        "y": 209.81382526696805
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_center_2",
+      "sectionId": "section_purple_2"
+    },
+    "s_c2_8": {
+      "id": "s_c2_8",
+      "label": "8",
+      "position": {
+        "x": 635.1795910167502,
+        "y": 209.81382526696805
+      },
+      "type": "seat",
+      "status": "occupied",
+      "rowId": "row_center_2",
+      "sectionId": "section_purple_2"
+    },
+    "s_c3_1": {
+      "id": "s_c3_1",
+      "label": "1",
+      "position": {
+        "x": 390.23740099246294,
+        "y": 342.7636311508236
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_center_3",
+      "sectionId": "section_purple_2"
+    },
+    "s_c3_2": {
+      "id": "s_c3_2",
+      "label": "2",
+      "position": {
+        "x": 425.23740099246294,
+        "y": 342.7636311508236
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_center_3",
+      "sectionId": "section_purple_2"
+    },
+    "s_c3_3": {
+      "id": "s_c3_3",
+      "label": "3",
+      "position": {
+        "x": 460.23740099246294,
+        "y": 342.7636311508236
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_center_3",
+      "sectionId": "section_purple_2"
+    },
+    "s_c3_4": {
+      "id": "s_c3_4",
+      "label": "4",
+      "position": {
+        "x": 495.23740099246294,
+        "y": 342.7636311508236
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_center_3",
+      "sectionId": "section_purple_2"
+    },
+    "s_c3_5": {
+      "id": "s_c3_5",
+      "label": "5",
+      "position": {
+        "x": 530.2374009924629,
+        "y": 342.7636311508236
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_center_3",
+      "sectionId": "section_purple_2"
+    },
+    "s_c3_6": {
+      "id": "s_c3_6",
+      "label": "6",
+      "position": {
+        "x": 565.2374009924627,
+        "y": 342.7636311508236
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_center_3",
+      "sectionId": "section_purple_2"
+    },
+    "s_c3_7": {
+      "id": "s_c3_7",
+      "label": "7",
+      "position": {
+        "x": 600.2374009924627,
+        "y": 342.7636311508236
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_center_3",
+      "sectionId": "section_purple_2"
+    },
+    "s_c3_8": {
+      "id": "s_c3_8",
+      "label": "8",
+      "position": {
+        "x": 635.2374009924627,
+        "y": 342.7636311508236
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_center_3",
+      "sectionId": "section_purple_2"
+    },
+    "s_c4_1": {
+      "id": "s_c4_1",
+      "label": "1",
+      "position": {
+        "x": 390.542766963464,
+        "y": 381.5807057883361
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_center_4",
+      "sectionId": "section_purple_2"
+    },
+    "s_c4_2": {
+      "id": "s_c4_2",
+      "label": "2",
+      "position": {
+        "x": 425.542766963464,
+        "y": 381.5807057883361
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_center_4",
+      "sectionId": "section_purple_2"
+    },
+    "s_c4_3": {
+      "id": "s_c4_3",
+      "label": "3",
+      "position": {
+        "x": 460.542766963464,
+        "y": 381.5807057883361
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_center_4",
+      "sectionId": "section_purple_2"
+    },
+    "s_c4_4": {
+      "id": "s_c4_4",
+      "label": "4",
+      "position": {
+        "x": 495.542766963464,
+        "y": 381.5807057883361
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_center_4",
+      "sectionId": "section_purple_2"
+    },
+    "s_c4_5": {
+      "id": "s_c4_5",
+      "label": "5",
+      "position": {
+        "x": 530.5427669634639,
+        "y": 381.5807057883361
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_center_4",
+      "sectionId": "section_purple_2"
+    },
+    "s_c4_6": {
+      "id": "s_c4_6",
+      "label": "6",
+      "position": {
+        "x": 565.5427669634639,
+        "y": 381.5807057883361
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_center_4",
+      "sectionId": "section_purple_2"
+    },
+    "s_c4_7": {
+      "id": "s_c4_7",
+      "label": "7",
+      "position": {
+        "x": 600.5427669634639,
+        "y": 381.5807057883361
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_center_4",
+      "sectionId": "section_purple_2"
+    },
+    "s_c4_8": {
+      "id": "s_c4_8",
+      "label": "8",
+      "position": {
+        "x": 635.5427669634639,
+        "y": 381.5807057883361
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_center_4",
+      "sectionId": "section_purple_2"
+    },
+    "s_c6_1": {
+      "id": "s_c6_1",
+      "label": "1",
+      "position": {
+        "x": 424.61590024077424,
+        "y": 429.46598569723824
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_center_6",
+      "sectionId": "section_purple_2"
+    },
+    "s_c6_2": {
+      "id": "s_c6_2",
+      "label": "2",
+      "position": {
+        "x": 459.6159002407743,
+        "y": 429.5529502450648
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_center_6",
+      "sectionId": "section_purple_2"
+    },
+    "s_c6_3": {
+      "id": "s_c6_3",
+      "label": "3",
+      "position": {
+        "x": 494.6159002407743,
+        "y": 429.5964325189779
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_center_6",
+      "sectionId": "section_purple_2"
+    },
+    "s_c6_4": {
+      "id": "s_c6_4",
+      "label": "4",
+      "position": {
+        "x": 529.6159002407743,
+        "y": 429.59643251897796
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_center_6",
+      "sectionId": "section_purple_2"
+    },
+    "s_c6_5": {
+      "id": "s_c6_5",
+      "label": "5",
+      "position": {
+        "x": 564.6159002407743,
+        "y": 429.5529502450647
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_center_6",
+      "sectionId": "section_purple_2"
+    },
+    "s_c6_6": {
+      "id": "s_c6_6",
+      "label": "6",
+      "position": {
+        "x": 599.6159002407743,
+        "y": 429.46598569723824
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_center_6",
+      "sectionId": "section_purple_2"
+    },
+    "s_r1_1": {
+      "id": "s_r1_1",
+      "label": "1",
+      "position": {
+        "x": 735.4562951145141,
+        "y": 168.08586675444585
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_right_1",
+      "sectionId": "section_gray_3"
+    },
+    "s_r1_2": {
+      "id": "s_r1_2",
+      "label": "2",
+      "position": {
+        "x": 770.4562951145143,
+        "y": 168.08586675444587
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_right_1",
+      "sectionId": "section_gray_3"
+    },
+    "s_r1_3": {
+      "id": "s_r1_3",
+      "label": "3",
+      "position": {
+        "x": 805.4562951145141,
+        "y": 168.08586675444585
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_right_1",
+      "sectionId": "section_gray_3"
+    },
+    "s_r1_4": {
+      "id": "s_r1_4",
+      "label": "4",
+      "position": {
+        "x": 840.4562951145141,
+        "y": 168.08586675444585
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_right_1",
+      "sectionId": "section_gray_3"
+    },
+    "s_r1_5": {
+      "id": "s_r1_5",
+      "label": "5",
+      "position": {
+        "x": 875.4562951145142,
+        "y": 168.08586675444585
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_right_1",
+      "sectionId": "section_gray_3"
+    },
+    "s_r1_6": {
+      "id": "s_r1_6",
+      "label": "6",
+      "position": {
+        "x": 910.4562951145141,
+        "y": 168.08586675444585
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_right_1",
+      "sectionId": "section_gray_3"
+    },
+    "s_r2_1": {
+      "id": "s_r2_1",
+      "label": "1",
+      "position": {
+        "x": 735.4562951145141,
+        "y": 203.08586675444585
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_right_2",
+      "sectionId": "section_gray_3"
+    },
+    "s_r2_2": {
+      "id": "s_r2_2",
+      "label": "2",
+      "position": {
+        "x": 770.4562951145143,
+        "y": 203.08586675444585
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_right_2",
+      "sectionId": "section_gray_3"
+    },
+    "s_r2_3": {
+      "id": "s_r2_3",
+      "label": "3",
+      "position": {
+        "x": 805.4562951145141,
+        "y": 203.08586675444585
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_right_2",
+      "sectionId": "section_gray_3"
+    },
+    "s_r2_4": {
+      "id": "s_r2_4",
+      "label": "4",
+      "position": {
+        "x": 840.4562951145141,
+        "y": 203.08586675444587
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_right_2",
+      "sectionId": "section_gray_3"
+    },
+    "s_r2_5": {
+      "id": "s_r2_5",
+      "label": "5",
+      "position": {
+        "x": 875.4562951145142,
+        "y": 203.08586675444585
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_right_2",
+      "sectionId": "section_gray_3"
+    },
+    "s_r2_6": {
+      "id": "s_r2_6",
+      "label": "6",
+      "position": {
+        "x": 910.4562951145141,
+        "y": 203.08586675444585
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_right_2",
+      "sectionId": "section_gray_3"
+    },
+    "s_r3_1": {
+      "id": "s_r3_1",
+      "label": "1",
+      "position": {
+        "x": 735.4562951145141,
+        "y": 238.08586675444587
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_right_3",
+      "sectionId": "section_gray_3"
+    },
+    "s_r3_2": {
+      "id": "s_r3_2",
+      "label": "2",
+      "position": {
+        "x": 770.4562951145143,
+        "y": 238.08586675444593
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_right_3",
+      "sectionId": "section_gray_3"
+    },
+    "s_r3_3": {
+      "id": "s_r3_3",
+      "label": "3",
+      "position": {
+        "x": 805.4562951145141,
+        "y": 238.08586675444587
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_right_3",
+      "sectionId": "section_gray_3"
+    },
+    "s_r3_4": {
+      "id": "s_r3_4",
+      "label": "4",
+      "position": {
+        "x": 840.4562951145141,
+        "y": 238.08586675444587
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_right_3",
+      "sectionId": "section_gray_3"
+    },
+    "s_r3_5": {
+      "id": "s_r3_5",
+      "label": "5",
+      "position": {
+        "x": 875.4562951145142,
+        "y": 238.08586675444587
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_right_3",
+      "sectionId": "section_gray_3"
+    },
+    "s_r3_6": {
+      "id": "s_r3_6",
+      "label": "6",
+      "position": {
+        "x": 910.4562951145141,
+        "y": 238.08586675444587
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_right_3",
+      "sectionId": "section_gray_3"
+    },
+    "s_r4_1": {
+      "id": "s_r4_1",
+      "label": "1",
+      "position": {
+        "x": 755.4562951145141,
+        "y": 273.085866754446
+      },
+      "type": "seat",
+      "status": "occupied",
+      "rowId": "row_right_4",
+      "sectionId": "section_gray_3"
+    },
+    "s_r4_2": {
+      "id": "s_r4_2",
+      "label": "2",
+      "position": {
+        "x": 790.4562951145141,
+        "y": 273.08586675444604
+      },
+      "type": "seat",
+      "status": "occupied",
+      "rowId": "row_right_4",
+      "sectionId": "section_gray_3"
+    },
+    "s_r4_3": {
+      "id": "s_r4_3",
+      "label": "3",
+      "position": {
+        "x": 825.4562951145141,
+        "y": 273.085866754446
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_right_4",
+      "sectionId": "section_gray_3"
+    },
+    "s_r4_4": {
+      "id": "s_r4_4",
+      "label": "4",
+      "position": {
+        "x": 860.4562951145142,
+        "y": 273.085866754446
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_right_4",
+      "sectionId": "section_gray_3"
+    },
+    "s_r4_5": {
+      "id": "s_r4_5",
+      "label": "5",
+      "position": {
+        "x": 895.4562951145141,
+        "y": 273.085866754446
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_right_4",
+      "sectionId": "section_gray_3"
+    },
+    "s_re1_1": {
+      "id": "s_re1_1",
+      "label": "1",
+      "position": {
+        "x": 85.66395556426552,
+        "y": 414.06776571131763
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_rear_1",
+      "sectionId": "section_yellow_4"
+    },
+    "s_re1_2": {
+      "id": "s_re1_2",
+      "label": "2",
+      "position": {
+        "x": 120.66395556426546,
+        "y": 414.06776571131763
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_rear_1",
+      "sectionId": "section_yellow_4"
+    },
+    "s_re1_3": {
+      "id": "s_re1_3",
+      "label": "3",
+      "position": {
+        "x": 155.66395556426542,
+        "y": 414.0677657113177
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_rear_1",
+      "sectionId": "section_yellow_4"
+    },
+    "s_re1_4": {
+      "id": "s_re1_4",
+      "label": "4",
+      "position": {
+        "x": 190.66395556426534,
+        "y": 414.06776571131763
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_rear_1",
+      "sectionId": "section_yellow_4"
+    },
+    "s_re1_5": {
+      "id": "s_re1_5",
+      "label": "5",
+      "position": {
+        "x": 225.66395556426528,
+        "y": 414.06776571131763
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_rear_1",
+      "sectionId": "section_yellow_4"
+    },
+    "s_re1_6": {
+      "id": "s_re1_6",
+      "label": "6",
+      "position": {
+        "x": 260.6639555642652,
+        "y": 414.06776571131763
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_rear_1",
+      "sectionId": "section_yellow_4"
+    },
+    "s_re1_7": {
+      "id": "s_re1_7",
+      "label": "7",
+      "position": {
+        "x": 295.66395556426517,
+        "y": 414.06776571131763
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_rear_1",
+      "sectionId": "section_yellow_4"
+    },
+    "s_re2_1": {
+      "id": "s_re2_1",
+      "label": "1",
+      "position": {
+        "x": 85.66395556426552,
+        "y": 455.07828411853023
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_rear_2",
+      "sectionId": "section_yellow_4"
+    },
+    "s_re2_2": {
+      "id": "s_re2_2",
+      "label": "2",
+      "position": {
+        "x": 120.66395556426546,
+        "y": 455.0782841185303
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_rear_2",
+      "sectionId": "section_yellow_4"
+    },
+    "s_re2_3": {
+      "id": "s_re2_3",
+      "label": "3",
+      "position": {
+        "x": 155.66395556426542,
+        "y": 455.07828411853035
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_rear_2",
+      "sectionId": "section_yellow_4"
+    },
+    "s_re2_4": {
+      "id": "s_re2_4",
+      "label": "4",
+      "position": {
+        "x": 190.66395556426534,
+        "y": 455.07828411853023
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_rear_2",
+      "sectionId": "section_yellow_4"
+    },
+    "s_re2_5": {
+      "id": "s_re2_5",
+      "label": "5",
+      "position": {
+        "x": 225.66395556426528,
+        "y": 455.0782841185303
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_rear_2",
+      "sectionId": "section_yellow_4"
+    },
+    "s_re2_6": {
+      "id": "s_re2_6",
+      "label": "6",
+      "position": {
+        "x": 260.6639555642652,
+        "y": 455.0782841185303
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_rear_2",
+      "sectionId": "section_yellow_4"
+    },
+    "s_re2_7": {
+      "id": "s_re2_7",
+      "label": "7",
+      "position": {
+        "x": 295.66395556426517,
+        "y": 455.07828411853023
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_rear_2",
+      "sectionId": "section_yellow_4"
+    },
+    "s_re3_1": {
+      "id": "s_re3_1",
+      "label": "1",
+      "position": {
+        "x": 722.2409117515381,
+        "y": 411.96123680877827
+      },
+      "type": "seat",
+      "status": "occupied",
+      "rowId": "row_rear_3",
+      "sectionId": "section_yellow_4"
+    },
+    "s_re3_2": {
+      "id": "s_re3_2",
+      "label": "2",
+      "position": {
+        "x": 757.2409117515381,
+        "y": 411.9612368087783
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_rear_3",
+      "sectionId": "section_yellow_4"
+    },
+    "s_re3_3": {
+      "id": "s_re3_3",
+      "label": "3",
+      "position": {
+        "x": 792.2409117515382,
+        "y": 411.9612368087783
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_rear_3",
+      "sectionId": "section_yellow_4"
+    },
+    "s_re3_4": {
+      "id": "s_re3_4",
+      "label": "4",
+      "position": {
+        "x": 827.2409117515381,
+        "y": 411.96123680877827
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_rear_3",
+      "sectionId": "section_yellow_4"
+    },
+    "s_re3_5": {
+      "id": "s_re3_5",
+      "label": "5",
+      "position": {
+        "x": 862.2409117515381,
+        "y": 411.96123680877827
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_rear_3",
+      "sectionId": "section_yellow_4"
+    },
+    "s_re3_6": {
+      "id": "s_re3_6",
+      "label": "6",
+      "position": {
+        "x": 897.2409117515381,
+        "y": 411.96123680877827
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_rear_3",
+      "sectionId": "section_yellow_4"
+    },
+    "s_re3_7": {
+      "id": "s_re3_7",
+      "label": "7",
+      "position": {
+        "x": 932.2409117515381,
+        "y": 411.96123680877827
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_rear_3",
+      "sectionId": "section_yellow_4"
+    },
+    "s_re4_1": {
+      "id": "s_re4_1",
+      "label": "1",
+      "position": {
+        "x": 724.3021320557949,
+        "y": 458.2979484821903
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_rear_4",
+      "sectionId": "section_yellow_4"
+    },
+    "s_re4_2": {
+      "id": "s_re4_2",
+      "label": "2",
+      "position": {
+        "x": 759.3021320557949,
+        "y": 458.2979484821903
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_rear_4",
+      "sectionId": "section_yellow_4"
+    },
+    "s_re4_3": {
+      "id": "s_re4_3",
+      "label": "3",
+      "position": {
+        "x": 794.302132055795,
+        "y": 458.2979484821903
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_rear_4",
+      "sectionId": "section_yellow_4"
+    },
+    "s_re4_4": {
+      "id": "s_re4_4",
+      "label": "4",
+      "position": {
+        "x": 829.3021320557949,
+        "y": 458.2979484821903
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_rear_4",
+      "sectionId": "section_yellow_4"
+    },
+    "s_re4_5": {
+      "id": "s_re4_5",
+      "label": "5",
+      "position": {
+        "x": 864.302132055795,
+        "y": 458.2979484821903
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_rear_4",
+      "sectionId": "section_yellow_4"
+    },
+    "s_re4_6": {
+      "id": "s_re4_6",
+      "label": "6",
+      "position": {
+        "x": 899.3021320557949,
+        "y": 458.2979484821903
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_rear_4",
+      "sectionId": "section_yellow_4"
+    },
+    "s_re4_7": {
+      "id": "s_re4_7",
+      "label": "7",
+      "position": {
+        "x": 934.3021320557949,
+        "y": 458.2979484821903
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_rear_4",
+      "sectionId": "section_yellow_4"
+    },
+    "seat_1772061330626_dzyi3z7f1": {
+      "id": "seat_1772061330626_dzyi3z7f1",
+      "label": "1",
+      "position": {
+        "x": 439.7462571787065,
+        "y": 655.0663722998205
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772061330626_1jqcfqbh2",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772061330626_31bqavxxv": {
+      "id": "seat_1772061330626_31bqavxxv",
+      "label": "2",
+      "position": {
+        "x": 474.74625717870646,
+        "y": 655.0663722998205
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772061330626_1jqcfqbh2",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772061330626_mls6aos07": {
+      "id": "seat_1772061330626_mls6aos07",
+      "label": "3",
+      "position": {
+        "x": 509.7462571787065,
+        "y": 655.0663722998205
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772061330626_1jqcfqbh2",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772061330626_0whxfylnn": {
+      "id": "seat_1772061330626_0whxfylnn",
+      "label": "4",
+      "position": {
+        "x": 544.7462571787064,
+        "y": 655.0663722998205
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772061330626_1jqcfqbh2",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772061330626_x0lcnr1as": {
+      "id": "seat_1772061330626_x0lcnr1as",
+      "label": "5",
+      "position": {
+        "x": 579.7462571787066,
+        "y": 655.0663722998205
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772061330626_1jqcfqbh2",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772061330626_stnvluvj3": {
+      "id": "seat_1772061330626_stnvluvj3",
+      "label": "6",
+      "position": {
+        "x": 614.7462571787064,
+        "y": 655.0663722998205
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772061330626_1jqcfqbh2",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772061330626_nf477esph": {
+      "id": "seat_1772061330626_nf477esph",
+      "label": "1",
+      "position": {
+        "x": 439.7462571787065,
+        "y": 698.4722582516046
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772061330626_lc80ve16o",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772061330626_iu79acyao": {
+      "id": "seat_1772061330626_iu79acyao",
+      "label": "2",
+      "position": {
+        "x": 474.74625717870646,
+        "y": 698.4722582516046
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772061330626_lc80ve16o",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772061330626_nvhmncy6d": {
+      "id": "seat_1772061330626_nvhmncy6d",
+      "label": "3",
+      "position": {
+        "x": 509.7462571787065,
+        "y": 698.4722582516046
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772061330626_lc80ve16o",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772061330626_42cwz3iva": {
+      "id": "seat_1772061330626_42cwz3iva",
+      "label": "4",
+      "position": {
+        "x": 544.7462571787064,
+        "y": 698.4722582516046
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772061330626_lc80ve16o",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772061330626_81phzfoja": {
+      "id": "seat_1772061330626_81phzfoja",
+      "label": "5",
+      "position": {
+        "x": 579.7462571787064,
+        "y": 698.4722582516046
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772061330626_lc80ve16o",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772061330626_egnlb4j3u": {
+      "id": "seat_1772061330626_egnlb4j3u",
+      "label": "6",
+      "position": {
+        "x": 614.7462571787066,
+        "y": 698.4722582516046
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772061330626_lc80ve16o",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772061330626_gk80dbyt4": {
+      "id": "seat_1772061330626_gk80dbyt4",
+      "label": "1",
+      "position": {
+        "x": 436.9202083008997,
+        "y": 741.8781442033886
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772061330626_bzncrexjg",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772061330626_x5be9hfej": {
+      "id": "seat_1772061330626_x5be9hfej",
+      "label": "2",
+      "position": {
+        "x": 471.9202083008997,
+        "y": 741.8781442033886
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772061330626_bzncrexjg",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772061330626_r92r548ia": {
+      "id": "seat_1772061330626_r92r548ia",
+      "label": "3",
+      "position": {
+        "x": 506.9202083008996,
+        "y": 741.8781442033886
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772061330626_bzncrexjg",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772061330626_kqohl6d9i": {
+      "id": "seat_1772061330626_kqohl6d9i",
+      "label": "4",
+      "position": {
+        "x": 541.9202083008995,
+        "y": 741.8781442033886
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772061330626_bzncrexjg",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772061330626_d450ya9qq": {
+      "id": "seat_1772061330626_d450ya9qq",
+      "label": "5",
+      "position": {
+        "x": 576.9202083008997,
+        "y": 741.8781442033886
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772061330626_bzncrexjg",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772061330626_974ycff26": {
+      "id": "seat_1772061330626_974ycff26",
+      "label": "6",
+      "position": {
+        "x": 611.9202083009,
+        "y": 741.8781442033886
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772061330626_bzncrexjg",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772068499813_nm128w0pa": {
+      "id": "seat_1772068499813_nm128w0pa",
+      "label": "1",
+      "position": {
+        "x": 1.360077793702017,
+        "y": 535.1148148878677
+      },
+      "type": "seat",
+      "status": "available",
+      "tableId": "table_1772068499813_dwddletwc"
+    },
+    "seat_1772068499813_2p464gz9h": {
+      "id": "seat_1772068499813_2p464gz9h",
+      "label": "2",
+      "position": {
+        "x": 52.911114966323744,
+        "y": 595.6318272787416
+      },
+      "type": "seat",
+      "status": "available",
+      "tableId": "table_1772068499813_dwddletwc"
+    },
+    "seat_1772068499813_62m7hej8c": {
+      "id": "seat_1772068499813_62m7hej8c",
+      "label": "3",
+      "position": {
+        "x": 1.360077793702016,
+        "y": 638.2168892331111
+      },
+      "type": "seat",
+      "status": "available",
+      "tableId": "table_1772068499813_dwddletwc"
+    },
+    "seat_1772068499813_q3j9g2fqc": {
+      "id": "seat_1772068499813_q3j9g2fqc",
+      "label": "4",
+      "position": {
+        "x": -51.685288581961785,
+        "y": 589.6545104665735
+      },
+      "type": "seat",
+      "status": "available",
+      "tableId": "table_1772068499813_dwddletwc"
+    },
+    "seat_1772068524015_96161ev24": {
+      "id": "seat_1772068524015_96161ev24",
+      "label": "1",
+      "position": {
+        "x": 1070.8496410584655,
+        "y": 519.2324540995255
+      },
+      "type": "seat",
+      "status": "available",
+      "tableId": "table_1772068524015_w1lrjmjwp"
+    },
+    "seat_1772068524015_ebvlmmtrf": {
+      "id": "seat_1772068524015_ebvlmmtrf",
+      "label": "2",
+      "position": {
+        "x": 1106.3666534493402,
+        "y": 519.2324540995255
+      },
+      "type": "seat",
+      "status": "available",
+      "tableId": "table_1772068524015_w1lrjmjwp"
+    },
+    "seat_1772068524015_avjft2jsg": {
+      "id": "seat_1772068524015_avjft2jsg",
+      "label": "3",
+      "position": {
+        "x": 1144.9857401854576,
+        "y": 592.2211125056095
+      },
+      "type": "seat",
+      "status": "available",
+      "tableId": "table_1772068524015_w1lrjmjwp"
+    },
+    "seat_1772068524015_aurrvpxij": {
+      "id": "seat_1772068524015_aurrvpxij",
+      "label": "4",
+      "position": {
+        "x": 1072.3439702615076,
+        "y": 654.7494664903993
+      },
+      "type": "seat",
+      "status": "available",
+      "tableId": "table_1772068524015_w1lrjmjwp"
+    },
+    "seat_1772068524015_jbggod9qh": {
+      "id": "seat_1772068524015_jbggod9qh",
+      "label": "5",
+      "position": {
+        "x": 1104.8723242462981,
+        "y": 654.7494664903993
+      },
+      "type": "seat",
+      "status": "available",
+      "tableId": "table_1772068524015_w1lrjmjwp"
+    },
+    "seat_1772068524015_tdcoz8514": {
+      "id": "seat_1772068524015_tdcoz8514",
+      "label": "6",
+      "position": {
+        "x": 1020.2759206980122,
+        "y": 589.2324540995254
+      },
+      "type": "seat",
+      "status": "available",
+      "tableId": "table_1772068524015_w1lrjmjwp"
+    },
+    "seat_1772168491114_wpt2avtfx": {
+      "id": "seat_1772168491114_wpt2avtfx",
+      "label": "1",
+      "position": {
+        "x": 387.4620630578065,
+        "y": 248.46095266280076
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168491113_0phcsgx32",
+      "sectionId": "section_purple_2"
+    },
+    "seat_1772168491114_k8xndq9k1": {
+      "id": "seat_1772168491114_k8xndq9k1",
+      "label": "2",
+      "position": {
+        "x": 422.4620630578066,
+        "y": 248.4609526628008
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168491113_0phcsgx32",
+      "sectionId": "section_purple_2"
+    },
+    "seat_1772168491114_bpq6owapn": {
+      "id": "seat_1772168491114_bpq6owapn",
+      "label": "3",
+      "position": {
+        "x": 457.4620630578065,
+        "y": 248.46095266280074
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168491113_0phcsgx32",
+      "sectionId": "section_purple_2"
+    },
+    "seat_1772168491114_dtmmqwbc2": {
+      "id": "seat_1772168491114_dtmmqwbc2",
+      "label": "4",
+      "position": {
+        "x": 492.4620630578064,
+        "y": 248.46095266280076
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168491113_0phcsgx32",
+      "sectionId": "section_purple_2"
+    },
+    "seat_1772168491114_v4rkn1ifc": {
+      "id": "seat_1772168491114_v4rkn1ifc",
+      "label": "5",
+      "position": {
+        "x": 527.4620630578065,
+        "y": 248.46095266280076
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168491113_0phcsgx32",
+      "sectionId": "section_purple_2"
+    },
+    "seat_1772168491114_07xoqyn5t": {
+      "id": "seat_1772168491114_07xoqyn5t",
+      "label": "6",
+      "position": {
+        "x": 562.4620630578065,
+        "y": 248.46095266280076
+      },
+      "type": "seat",
+      "status": "occupied",
+      "rowId": "row_1772168491113_0phcsgx32",
+      "sectionId": "section_purple_2"
+    },
+    "seat_1772168491114_l4j9ydall": {
+      "id": "seat_1772168491114_l4j9ydall",
+      "label": "7",
+      "position": {
+        "x": 597.4620630578065,
+        "y": 248.46095266280076
+      },
+      "type": "seat",
+      "status": "occupied",
+      "rowId": "row_1772168491113_0phcsgx32",
+      "sectionId": "section_purple_2"
+    },
+    "seat_1772168491114_hjunz9nk8": {
+      "id": "seat_1772168491114_hjunz9nk8",
+      "label": "8",
+      "position": {
+        "x": 632.4620630578064,
+        "y": 248.46095266280076
+      },
+      "type": "seat",
+      "status": "occupied",
+      "rowId": "row_1772168491113_0phcsgx32",
+      "sectionId": "section_purple_2"
+    },
+    "seat_1772168491114_hzqbo5vzu": {
+      "id": "seat_1772168491114_hzqbo5vzu",
+      "label": "1",
+      "position": {
+        "x": 389.00677948281486,
+        "y": 292.5503855128174
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168491114_bf8ovbhf3",
+      "sectionId": "section_purple_2"
+    },
+    "seat_1772168491114_8s53q5hyg": {
+      "id": "seat_1772168491114_8s53q5hyg",
+      "label": "2",
+      "position": {
+        "x": 424.0067794828149,
+        "y": 292.55038551281746
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168491114_bf8ovbhf3",
+      "sectionId": "section_purple_2"
+    },
+    "seat_1772168491114_0ua1igz1s": {
+      "id": "seat_1772168491114_0ua1igz1s",
+      "label": "3",
+      "position": {
+        "x": 459.00677948281486,
+        "y": 292.5503855128174
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168491114_bf8ovbhf3",
+      "sectionId": "section_purple_2"
+    },
+    "seat_1772168491114_efxxordso": {
+      "id": "seat_1772168491114_efxxordso",
+      "label": "4",
+      "position": {
+        "x": 494.00677948281475,
+        "y": 292.55038551281734
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168491114_bf8ovbhf3",
+      "sectionId": "section_purple_2"
+    },
+    "seat_1772168491114_7rtjac4my": {
+      "id": "seat_1772168491114_7rtjac4my",
+      "label": "5",
+      "position": {
+        "x": 529.0067794828147,
+        "y": 292.5503855128174
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168491114_bf8ovbhf3",
+      "sectionId": "section_purple_2"
+    },
+    "seat_1772168491114_d1gv1n7ed": {
+      "id": "seat_1772168491114_d1gv1n7ed",
+      "label": "6",
+      "position": {
+        "x": 564.0067794828149,
+        "y": 292.5503855128174
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168491114_bf8ovbhf3",
+      "sectionId": "section_purple_2"
+    },
+    "seat_1772168491114_igruasnu4": {
+      "id": "seat_1772168491114_igruasnu4",
+      "label": "7",
+      "position": {
+        "x": 599.0067794828147,
+        "y": 292.55038551281746
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168491114_bf8ovbhf3",
+      "sectionId": "section_purple_2"
+    },
+    "seat_1772168491114_bb1qi7wns": {
+      "id": "seat_1772168491114_bb1qi7wns",
+      "label": "8",
+      "position": {
+        "x": 634.0067794828147,
+        "y": 292.5503855128174
+      },
+      "type": "seat",
+      "status": "occupied",
+      "rowId": "row_1772168491114_bf8ovbhf3",
+      "sectionId": "section_purple_2"
+    },
+    "seat_1772168524430_fxieaesui": {
+      "id": "seat_1772168524430_fxieaesui",
+      "label": "1",
+      "position": {
+        "x": 425.46656242989224,
+        "y": 466.0928972304465
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168524430_or4hnr4we",
+      "sectionId": "section_purple_2"
+    },
+    "seat_1772168524430_u6kd3dqlp": {
+      "id": "seat_1772168524430_u6kd3dqlp",
+      "label": "2",
+      "position": {
+        "x": 460.4665624298923,
+        "y": 466.17986177827305
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168524430_or4hnr4we",
+      "sectionId": "section_purple_2"
+    },
+    "seat_1772168524430_lheir6hqh": {
+      "id": "seat_1772168524430_lheir6hqh",
+      "label": "3",
+      "position": {
+        "x": 495.4665624298923,
+        "y": 466.2233440521862
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168524430_or4hnr4we",
+      "sectionId": "section_purple_2"
+    },
+    "seat_1772168524430_72dsxpwdh": {
+      "id": "seat_1772168524430_72dsxpwdh",
+      "label": "4",
+      "position": {
+        "x": 530.4665624298923,
+        "y": 466.22334405218623
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168524430_or4hnr4we",
+      "sectionId": "section_purple_2"
+    },
+    "seat_1772168524430_c6cfqm1we": {
+      "id": "seat_1772168524430_c6cfqm1we",
+      "label": "5",
+      "position": {
+        "x": 565.4665624298923,
+        "y": 466.179861778273
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168524430_or4hnr4we",
+      "sectionId": "section_purple_2"
+    },
+    "seat_1772168524430_bay2hi8ul": {
+      "id": "seat_1772168524430_bay2hi8ul",
+      "label": "6",
+      "position": {
+        "x": 600.4665624298923,
+        "y": 466.0928972304465
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168524430_or4hnr4we",
+      "sectionId": "section_purple_2"
+    },
+    "seat_1772168699024_hp9upgt3s": {
+      "id": "seat_1772168699024_hp9upgt3s",
+      "label": "1",
+      "position": {
+        "x": 754.7740606360205,
+        "y": 316.5718413427304
+      },
+      "type": "seat",
+      "status": "occupied",
+      "rowId": "row_1772168699024_rfdp1bjuf",
+      "sectionId": "section_gray_3"
+    },
+    "seat_1772168699024_j9a085bup": {
+      "id": "seat_1772168699024_j9a085bup",
+      "label": "2",
+      "position": {
+        "x": 789.7740606360205,
+        "y": 316.5718413427304
+      },
+      "type": "seat",
+      "status": "occupied",
+      "rowId": "row_1772168699024_rfdp1bjuf",
+      "sectionId": "section_gray_3"
+    },
+    "seat_1772168699024_oq3cjmhx6": {
+      "id": "seat_1772168699024_oq3cjmhx6",
+      "label": "3",
+      "position": {
+        "x": 824.7740606360205,
+        "y": 316.5718413427304
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168699024_rfdp1bjuf",
+      "sectionId": "section_gray_3"
+    },
+    "seat_1772168699024_otmay41j8": {
+      "id": "seat_1772168699024_otmay41j8",
+      "label": "4",
+      "position": {
+        "x": 859.7740606360205,
+        "y": 316.5718413427304
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168699024_rfdp1bjuf",
+      "sectionId": "section_gray_3"
+    },
+    "seat_1772168699024_5zsav25ri": {
+      "id": "seat_1772168699024_5zsav25ri",
+      "label": "5",
+      "position": {
+        "x": 894.7740606360205,
+        "y": 316.5718413427304
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168699024_rfdp1bjuf",
+      "sectionId": "section_gray_3"
+    },
+    "seat_1772168712339_i499e6oqt": {
+      "id": "seat_1772168712339_i499e6oqt",
+      "label": "1",
+      "position": {
+        "x": 963.9062096338025,
+        "y": 97.42987294142222
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168712339_fxkekz8uj",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772168712339_cjcp34l0m": {
+      "id": "seat_1772168712339_cjcp34l0m",
+      "label": "2",
+      "position": {
+        "x": 978.7600896913864,
+        "y": 76.52235011174484
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168712339_fxkekz8uj",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772168712339_pb4maz94f": {
+      "id": "seat_1772168712339_pb4maz94f",
+      "label": "3",
+      "position": {
+        "x": 992.0031291830051,
+        "y": 54.91333219688923
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168712339_fxkekz8uj",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772168712339_bqam0wuf6": {
+      "id": "seat_1772168712339_bqam0wuf6",
+      "label": "4",
+      "position": {
+        "x": 1003.635328108659,
+        "y": 32.602819196855364
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168712339_fxkekz8uj",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772168712339_3gukaeusj": {
+      "id": "seat_1772168712339_3gukaeusj",
+      "label": "5",
+      "position": {
+        "x": 1013.6566864683482,
+        "y": 9.590811111643276
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168712339_fxkekz8uj",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772168712339_4lrdkwopy": {
+      "id": "seat_1772168712339_4lrdkwopy",
+      "label": "6",
+      "position": {
+        "x": 1022.0672042620724,
+        "y": -14.122692058747063
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168712339_fxkekz8uj",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772168712339_cik9h5ega": {
+      "id": "seat_1772168712339_cik9h5ega",
+      "label": "7",
+      "position": {
+        "x": 1028.866881489832,
+        "y": -38.537690314315626
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168712339_fxkekz8uj",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772168712339_rcgdyaw6y": {
+      "id": "seat_1772168712339_rcgdyaw6y",
+      "label": "8",
+      "position": {
+        "x": 1034.0557181516265,
+        "y": -63.65418365506245
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168712339_fxkekz8uj",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772168718121_5pnu76hmi": {
+      "id": "seat_1772168718121_5pnu76hmi",
+      "label": "1",
+      "position": {
+        "x": 1007.392184222087,
+        "y": 126.62613283163137
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168718121_159f88855",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772168718121_dnykrhwkp": {
+      "id": "seat_1772168718121_dnykrhwkp",
+      "label": "2",
+      "position": {
+        "x": 1022.2460642796708,
+        "y": 105.71861000195402
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168718121_159f88855",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772168718121_p8e9fa33r": {
+      "id": "seat_1772168718121_p8e9fa33r",
+      "label": "3",
+      "position": {
+        "x": 1035.4891037712896,
+        "y": 84.10959208709838
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168718121_159f88855",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772168718121_be5vulsdv": {
+      "id": "seat_1772168718121_be5vulsdv",
+      "label": "4",
+      "position": {
+        "x": 1047.1213026969435,
+        "y": 61.79907908706454
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168718121_159f88855",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772168718121_hq8rnsmxb": {
+      "id": "seat_1772168718121_hq8rnsmxb",
+      "label": "5",
+      "position": {
+        "x": 1057.1426610566327,
+        "y": 38.78707100185246
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168718121_159f88855",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772168718121_a2vt4aadr": {
+      "id": "seat_1772168718121_a2vt4aadr",
+      "label": "6",
+      "position": {
+        "x": 1065.553178850357,
+        "y": 15.073567831462128
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168718121_159f88855",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772168718121_jxl79dxrm": {
+      "id": "seat_1772168718121_jxl79dxrm",
+      "label": "7",
+      "position": {
+        "x": 1072.3528560781165,
+        "y": -9.341430424106424
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168718121_159f88855",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772168718121_4n8vgalax": {
+      "id": "seat_1772168718121_4n8vgalax",
+      "label": "8",
+      "position": {
+        "x": 1077.541692739911,
+        "y": -34.45792376485324
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168718121_159f88855",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772168733625_v1oa3jv6k": {
+      "id": "seat_1772168733625_v1oa3jv6k",
+      "label": "1",
+      "position": {
+        "x": 1041.8501079869404,
+        "y": 166.28031648669378
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168733625_72ygsw7zo",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772168733625_np15yfiby": {
+      "id": "seat_1772168733625_np15yfiby",
+      "label": "2",
+      "position": {
+        "x": 1061.0669905451964,
+        "y": 140.28231477171508
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168733625_72ygsw7zo",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772168733625_kcjlrd1tc": {
+      "id": "seat_1772168733625_kcjlrd1tc",
+      "label": "3",
+      "position": {
+        "x": 1078.270322395996,
+        "y": 113.36197692622422
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168733625_72ygsw7zo",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772168733625_lbtvw9nqk": {
+      "id": "seat_1772168733625_lbtvw9nqk",
+      "label": "4",
+      "position": {
+        "x": 1093.4601035393393,
+        "y": 85.51930295022122
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168733625_72ygsw7zo",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772168733625_z6lg0llt8": {
+      "id": "seat_1772168733625_z6lg0llt8",
+      "label": "5",
+      "position": {
+        "x": 1106.636333975227,
+        "y": 56.75429284370613
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168733625_72ygsw7zo",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772168733625_qwp0qetld": {
+      "id": "seat_1772168733625_qwp0qetld",
+      "label": "6",
+      "position": {
+        "x": 1117.7990137036584,
+        "y": 27.066946606678894
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168733625_72ygsw7zo",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772168733625_uidwgr4vz": {
+      "id": "seat_1772168733625_uidwgr4vz",
+      "label": "7",
+      "position": {
+        "x": 1126.9481427246337,
+        "y": -3.542735760860456
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168733625_72ygsw7zo",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772168733625_dwd8elx2o": {
+      "id": "seat_1772168733625_dwd8elx2o",
+      "label": "8",
+      "position": {
+        "x": 1134.0837210381533,
+        "y": -35.07475425891196
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168733625_72ygsw7zo",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772168748466_faovgix9f": {
+      "id": "seat_1772168748466_faovgix9f",
+      "label": "1",
+      "position": {
+        "x": -1.2990649725524168,
+        "y": -44.16820906677804
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168748466_frfpsnsap",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772168748466_pvtj73bix": {
+      "id": "seat_1772168748466_pvtj73bix",
+      "label": "2",
+      "position": {
+        "x": 2.27893112327735,
+        "y": -17.83987368735032
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168748466_frfpsnsap",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772168748466_8qryaugdm": {
+      "id": "seat_1772168748466_8qryaugdm",
+      "label": "3",
+      "position": {
+        "x": 7.5716929828761455,
+        "y": 7.877901154977833
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168748466_frfpsnsap",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772168748466_j46hqfhzo": {
+      "id": "seat_1772168748466_j46hqfhzo",
+      "label": "4",
+      "position": {
+        "x": 14.579220606243968,
+        "y": 32.9851154602064
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168748466_frfpsnsap",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772168748467_bri286zdm": {
+      "id": "seat_1772168748467_bri286zdm",
+      "label": "5",
+      "position": {
+        "x": 23.301513993380823,
+        "y": 57.48176922833538
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168748466_frfpsnsap",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772168748467_22qees48g": {
+      "id": "seat_1772168748467_22qees48g",
+      "label": "6",
+      "position": {
+        "x": 33.738573144286704,
+        "y": 81.3678624593648
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168748466_frfpsnsap",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772168748467_r8z2fubzk": {
+      "id": "seat_1772168748467_r8z2fubzk",
+      "label": "7",
+      "position": {
+        "x": 45.89039805896161,
+        "y": 104.64339515329463
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168748466_frfpsnsap",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772168748467_oyif2u41a": {
+      "id": "seat_1772168748467_oyif2u41a",
+      "label": "8",
+      "position": {
+        "x": 59.75698873740556,
+        "y": 127.30836731012488
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168748466_frfpsnsap",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772168755983_wvqk8vx6b": {
+      "id": "seat_1772168755983_wvqk8vx6b",
+      "label": "1",
+      "position": {
+        "x": -57.15885879230098,
+        "y": -49.36446895698721
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168755983_xo6jlsljp",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772168755983_b1ixqby71": {
+      "id": "seat_1772168755983_b1ixqby71",
+      "label": "2",
+      "position": {
+        "x": -51.086657949170835,
+        "y": -15.536817071725435
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168755983_xo6jlsljp",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772168755983_ocsd8fad5": {
+      "id": "seat_1772168755983_ocsd8fad5",
+      "label": "3",
+      "position": {
+        "x": -42.83202795215282,
+        "y": 17.4074706322008
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168755983_xo6jlsljp",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772168755983_fof753x9i": {
+      "id": "seat_1772168755983_fof753x9i",
+      "label": "4",
+      "position": {
+        "x": -32.39496880124694,
+        "y": 49.46839415479147
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168755983_xo6jlsljp",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772168755983_jtyg2mjcf": {
+      "id": "seat_1772168755983_jtyg2mjcf",
+      "label": "5",
+      "position": {
+        "x": -19.77548049645322,
+        "y": 80.64595349604656
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168755983_xo6jlsljp",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772168755983_5imavqwzh": {
+      "id": "seat_1772168755983_5imavqwzh",
+      "label": "6",
+      "position": {
+        "x": -4.973563037771633,
+        "y": 110.94014865596613
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168755983_xo6jlsljp",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772168755983_ct64akkf4": {
+      "id": "seat_1772168755983_ct64akkf4",
+      "label": "7",
+      "position": {
+        "x": 12.010783574797802,
+        "y": 140.3509796345501
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168755983_xo6jlsljp",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772168755983_kvtocerp3": {
+      "id": "seat_1772168755983_kvtocerp3",
+      "label": "8",
+      "position": {
+        "x": 31.177559341255105,
+        "y": 168.87844643179852
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168755983_xo6jlsljp",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772168763288_xuyt5w4a1": {
+      "id": "seat_1772168763288_xuyt5w4a1",
+      "label": "1",
+      "position": {
+        "x": -100.02800288652674,
+        "y": -58.457923764853284
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168763288_pqfzpcfmb",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772168763288_9z6dmc32t": {
+      "id": "seat_1772168763288_9z6dmc32t",
+      "label": "2",
+      "position": {
+        "x": -94.90968689467071,
+        "y": -18.242583828841532
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168763288_pqfzpcfmb",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772168763288_hb8gcyzkg": {
+      "id": "seat_1772168763288_hb8gcyzkg",
+      "label": "3",
+      "position": {
+        "x": -87.16725965825898,
+        "y": 21.06341062638362
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168763288_pqfzpcfmb",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772168763288_siim2yjo0": {
+      "id": "seat_1772168763288_siim2yjo0",
+      "label": "4",
+      "position": {
+        "x": -76.80072117729166,
+        "y": 59.46005960082216
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168763288_pqfzpcfmb",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772168763288_wxjof30c1": {
+      "id": "seat_1772168763288_wxjof30c1",
+      "label": "5",
+      "position": {
+        "x": -63.81007145176872,
+        "y": 96.9473630944741
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168763288_pqfzpcfmb",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772168763288_ijjmaov64": {
+      "id": "seat_1772168763288_ijjmaov64",
+      "label": "6",
+      "position": {
+        "x": -48.19531048169013,
+        "y": 133.52532110733944
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168763288_pqfzpcfmb",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772168763288_7ge89p1ij": {
+      "id": "seat_1772168763288_7ge89p1ij",
+      "label": "7",
+      "position": {
+        "x": -29.956438267055898,
+        "y": 169.19393363941816
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168763288_pqfzpcfmb",
+      "sectionId": "section_1772061330626_5a486uax4"
+    },
+    "seat_1772168763288_mmc35yjqd": {
+      "id": "seat_1772168763288_mmc35yjqd",
+      "label": "8",
+      "position": {
+        "x": -9.093454807866024,
+        "y": 203.95320069071028
+      },
+      "type": "seat",
+      "status": "available",
+      "rowId": "row_1772168763288_pqfzpcfmb",
+      "sectionId": "section_1772061330626_5a486uax4"
+    }
+  },
+  "areas": {
+    "area_1772068588098_mqh7dwntl": {
+      "id": "area_1772068588098_mqh7dwntl",
+      "label": "stage",
+      "position": {
+        "x": 203.21685491906214,
+        "y": -182.79739797717238
+      },
+      "size": {
+        "width": 600,
+        "height": 250
+      },
+      "color": "#ff0026",
+      "shape": "rectangle",
+      "opacity": 1,
+      "rotation": 0,
+      "isLocked": false
+    },
+    "area_1772131645368_h6vi8pn56": {
+      "id": "area_1772131645368_h6vi8pn56",
+      "label": "",
+      "position": {
+        "x": -155.776193735581,
+        "y": -213.2621112883212
+      },
+      "size": {
+        "width": 1350,
+        "height": 1050
+      },
+      "color": "#969696",
+      "shape": "rectangle",
+      "opacity": 0.1,
+      "rotation": 0,
+      "zIndex": -2,
+      "isLocked": true
+    }
+  },
+  "tables": {
+    "table_1772068499813_dwddletwc": {
+      "id": "table_1772068499813_dwddletwc",
+      "label": "Table 1",
+      "position": {
+        "x": -26.685288581961743,
+        "y": 558.6204856848257
+      },
+      "shape": "round",
+      "size": {
+        "width": 60,
+        "height": 60
+      },
+      "seats": [
+        "seat_1772068499813_nm128w0pa",
+        "seat_1772068499813_2p464gz9h",
+        "seat_1772068499813_62m7hej8c",
+        "seat_1772068499813_q3j9g2fqc"
+      ]
+    },
+    "table_1772068524015_w1lrjmjwp": {
+      "id": "table_1772068524015_w1lrjmjwp",
+      "label": "Table 2",
+      "position": {
+        "x": 1042.804274682802,
+        "y": 547.7381248964834
+      },
+      "shape": "rectangular",
+      "size": {
+        "width": 80,
+        "height": 80
+      },
+      "seats": [
+        "seat_1772068524015_96161ev24",
+        "seat_1772068524015_ebvlmmtrf",
+        "seat_1772068524015_avjft2jsg",
+        "seat_1772068524015_aurrvpxij",
+        "seat_1772068524015_jbggod9qh",
+        "seat_1772068524015_tdcoz8514"
+      ]
+    }
+  },
+  "structures": {
+    "structure_1772062425423_0es6a3fcj": {
+      "id": "structure_1772062425423_0es6a3fcj",
+      "label": "Entrance",
+      "type": "entrance",
+      "position": {
+        "x": -197.20154154086075,
+        "y": 355.6863440772608
+      },
+      "size": {
+        "width": 80,
+        "height": 60
+      },
+      "color": "#12ed80"
+    },
+    "structure_1772062458892_nb2f5swh6": {
+      "id": "structure_1772062458892_nb2f5swh6",
+      "label": "Exit",
+      "type": "exit",
+      "position": {
+        "x": 1152.7295699078402,
+        "y": 339.8052921227847
+      },
+      "size": {
+        "width": 80,
+        "height": 60
+      },
+      "color": "#ef0b0b"
+    },
+    "structure_1772062480140_flnhjgxcq": {
+      "id": "structure_1772062480140_flnhjgxcq",
+      "label": "Entrance",
+      "type": "entrance",
+      "position": {
+        "x": 113.24720371653933,
+        "y": 793.8336378685227
+      },
+      "size": {
+        "width": 80,
+        "height": 60
+      },
+      "color": "#12ed80",
+      "zIndex": 12
+    },
+    "structure_1772062494067_8tvsg7vby": {
+      "id": "structure_1772062494067_8tvsg7vby",
+      "label": "Exit",
+      "type": "exit",
+      "position": {
+        "x": 808.637967907588,
+        "y": 800.6136489249369
+      },
+      "size": {
+        "width": 80,
+        "height": 60
+      },
+      "color": "#ef0b0b"
+    },
+    "structure_1772062895139_179ogy6gk": {
+      "id": "structure_1772062895139_179ogy6gk",
+      "label": "Bar",
+      "type": "bar",
+      "position": {
+        "x": 100.80877824594916,
+        "y": 560.9394766645033
+      },
+      "size": {
+        "width": 400,
+        "height": 60
+      },
+      "color": "#e557c6",
+      "rotation": 360,
+      "zIndex": 15
+    },
+    "structure_1772167674166_17kzsxorq": {
+      "id": "structure_1772167674166_17kzsxorq",
+      "label": "Bar",
+      "type": "bar",
+      "position": {
+        "x": 571.102197485477,
+        "y": 561.4503493361071
+      },
+      "size": {
+        "width": 400,
+        "height": 60
+      },
+      "color": "#e557c6",
+      "rotation": 360,
+      "zIndex": 15
+    }
+  },
+  "sections": {
+    "section_orange_1": {
+      "id": "section_orange_1",
+      "label": "Left Orchestra",
+      "color": "#f97316",
+      "sectionNumber": 1,
+      "price": 65
+    },
+    "section_purple_2": {
+      "id": "section_purple_2",
+      "label": "Center Orchestra",
+      "color": "#a855f7",
+      "sectionNumber": 2,
+      "price": 85
+    },
+    "section_gray_3": {
+      "id": "section_gray_3",
+      "label": "Right Orchestra",
+      "color": "#6b7280",
+      "sectionNumber": 3,
+      "price": 65
+    },
+    "section_yellow_4": {
+      "id": "section_yellow_4",
+      "label": "Rear Orchestra",
+      "color": "#eab308",
+      "sectionNumber": 4,
+      "price": 45
+    },
+    "section_1772061330626_5a486uax4": {
+      "id": "section_1772061330626_5a486uax4",
+      "label": "VIP",
+      "color": "#30f915",
+      "sectionNumber": 5,
+      "price": 500
+    }
+  }
+}

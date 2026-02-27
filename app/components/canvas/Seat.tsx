@@ -61,7 +61,9 @@ export const Seat = memo(function Seat({
   return (
     <g
       transform={`translate(${seat.position.x}, ${seat.position.y})`}
-      className="cursor-pointer"
+      className={
+        seat.isLocked ? "cursor-not-allowed opacity-75" : "cursor-pointer"
+      }
       onClick={(e) => onClick(seat.id, e)}
       data-element-id={seat.id}
       onMouseEnter={() => setIsHovered(true)}

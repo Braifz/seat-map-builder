@@ -98,6 +98,55 @@ const inferRowEndpoints = (
   };
 };
 
+const isElementLocked = (
+  state: Pick<
+    SeatMapStore,
+    "rows" | "seats" | "areas" | "tables" | "structures"
+  >,
+  elementId: ElementId,
+): boolean => {
+  if (elementId.startsWith("row_"))
+    return Boolean(state.rows[elementId]?.isLocked);
+  if (elementId.startsWith("seat_"))
+    return Boolean(state.seats[elementId as SeatId]?.isLocked);
+  if (elementId.startsWith("area_"))
+    return Boolean(state.areas[elementId as AreaId]?.isLocked);
+  if (elementId.startsWith("table_"))
+    return Boolean(state.tables[elementId as TableId]?.isLocked);
+  if (elementId.startsWith("structure_"))
+    return Boolean(state.structures[elementId as StructureId]?.isLocked);
+  return false;
+};
+
+const resolveLockTargetIds = (
+  state: Pick<SeatMapStore, "rows" | "seats" | "tables">,
+  elementIds: ElementId[],
+): ElementId[] => {
+  const targets = new Set<ElementId>();
+
+  elementIds.forEach((elementId) => {
+    if (elementId.startsWith("row_")) {
+      const row = state.rows[elementId as RowId];
+      if (!row) return;
+      targets.add(elementId);
+      row.seats.forEach((seatId) => targets.add(seatId));
+      return;
+    }
+
+    if (elementId.startsWith("table_")) {
+      const table = state.tables[elementId as TableId];
+      if (!table) return;
+      targets.add(elementId);
+      table.seats.forEach((seatId) => targets.add(seatId));
+      return;
+    }
+
+    targets.add(elementId);
+  });
+
+  return [...targets];
+};
+
 const computeCurvedRowSeatPositions = (
   start: Position,
   end: Position,
@@ -194,9 +243,11 @@ const initialState = {
   structures: {},
   sections: {},
   selectedIds: [],
+  purchaseSelectedSeatIds: [],
   zoom: DEFAULT_ZOOM,
   pan: { x: 0, y: 0 },
   activeTool: "select" as const,
+  appMode: "editor" as const,
 };
 
 let historyPast: HistorySnapshot[] = [];
@@ -213,6 +264,60 @@ export const useSeatMapStore = create<SeatMapStore>()(
         const snapshot = createHistorySnapshot(get());
         historyPast = [...historyPast, snapshot].slice(-HISTORY_LIMIT);
         historyFuture = [];
+      };
+
+      const applyLockState = (
+        elementIds: ElementId[],
+        isLocked: boolean,
+      ): void => {
+        const state = get();
+        const targetIds = resolveLockTargetIds(state, elementIds);
+        if (targetIds.length === 0) return;
+
+        recordHistory();
+        set((currentState) => {
+          const rows = { ...currentState.rows };
+          const seats = { ...currentState.seats };
+          const areas = { ...currentState.areas };
+          const tables = { ...currentState.tables };
+          const structures = { ...currentState.structures };
+
+          targetIds.forEach((elementId) => {
+            if (elementId.startsWith("row_") && rows[elementId]) {
+              rows[elementId] = { ...rows[elementId], isLocked };
+            } else if (
+              elementId.startsWith("seat_") &&
+              seats[elementId as SeatId]
+            ) {
+              seats[elementId as SeatId] = {
+                ...seats[elementId as SeatId],
+                isLocked,
+              };
+            } else if (elementId.startsWith("area_") && areas[elementId]) {
+              areas[elementId] = { ...areas[elementId], isLocked };
+            } else if (elementId.startsWith("table_") && tables[elementId]) {
+              tables[elementId] = { ...tables[elementId], isLocked };
+            } else if (
+              elementId.startsWith("structure_") &&
+              structures[elementId]
+            ) {
+              structures[elementId] = { ...structures[elementId], isLocked };
+            }
+          });
+
+          return {
+            rows,
+            seats,
+            areas,
+            tables,
+            structures,
+            selectedIds: isLocked
+              ? currentState.selectedIds.filter(
+                  (elementId) => !targetIds.includes(elementId),
+                )
+              : currentState.selectedIds,
+          };
+        });
       };
 
       return {
@@ -391,7 +496,7 @@ export const useSeatMapStore = create<SeatMapStore>()(
 
         updateRowCurve: (rowId, curve) => {
           const row = get().rows[rowId];
-          if (!row) return;
+          if (!row || row.isLocked) return;
           recordHistory();
 
           const currentSeats = get().seats;
@@ -436,7 +541,7 @@ export const useSeatMapStore = create<SeatMapStore>()(
 
         updateRowGeometry: (rowId, start, end, curve) => {
           const row = get().rows[rowId];
-          if (!row) return;
+          if (!row || row.isLocked) return;
           recordHistory();
 
           const nextCurve = clampCurve(curve ?? row.curve ?? 0);
@@ -1087,6 +1192,7 @@ export const useSeatMapStore = create<SeatMapStore>()(
         },
 
         moveStructure: (structureId, delta) => {
+          if (get().structures[structureId]?.isLocked) return;
           set((state) => ({
             structures: {
               ...state.structures,
@@ -1134,6 +1240,7 @@ export const useSeatMapStore = create<SeatMapStore>()(
 
         // Rotate actions
         rotateArea: (areaId, degrees) => {
+          if (get().areas[areaId]?.isLocked) return;
           set((state) => ({
             areas: {
               ...state.areas,
@@ -1146,6 +1253,7 @@ export const useSeatMapStore = create<SeatMapStore>()(
         },
 
         rotateTable: (tableId, degrees) => {
+          if (get().tables[tableId]?.isLocked) return;
           set((state) => ({
             tables: {
               ...state.tables,
@@ -1158,6 +1266,7 @@ export const useSeatMapStore = create<SeatMapStore>()(
         },
 
         rotateStructure: (structureId, degrees) => {
+          if (get().structures[structureId]?.isLocked) return;
           set((state) => ({
             structures: {
               ...state.structures,
@@ -1183,6 +1292,10 @@ export const useSeatMapStore = create<SeatMapStore>()(
         // Layer actions (zIndex)
         bringToFront: (elementIds) => {
           const state = get();
+          const unlockedElementIds = elementIds.filter(
+            (elementId) => !isElementLocked(state, elementId),
+          );
+          if (unlockedElementIds.length === 0) return;
           const maxZ = Math.max(
             0,
             ...Object.values(state.areas).map((a) => a.zIndex || 0),
@@ -1192,7 +1305,7 @@ export const useSeatMapStore = create<SeatMapStore>()(
           );
           set((state) => {
             const updates: Partial<typeof state> = {};
-            elementIds.forEach((id) => {
+            unlockedElementIds.forEach((id) => {
               if (id.startsWith("area_") && state.areas[id]) {
                 if (!updates.areas) updates.areas = { ...state.areas };
                 updates.areas[id] = { ...state.areas[id], zIndex: maxZ + 1 };
@@ -1217,6 +1330,10 @@ export const useSeatMapStore = create<SeatMapStore>()(
 
         sendToBack: (elementIds) => {
           const state = get();
+          const unlockedElementIds = elementIds.filter(
+            (elementId) => !isElementLocked(state, elementId),
+          );
+          if (unlockedElementIds.length === 0) return;
           const minZ = Math.min(
             0,
             ...Object.values(state.areas).map((a) => a.zIndex || 0),
@@ -1226,7 +1343,7 @@ export const useSeatMapStore = create<SeatMapStore>()(
           );
           set((state) => {
             const updates: Partial<typeof state> = {};
-            elementIds.forEach((id) => {
+            unlockedElementIds.forEach((id) => {
               if (id.startsWith("area_") && state.areas[id]) {
                 if (!updates.areas) updates.areas = { ...state.areas };
                 updates.areas[id] = { ...state.areas[id], zIndex: minZ - 1 };
@@ -1250,9 +1367,14 @@ export const useSeatMapStore = create<SeatMapStore>()(
         },
 
         bringForward: (elementIds) => {
+          const state = get();
+          const unlockedElementIds = elementIds.filter(
+            (elementId) => !isElementLocked(state, elementId),
+          );
+          if (unlockedElementIds.length === 0) return;
           set((state) => {
             const updates: Partial<typeof state> = {};
-            elementIds.forEach((id) => {
+            unlockedElementIds.forEach((id) => {
               if (id.startsWith("area_") && state.areas[id]) {
                 if (!updates.areas) updates.areas = { ...state.areas };
                 updates.areas[id] = {
@@ -1285,9 +1407,14 @@ export const useSeatMapStore = create<SeatMapStore>()(
         },
 
         sendBackward: (elementIds) => {
+          const state = get();
+          const unlockedElementIds = elementIds.filter(
+            (elementId) => !isElementLocked(state, elementId),
+          );
+          if (unlockedElementIds.length === 0) return;
           set((state) => {
             const updates: Partial<typeof state> = {};
-            elementIds.forEach((id) => {
+            unlockedElementIds.forEach((id) => {
               if (id.startsWith("area_") && state.areas[id]) {
                 if (!updates.areas) updates.areas = { ...state.areas };
                 updates.areas[id] = {
@@ -1322,7 +1449,7 @@ export const useSeatMapStore = create<SeatMapStore>()(
         // Move actions
         moveRow: (rowId, delta) => {
           const row = get().rows[rowId];
-          if (!row) return;
+          if (!row || row.isLocked) return;
 
           const { start, end } = inferRowEndpoints(row, get().seats);
           const nextStart = { x: start.x + delta.x, y: start.y + delta.y };
@@ -1365,6 +1492,7 @@ export const useSeatMapStore = create<SeatMapStore>()(
         },
 
         moveArea: (areaId, delta) => {
+          if (get().areas[areaId]?.isLocked) return;
           set((state) => ({
             areas: {
               ...state.areas,
@@ -1381,7 +1509,7 @@ export const useSeatMapStore = create<SeatMapStore>()(
 
         moveTable: (tableId, delta) => {
           const table = get().tables[tableId];
-          if (!table) return;
+          if (!table || table.isLocked) return;
 
           const seats = { ...get().seats };
           table.seats.forEach((seatId) => {
@@ -1413,6 +1541,7 @@ export const useSeatMapStore = create<SeatMapStore>()(
         },
 
         moveSeat: (seatId, delta) => {
+          if (get().seats[seatId]?.isLocked) return;
           set((state) => ({
             seats: {
               ...state.seats,
@@ -1464,9 +1593,30 @@ export const useSeatMapStore = create<SeatMapStore>()(
           set({ selectedIds: allIds });
         },
 
+        lockElements: (elementIds) => {
+          applyLockState(elementIds, true);
+        },
+
+        unlockElements: (elementIds) => {
+          applyLockState(elementIds, false);
+        },
+
+        toggleLockElements: (elementIds) => {
+          const state = get();
+          const targetIds = resolveLockTargetIds(state, elementIds);
+          if (targetIds.length === 0) return;
+          const shouldUnlock = targetIds.every((elementId) =>
+            isElementLocked(state, elementId),
+          );
+          applyLockState(targetIds, !shouldUnlock);
+        },
+
         // Bulk operations
         deleteSelected: () => {
-          const { selectedIds } = get();
+          const stateBeforeDelete = get();
+          const selectedIds = stateBeforeDelete.selectedIds.filter(
+            (elementId) => !isElementLocked(stateBeforeDelete, elementId),
+          );
           if (selectedIds.length === 0) return;
           recordHistory();
           isHistorySuspended = true;
@@ -1513,6 +1663,7 @@ export const useSeatMapStore = create<SeatMapStore>()(
           let counter = 1;
 
           selectedIds.forEach((id) => {
+            if (isElementLocked(get(), id)) return;
             if (id.startsWith("seat_") && seats[id]) {
               const label = pattern
                 .replace(/\{n\}/g, String(counter))
@@ -1551,8 +1702,11 @@ export const useSeatMapStore = create<SeatMapStore>()(
           const state = get();
           const selectedRows = new Set<RowId>();
           const selectedTables = new Set<TableId>();
+          const selectableIds = state.selectedIds.filter(
+            (elementId) => !isElementLocked(state, elementId),
+          );
 
-          state.selectedIds.forEach((id) => {
+          selectableIds.forEach((id) => {
             if (id.startsWith("row_") && state.rows[id as RowId]) {
               selectedRows.add(id as RowId);
             }
@@ -1569,7 +1723,7 @@ export const useSeatMapStore = create<SeatMapStore>()(
           const structures: Structure[] = [];
           const standaloneSeats: Seat[] = [];
 
-          state.selectedIds.forEach((id) => {
+          selectableIds.forEach((id) => {
             if (id.startsWith("row_")) {
               const row = state.rows[id as RowId];
               if (!row) return;
@@ -1814,6 +1968,61 @@ export const useSeatMapStore = create<SeatMapStore>()(
           set({ activeTool: tool });
         },
 
+        setAppMode: (mode) => {
+          set({
+            appMode: mode,
+            selectedIds: mode === "purchase" ? [] : get().selectedIds,
+            activeTool: mode === "purchase" ? "select" : get().activeTool,
+          });
+        },
+
+        toggleAppMode: () => {
+          const nextMode = get().appMode === "editor" ? "purchase" : "editor";
+          get().setAppMode(nextMode);
+        },
+
+        togglePurchaseSeat: (seatId) => {
+          const seat = get().seats[seatId];
+          if (!seat || seat.status !== "available") return;
+
+          set((state) => ({
+            purchaseSelectedSeatIds: state.purchaseSelectedSeatIds.includes(
+              seatId,
+            )
+              ? state.purchaseSelectedSeatIds.filter(
+                  (existingSeatId) => existingSeatId !== seatId,
+                )
+              : [...state.purchaseSelectedSeatIds, seatId],
+          }));
+        },
+
+        clearPurchaseSelection: () => {
+          set({ purchaseSelectedSeatIds: [] });
+        },
+
+        purchaseSelectedSeats: () => {
+          const selectedSeatIds = get().purchaseSelectedSeatIds;
+          if (selectedSeatIds.length === 0) return;
+
+          recordHistory();
+          set((state) => {
+            const nextSeats = { ...state.seats };
+            selectedSeatIds.forEach((seatId) => {
+              const seat = nextSeats[seatId];
+              if (!seat || seat.status !== "available") return;
+              nextSeats[seatId] = {
+                ...seat,
+                status: "occupied",
+              };
+            });
+
+            return {
+              seats: nextSeats,
+              purchaseSelectedSeatIds: [],
+            };
+          });
+        },
+
         undo: () => {
           if (historyPast.length === 0) return;
 
@@ -1886,6 +2095,9 @@ export const useSeatMapStore = create<SeatMapStore>()(
               structures: data.structures || {},
               sections: data.sections || {},
               selectedIds: [],
+              purchaseSelectedSeatIds: [],
+              appMode: "editor",
+              activeTool: "select",
             });
           } catch (error) {
             console.error("Failed to import map:", error);
@@ -1918,6 +2130,7 @@ export const useSeatMapStore = create<SeatMapStore>()(
         tables: state.tables,
         structures: state.structures,
         sections: state.sections,
+        appMode: state.appMode,
       }),
     },
   ),

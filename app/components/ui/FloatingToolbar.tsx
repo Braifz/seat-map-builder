@@ -31,15 +31,19 @@ const tools: { id: ToolType; label: string; icon: React.ReactNode }[] = [
 ];
 
 export function FloatingToolbar() {
-  const { activeTool, setActiveTool } = useSeatMapStore();
+  const { activeTool, setActiveTool, appMode } = useSeatMapStore();
   const { colors } = useThemeColors();
+  const visibleTools =
+    appMode === "purchase"
+      ? tools.filter((tool) => tool.id === "select" || tool.id === "pan")
+      : tools;
 
   return (
     <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50">
       <div
         className={`flex items-center gap-1 ${colors.bgPrimary} rounded-2xl px-2 py-2 shadow-lg border ${colors.border}`}
       >
-        {tools.map((tool) => (
+        {visibleTools.map((tool) => (
           <Tooltip key={tool.id} content={tool.label} position="bottom">
             <button
               onClick={() => setActiveTool(tool.id)}
