@@ -2,6 +2,8 @@
 
 Interactive visual editor for designing seat maps. Inspired by Seats.io, it allows creating and editing rows, seats, areas, and tables.
 
+> Developed with **Windsurf IDE** and **Kimi k2.5 (Reasoning)**, **Claude Opus 4.6** and **GPT-5.3-Codex** LLM models.
+
 ## Setup
 
 ```bash
@@ -14,7 +16,6 @@ npm run dev
 
 The application will be available at `http://localhost:3000`.
 
-Developed with **Windsurf IDE** and **Kimi k2.5** LLM model.
 
 ## Technical Decisions
 
@@ -142,8 +143,6 @@ interface Table {
 This project uses the following Model Context Protocol (MCP) servers:
 
 - **context7**: Documentation retrieval for libraries and frameworks
-- **linear**: Issue tracking and project management integration
-- **mastra**: AI agent orchestration capabilities
 - **memory**: Persistent memory for conversation context
 - **next-devtools**: Next.js development and debugging tools
 
@@ -210,7 +209,3 @@ app/
 └── page.tsx
 ```
 
-## Future Improvements
-
-- Further improvements to UI and user experience
-- Additional features and functionality
