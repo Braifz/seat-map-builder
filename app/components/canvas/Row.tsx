@@ -1,7 +1,12 @@
 "use client";
 
 import { memo } from "react";
-import type { Row as RowType, Seat as SeatType, Section } from "../../types";
+import type {
+  AppMode,
+  Row as RowType,
+  Seat as SeatType,
+  Section,
+} from "../../types";
 import { Seat } from "./Seat";
 
 interface RowProps {
@@ -13,6 +18,7 @@ interface RowProps {
   selectedIdSet?: Set<string>;
   scale?: number;
   section?: Section;
+  appMode: AppMode;
 }
 
 export const Row = memo(function Row({
@@ -24,6 +30,7 @@ export const Row = memo(function Row({
   selectedIdSet,
   scale = 1,
   section,
+  appMode,
 }: RowProps) {
   const firstSeat = seats[0];
   const lastSeat = seats[seats.length - 1];
@@ -69,8 +76,10 @@ export const Row = memo(function Row({
         <path
           d={connectionPath}
           fill="none"
-          className="stroke-gray-300"
+          stroke="transparent"
           strokeWidth={2}
+          pointerEvents="none"
+          opacity={0}
         />
       )}
 
@@ -99,6 +108,7 @@ export const Row = memo(function Row({
             scale={scale}
             section={section}
             rowLabel={row.label}
+            appMode={appMode}
           />
         </g>
       ))}

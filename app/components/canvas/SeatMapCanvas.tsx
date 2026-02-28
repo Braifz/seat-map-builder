@@ -1403,6 +1403,7 @@ export function SeatMapCanvas() {
               }
               scale={zoom}
               section={row.sectionId ? sections[row.sectionId] : undefined}
+              appMode={appMode}
             />
           ))}
 
@@ -1419,6 +1420,7 @@ export function SeatMapCanvas() {
                 appMode === "purchase" ? purchaseSelectedSeatSet : selectedIdSet
               }
               scale={zoom}
+              appMode={appMode}
             />
           ))}
 
@@ -1434,6 +1436,8 @@ export function SeatMapCanvas() {
               }
               onClick={handleSeatClick}
               scale={zoom}
+              section={seat.sectionId ? sections[seat.sectionId] : undefined}
+              appMode={appMode}
             />
           ))}
 

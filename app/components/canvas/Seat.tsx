@@ -1,7 +1,7 @@
 "use client";
 
 import { memo, useState } from "react";
-import type { Seat as SeatType, Section } from "../../types";
+import type { AppMode, Seat as SeatType, Section } from "../../types";
 import { useThemeColors } from "../../hooks/useThemeColors";
 
 interface SeatProps {
@@ -11,6 +11,7 @@ interface SeatProps {
   scale?: number;
   section?: Section;
   rowLabel?: string;
+  appMode: AppMode;
 }
 
 const SEAT_SIZE = 24;
@@ -21,6 +22,7 @@ export const Seat = memo(function Seat({
   onClick,
   section,
   rowLabel,
+  appMode,
 }: SeatProps) {
   const [isHovered, setIsHovered] = useState(false);
   const { isDark } = useThemeColors();
@@ -57,6 +59,12 @@ export const Seat = memo(function Seat({
   const halfSize = size / 2;
   const seatColors = getSeatColor();
   const effectivePrice = seat.price ?? section?.price;
+  const isPurchaseSelection = appMode === "purchase" && isSelected;
+  const seatStroke =
+    appMode === "editor" && isSelected ? "#3b82f6" : seatColors.stroke;
+  const seatStrokeWidth = appMode === "editor" && isSelected ? 3 : 2;
+  const seatFill = isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.06)";
+  const seatLabelFill = isDark ? "#e5e7eb" : "#374151";
 
   return (
     <g
@@ -72,9 +80,9 @@ export const Seat = memo(function Seat({
       {getSeatShape() === "circle" ? (
         <circle
           r={halfSize}
-          fill={seatColors.fill}
-          stroke={isSelected ? "#3b82f6" : seatColors.stroke}
-          strokeWidth={isSelected ? 2 : 1}
+          fill={seatFill}
+          stroke={seatStroke}
+          strokeWidth={seatStrokeWidth}
           className="transition-all hover:stroke-2"
         />
       ) : (
@@ -84,20 +92,33 @@ export const Seat = memo(function Seat({
           width={size}
           height={size}
           rx={4}
-          fill={seatColors.fill}
-          stroke={isSelected ? "#3b82f6" : seatColors.stroke}
-          strokeWidth={isSelected ? 2 : 1}
+          fill={seatFill}
+          stroke={seatStroke}
+          strokeWidth={seatStrokeWidth}
           className="transition-all hover:stroke-2"
         />
       )}
-      <text
-        y={size / 4}
-        textAnchor="middle"
-        className="text-xs fill-gray-700 pointer-events-none select-none"
-        style={{ fontSize: `10px` }}
-      >
-        {seat.label}
-      </text>
+      {isPurchaseSelection ? (
+        <path
+          d="M -5 0 L -1 4 L 6 -4"
+          fill="none"
+          stroke={seatColors.stroke}
+          strokeWidth={2.5}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="pointer-events-none"
+        />
+      ) : (
+        <text
+          y={size / 4}
+          textAnchor="middle"
+          className="text-xs pointer-events-none select-none"
+          fill={seatLabelFill}
+          style={{ fontSize: `10px` }}
+        >
+          {seat.label}
+        </text>
+      )}
 
       {/* Hover Tooltip - Minimalist Style */}
       {isHovered && (
