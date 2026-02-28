@@ -17,6 +17,7 @@ import { CreateLineModal } from "../modals/CreateLineModal";
 import { ContextMenu } from "../ContextMenu";
 import { EditSelectionModal } from "../modals/EditSelectionModal";
 import { ConfirmationModal } from "../modals/ConfirmationModal";
+import { ResizeHandles } from "./ResizeHandles";
 import type {
   Position,
   TableShape,
@@ -32,6 +33,7 @@ import type {
 } from "../../types";
 
 const DEFAULT_ROW_SEAT_COUNT = 8;
+const MIN_AREA_SIZE = 20;
 
 const clampCurve = (curve: number): number =>
   Math.max(-1.5, Math.min(1.5, curve));
@@ -135,6 +137,17 @@ export function SeatMapCanvas() {
     null,
   );
   const [endDraggingRowId, setEndDraggingRowId] = useState<RowId | null>(null);
+  const [resizingAreaId, setResizingAreaId] = useState<AreaId | null>(null);
+  const [activeAreaResizeHandle, setActiveAreaResizeHandle] = useState<
+    string | null
+  >(null);
+  const [resizeStartPoint, setResizeStartPoint] = useState<Position | null>(
+    null,
+  );
+  const [resizeStartRect, setResizeStartRect] = useState<{
+    position: Position;
+    size: { width: number; height: number };
+  } | null>(null);
 
   const {
     rows,
@@ -180,6 +193,7 @@ export function SeatMapCanvas() {
     deleteSelected,
     moveRow,
     moveArea,
+    resizeArea,
     moveTable,
     moveStructure,
     moveSeat,
@@ -212,6 +226,7 @@ export function SeatMapCanvas() {
       deleteSelected: state.deleteSelected,
       moveRow: state.moveRow,
       moveArea: state.moveArea,
+      resizeArea: state.resizeArea,
       moveTable: state.moveTable,
       moveStructure: state.moveStructure,
       moveSeat: state.moveSeat,
@@ -291,10 +306,25 @@ export function SeatMapCanvas() {
   const shouldRenderSelectionDragHandle = useMemo(() => {
     if (selectedIds.length > 1) return true;
     if (selectedIds.length === 1) {
-      return selectedIds[0].startsWith("row_");
+      const selectedId = selectedIds[0];
+      if (selectedId.startsWith("row_")) return false;
+      return (
+        selectedId.startsWith("area_") ||
+        selectedId.startsWith("table_") ||
+        selectedId.startsWith("structure_")
+      );
     }
     return false;
   }, [selectedIds]);
+  const selectedResizableArea = useMemo(() => {
+    if (selectedIds.length !== 1) return null;
+    const selectedId = selectedIds[0];
+    if (!selectedId.startsWith("area_")) return null;
+
+    const area = areas[selectedId as AreaId];
+    if (!area || area.isLocked) return null;
+    return area;
+  }, [selectedIds, areas]);
   const multiSelectionBounds = useMemo(() => {
     if (selectedIds.length === 0) return null;
 
@@ -676,7 +706,7 @@ export function SeatMapCanvas() {
         }
       }
 
-      if (activeTool === "addRow" && e.target === svgRef.current) {
+      if (activeTool === "addRow") {
         setIsDrawingRow(true);
         setRowDraftStart(svgPoint);
         setRowDraftEnd(svgPoint);
@@ -693,8 +723,19 @@ export function SeatMapCanvas() {
         unlockedElementId && selectedIdSet.has(unlockedElementId)
           ? unlockedElementId
           : null;
+      const singleSelectedRowId =
+        selectedIds.length === 1 && selectedIds[0].startsWith("row_")
+          ? (selectedIds[0] as RowId)
+          : null;
+      const clickedSeatFromSelectedRow =
+        Boolean(singleSelectedRowId) &&
+        unlockedElementId?.startsWith("seat_") === true &&
+        seats[unlockedElementId as SeatId]?.rowId === singleSelectedRowId;
 
-      if (clickedElementId && activeTool === "select") {
+      if (
+        activeTool === "select" &&
+        (clickedElementId || clickedSeatFromSelectedRow)
+      ) {
         setIsElementDragging(true);
         setDragElementStart(svgPoint);
         return;
@@ -747,7 +788,9 @@ export function SeatMapCanvas() {
       screenToSVG,
       getUnlockedElementIdAtPoint,
       clearSelection,
+      selectedIds,
       selectedIdSet,
+      seats,
       hasDraggableSelected,
       shouldRenderSelectionDragHandle,
       isShiftPressed,
@@ -913,6 +956,75 @@ export function SeatMapCanvas() {
 
       scheduleMouseMove(() => {
         // Curvature handle drag
+        if (
+          resizingAreaId &&
+          activeAreaResizeHandle &&
+          resizeStartPoint &&
+          resizeStartRect
+        ) {
+          const area = areas[resizingAreaId];
+          if (!area || area.isLocked) return;
+
+          const svgPoint = screenToSVG(clientX, clientY);
+          const delta = {
+            x: svgPoint.x - resizeStartPoint.x,
+            y: svgPoint.y - resizeStartPoint.y,
+          };
+
+          let nextX = resizeStartRect.position.x;
+          let nextY = resizeStartRect.position.y;
+          let nextWidth = resizeStartRect.size.width;
+          let nextHeight = resizeStartRect.size.height;
+
+          if (activeAreaResizeHandle.includes("e")) {
+            nextWidth = resizeStartRect.size.width + delta.x;
+          }
+          if (activeAreaResizeHandle.includes("s")) {
+            nextHeight = resizeStartRect.size.height + delta.y;
+          }
+          if (activeAreaResizeHandle.includes("w")) {
+            nextX = resizeStartRect.position.x + delta.x;
+            nextWidth = resizeStartRect.size.width - delta.x;
+          }
+          if (activeAreaResizeHandle.includes("n")) {
+            nextY = resizeStartRect.position.y + delta.y;
+            nextHeight = resizeStartRect.size.height - delta.y;
+          }
+
+          if (nextWidth < MIN_AREA_SIZE) {
+            if (activeAreaResizeHandle.includes("w")) {
+              nextX =
+                resizeStartRect.position.x +
+                (resizeStartRect.size.width - MIN_AREA_SIZE);
+            }
+            nextWidth = MIN_AREA_SIZE;
+          }
+
+          if (nextHeight < MIN_AREA_SIZE) {
+            if (activeAreaResizeHandle.includes("n")) {
+              nextY =
+                resizeStartRect.position.y +
+                (resizeStartRect.size.height - MIN_AREA_SIZE);
+            }
+            nextHeight = MIN_AREA_SIZE;
+          }
+
+          const positionDelta = {
+            x: nextX - area.position.x,
+            y: nextY - area.position.y,
+          };
+
+          if (positionDelta.x !== 0 || positionDelta.y !== 0) {
+            moveArea(resizingAreaId, positionDelta);
+          }
+
+          resizeArea(resizingAreaId, {
+            width: nextWidth,
+            height: nextHeight,
+          });
+          return;
+        }
+
         if (curveDraggingRowId) {
           const row = rows[curveDraggingRowId];
           if (!row) return;
@@ -1018,6 +1130,10 @@ export function SeatMapCanvas() {
     [
       isDragging,
       isDrawingRow,
+      resizingAreaId,
+      activeAreaResizeHandle,
+      resizeStartPoint,
+      resizeStartRect,
       curveDraggingRowId,
       startDraggingRowId,
       endDraggingRowId,
@@ -1032,9 +1148,11 @@ export function SeatMapCanvas() {
       dragElementStart,
       moveRow,
       moveArea,
+      resizeArea,
       moveTable,
       moveStructure,
       moveSeat,
+      areas,
       rows,
       seats,
       updateRowCurve,
@@ -1045,6 +1163,14 @@ export function SeatMapCanvas() {
 
   // Handle mouse up
   const handleMouseUp = useCallback(() => {
+    if (resizingAreaId) {
+      setResizingAreaId(null);
+      setActiveAreaResizeHandle(null);
+      setResizeStartPoint(null);
+      setResizeStartRect(null);
+      return;
+    }
+
     if (curveDraggingRowId) {
       setCurveDraggingRowId(null);
       return;
@@ -1156,6 +1282,7 @@ export function SeatMapCanvas() {
     setIsElementDragging(false);
     setIsBoxSelecting(false);
   }, [
+    resizingAreaId,
     curveDraggingRowId,
     startDraggingRowId,
     endDraggingRowId,
@@ -1313,69 +1440,6 @@ export function SeatMapCanvas() {
             />
           ))}
 
-          {/* Row curve handles (only in select mode) */}
-          {appMode === "editor" &&
-            activeTool === "select" &&
-            selectedIds
-              .filter(
-                (id) => id.startsWith("row_") && rows[id] && !rows[id].isLocked,
-              )
-              .map((rowId) => {
-                const row = rows[rowId];
-                const rowSeats = row.seats
-                  .map((seatId) => seats[seatId])
-                  .filter(Boolean);
-                if (rowSeats.length === 0) return null;
-
-                const start = row.start || rowSeats[0].position;
-                const end = row.end || rowSeats[rowSeats.length - 1].position;
-                const control = getCurvedRowControlPoint(
-                  start,
-                  end,
-                  row.curve ?? 0,
-                );
-
-                return (
-                  <g key={`row-curve-handle-${rowId}`}>
-                    <circle
-                      cx={start.x}
-                      cy={start.y}
-                      r={8 / zoom}
-                      fill="#ffffff"
-                      stroke="#16a34a"
-                      strokeWidth={2 / zoom}
-                      data-row-start-handle="true"
-                      data-row-id={rowId}
-                      className="cursor-ew-resize"
-                    />
-
-                    <circle
-                      cx={end.x}
-                      cy={end.y}
-                      r={8 / zoom}
-                      fill="#ffffff"
-                      stroke="#dc2626"
-                      strokeWidth={2 / zoom}
-                      data-row-end-handle="true"
-                      data-row-id={rowId}
-                      className="cursor-ew-resize"
-                    />
-
-                    <circle
-                      cx={control.x}
-                      cy={control.y}
-                      r={10 / zoom}
-                      fill="#ffffff"
-                      stroke="#2563eb"
-                      strokeWidth={2 / zoom}
-                      data-row-curve-handle="true"
-                      data-row-id={rowId}
-                      className="cursor-grab"
-                    />
-                  </g>
-                );
-              })}
-
           {/* Render structures sorted by zIndex */}
           {sortedStructures.map((structure) => (
             <Structure
@@ -1471,6 +1535,90 @@ export function SeatMapCanvas() {
                 />
               </g>
             )}
+
+          {/* Area resize handles (single unlocked area selection) */}
+          {appMode === "editor" &&
+            activeTool === "select" &&
+            selectedResizableArea && (
+              <ResizeHandles
+                position={selectedResizableArea.position}
+                size={selectedResizableArea.size}
+                rotation={selectedResizableArea.rotation || 0}
+                onResizeStart={(handle, e) => {
+                  e.stopPropagation();
+                  setResizingAreaId(selectedResizableArea.id);
+                  setActiveAreaResizeHandle(handle);
+                  setResizeStartPoint(screenToSVG(e.clientX, e.clientY));
+                  setResizeStartRect({
+                    position: { ...selectedResizableArea.position },
+                    size: { ...selectedResizableArea.size },
+                  });
+                }}
+              />
+            )}
+
+          {/* Row curve handles (only in select mode, rendered on top) */}
+          {appMode === "editor" &&
+            activeTool === "select" &&
+            selectedIds
+              .filter(
+                (id) => id.startsWith("row_") && rows[id] && !rows[id].isLocked,
+              )
+              .map((rowId) => {
+                const row = rows[rowId];
+                const rowSeats = row.seats
+                  .map((seatId) => seats[seatId])
+                  .filter(Boolean);
+                if (rowSeats.length === 0) return null;
+
+                const start = row.start || rowSeats[0].position;
+                const end = row.end || rowSeats[rowSeats.length - 1].position;
+                const control = getCurvedRowControlPoint(
+                  start,
+                  end,
+                  row.curve ?? 0,
+                );
+
+                return (
+                  <g key={`row-curve-handle-${rowId}`}>
+                    <circle
+                      cx={start.x}
+                      cy={start.y}
+                      r={9 / zoom}
+                      fill="#ffffff"
+                      stroke="#16a34a"
+                      strokeWidth={2 / zoom}
+                      data-row-start-handle="true"
+                      data-row-id={rowId}
+                      className="cursor-ew-resize"
+                    />
+
+                    <circle
+                      cx={end.x}
+                      cy={end.y}
+                      r={9 / zoom}
+                      fill="#ffffff"
+                      stroke="#dc2626"
+                      strokeWidth={2 / zoom}
+                      data-row-end-handle="true"
+                      data-row-id={rowId}
+                      className="cursor-ew-resize"
+                    />
+
+                    <circle
+                      cx={control.x}
+                      cy={control.y}
+                      r={11 / zoom}
+                      fill="#ffffff"
+                      stroke="#2563eb"
+                      strokeWidth={2 / zoom}
+                      data-row-curve-handle="true"
+                      data-row-id={rowId}
+                      className="cursor-grab"
+                    />
+                  </g>
+                );
+              })}
 
           {/* Box selection rectangle */}
           {isBoxSelecting && (

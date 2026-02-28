@@ -77,8 +77,9 @@ export const Row = memo(function Row({
           d={connectionPath}
           fill="none"
           stroke="transparent"
-          strokeWidth={2}
-          pointerEvents="none"
+          strokeWidth={24}
+          pointerEvents="stroke"
+          data-element-id={row.id}
           opacity={0}
         />
       )}
