@@ -1,13 +1,21 @@
 "use client";
 
+import { useState } from "react";
 import { FilePlus, Download, Upload } from "lucide-react";
 import { useSeatMapStore } from "../../store/seatMapStore";
 import { Tooltip } from "./Tooltip";
 import { useThemeColors } from "../../hooks/useThemeColors";
+import { NewMapModal } from "../modals/NewMapModal";
+import {
+  MAP_TEMPLATES,
+  getTemplatePayloadById,
+  type MapTemplateId,
+} from "../../lib/map-templates";
 
 export function FileActions() {
   const { exportMap, importMap, resetMap } = useSeatMapStore();
   const { colors } = useThemeColors();
+  const [showNewMapModal, setShowNewMapModal] = useState(false);
 
   const handleExport = () => {
     const data = exportMap();
@@ -45,12 +53,20 @@ export function FileActions() {
   };
 
   const handleNewMap = () => {
-    if (
-      confirm(
-        "Are you sure you want to create a new map? All unsaved changes will be lost.",
-      )
-    ) {
-      resetMap();
+    setShowNewMapModal(true);
+  };
+
+  const handleCreateEmptyMap = () => {
+    resetMap();
+    setShowNewMapModal(false);
+  };
+
+  const handleCreateFromTemplate = (templateId: MapTemplateId) => {
+    try {
+      importMap(getTemplatePayloadById(templateId));
+      setShowNewMapModal(false);
+    } catch {
+      alert("Could not load selected template.");
     }
   };
 
@@ -86,6 +102,14 @@ export function FileActions() {
           </button>
         </Tooltip>
       </div>
+
+      <NewMapModal
+        isOpen={showNewMapModal}
+        templates={MAP_TEMPLATES}
+        onClose={() => setShowNewMapModal(false)}
+        onCreateEmpty={handleCreateEmptyMap}
+        onSelectTemplate={handleCreateFromTemplate}
+      />
     </div>
   );
 }
